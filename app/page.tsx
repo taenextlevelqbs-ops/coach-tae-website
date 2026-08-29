@@ -78,65 +78,69 @@ export default function Home() {
         {/* HERO */}
         <section className="px-6 py-8 md:px-8 md:py-12">
           <div className="mx-auto max-w-7xl">
-            <div className="relative flex min-h-[600px] flex-col justify-between overflow-hidden rounded-[32px] border border-white/10 bg-white/[0.03] p-8 md:min-h-[650px] md:p-12 lg:p-16">
-              <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.025)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.025)_1px,transparent_1px)] bg-[size:42px_42px]" />
+            <div className="relative min-h-[650px] overflow-hidden rounded-[32px] border border-white/10">
+              <img
+                src="/QbGroupTraining.jpeg"
+                alt="Coach Tae quarterback group training"
+                className="absolute inset-0 h-full w-full object-cover object-center"
+              />
 
-              <div className="pointer-events-none absolute -right-32 top-0 h-[420px] w-[420px] rounded-full bg-sky-500/[0.08] blur-[130px]" />
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-black/85 via-black/40 to-transparent" />
 
-              <div className="pointer-events-none absolute -left-32 bottom-[-100px] h-[350px] w-[350px] rounded-full bg-white/[0.04] blur-[130px]" />
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-black/10" />
 
-              <div className="pointer-events-none absolute bottom-[-40px] right-[-15px] select-none text-[130px] font-black leading-none tracking-[-0.08em] text-white/[0.025] md:text-[230px] lg:text-[300px]">
-                QB
-              </div>
+              <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:42px_42px]" />
 
-              <div className="relative z-10">
-                <div className="flex items-center gap-3">
-                  <span className="h-[1px] w-10 bg-white/40" />
+              <div className="relative z-10 flex min-h-[650px] flex-col justify-between p-8 md:p-12 lg:p-16">
+                <div>
+                  <div className="flex items-center gap-3">
+                    <span className="h-[1px] w-10 bg-white/50" />
 
-                  <p className="text-[10px] font-black tracking-[0.38em] text-white/40">
-                    QUARTERBACK DEVELOPMENT // DMV
+                    <p className="text-[10px] font-black tracking-[0.38em] text-white/60">
+                      QUARTERBACK DEVELOPMENT // DMV
+                    </p>
+                  </div>
+
+                  <h1 className="mt-8 text-6xl font-black leading-[0.86] tracking-[-0.05em] md:text-8xl lg:text-9xl">
+                    TRAIN.
+                    <br />
+                    DEVELOP.
+                    <br />
+                    <span className="text-white/65">COMPETE.</span>
+                  </h1>
+
+                  <p className="mt-8 max-w-2xl text-base leading-relaxed text-white/80 md:text-xl">
+                    Quarterback development, competitive 7v7 football,
+                    mentorship, and athlete development throughout the DMV.
                   </p>
                 </div>
 
-                <h1 className="mt-8 text-6xl font-black leading-[0.86] tracking-[-0.05em] md:text-8xl lg:text-9xl">
-                  TRAIN.
-                  <br />
-                  DEVELOP.
-                  <br />
-                  <span className="text-white/35">COMPETE.</span>
-                </h1>
+                <div className="mt-14 flex flex-col justify-between gap-8 border-t border-white/20 pt-8 md:flex-row md:items-end">
+                  <div className="flex flex-col gap-3 sm:flex-row">
+                    <a
+                      href="#training"
+                      className="rounded-full bg-white px-7 py-3 text-center font-bold text-black transition hover:scale-[1.02]"
+                    >
+                      Train With Coach Tae →
+                    </a>
 
-                <p className="mt-8 max-w-2xl text-base leading-relaxed text-white/60 md:text-xl">
-                  Quarterback development, competitive 7v7 football,
-                  mentorship, and athlete development throughout the DMV.
-                </p>
-              </div>
+                    <a
+                      href="#attack"
+                      className="rounded-full border border-white/30 bg-black/20 px-7 py-3 text-center font-bold text-white backdrop-blur-sm transition hover:bg-white hover:text-black"
+                    >
+                      DMV Attack 7v7
+                    </a>
+                  </div>
 
-              <div className="relative z-10 mt-14 flex flex-col justify-between gap-8 border-t border-white/10 pt-8 md:flex-row md:items-end">
-                <div className="flex flex-col gap-3 sm:flex-row">
-                  <a
-                    href="#training"
-                    className="rounded-full bg-white px-7 py-3 text-center font-bold text-black transition hover:scale-[1.02]"
-                  >
-                    Train With Coach Tae →
-                  </a>
+                  <div className="text-left md:text-right">
+                    <p className="text-[10px] font-black tracking-[0.3em] text-white/50">
+                      COACH TAE // QB DEVELOPMENT
+                    </p>
 
-                  <a
-                    href="#attack"
-                    className="rounded-full border border-white/20 px-7 py-3 text-center font-bold transition hover:bg-white hover:text-black"
-                  >
-                    DMV Attack 7v7
-                  </a>
-                </div>
-
-                <div className="text-left md:text-right">
-                  <p className="text-[10px] font-black tracking-[0.3em] text-white/25">
-                    COACH TAE // QB DEVELOPMENT
-                  </p>
-
-                  <p className="mt-2 text-sm font-bold text-white/50">
-                    Northern Virginia • DMV
-                  </p>
+                    <p className="mt-2 text-sm font-bold text-white/70">
+                      Northern Virginia • DMV
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -446,48 +450,6 @@ export default function Home() {
                       NCAA Efficiency
                     </p>
                   </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* GROUP TRAINING */}
-        <section className="px-6 py-10 md:px-8 md:py-14">
-          <div className="mx-auto max-w-7xl">
-            <div className="overflow-hidden rounded-[32px] border border-white/10 bg-white/[0.03]">
-              <img
-                src="/QbGroupTraining.jpeg"
-                alt="Coach Tae quarterback group training"
-                className="h-auto w-full"
-              />
-
-              <div className="flex flex-col justify-between gap-5 p-7 md:flex-row md:items-center md:p-9">
-                <div>
-                  <p className="text-[10px] font-black tracking-[0.3em] text-white/30">
-                    QB LAB // GROUP DEVELOPMENT
-                  </p>
-
-                  <h3 className="mt-3 text-3xl font-black md:text-4xl">
-                    Reps With Purpose.
-                  </h3>
-                </div>
-
-                <div className="max-w-xl">
-                  <p className="text-sm leading-relaxed text-white/50 md:text-base">
-                    Every rep should develop mechanics, timing, movement,
-                    confidence, and a better understanding of the quarterback
-                    position.
-                  </p>
-
-                  <a
-                    href={GROUP_BOOKING_URL}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="mt-5 inline-block text-sm font-black tracking-[0.12em] text-white"
-                  >
-                    BOOK GROUP SESSION →
-                  </a>
                 </div>
               </div>
             </div>
