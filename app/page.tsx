@@ -23,7 +23,6 @@ export default function Home() {
       <Intro />
 
       <main className="min-h-screen bg-black text-white">
-
         {/* GLOBAL BACKGROUND */}
         <div className="pointer-events-none fixed inset-0 -z-10">
           <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:42px_42px]" />
@@ -36,7 +35,6 @@ export default function Home() {
         {/* NAVIGATION */}
         <nav className="sticky top-0 z-50 border-b border-white/10 bg-black/80 backdrop-blur-xl">
           <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 px-6 py-4 md:px-8">
-
             <a
               href="#"
               className="text-xl font-black tracking-[0.18em] md:text-2xl"
@@ -45,39 +43,23 @@ export default function Home() {
             </a>
 
             <div className="flex flex-wrap items-center gap-4 text-xs font-semibold text-white/65 md:gap-7 md:text-sm">
-
-              <a
-                href="#about"
-                className="transition hover:text-white"
-              >
-                About
-              </a>
-
-              <a
-                href="#training"
-                className="transition hover:text-white"
-              >
+              <a href="#training" className="transition hover:text-white">
                 Training
               </a>
 
-              <a
-                href="#attack"
-                className="transition hover:text-white"
-              >
+              <a href="#about" className="transition hover:text-white">
+                About
+              </a>
+
+              <a href="#attack" className="transition hover:text-white">
                 DMV Attack
               </a>
 
-              <a
-                href="#foundation"
-                className="transition hover:text-white"
-              >
+              <a href="#foundation" className="transition hover:text-white">
                 Foundation
               </a>
 
-              <a
-                href="#apparel"
-                className="transition hover:text-white"
-              >
+              <a href="#apparel" className="transition hover:text-white">
                 Apparel
               </a>
 
@@ -89,7 +71,6 @@ export default function Home() {
               >
                 Shop
               </a>
-
             </div>
           </div>
         </nav>
@@ -97,25 +78,18 @@ export default function Home() {
         {/* HERO */}
         <section className="px-6 py-8 md:px-8 md:py-12">
           <div className="mx-auto max-w-7xl">
-
             <div className="relative flex min-h-[600px] flex-col justify-between overflow-hidden rounded-[32px] border border-white/10 bg-white/[0.03] p-8 md:min-h-[650px] md:p-12 lg:p-16">
-
-              {/* TECH GRID */}
               <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.025)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.025)_1px,transparent_1px)] bg-[size:42px_42px]" />
 
-              {/* GLOW */}
               <div className="pointer-events-none absolute -right-32 top-0 h-[420px] w-[420px] rounded-full bg-sky-500/[0.08] blur-[130px]" />
 
               <div className="pointer-events-none absolute -left-32 bottom-[-100px] h-[350px] w-[350px] rounded-full bg-white/[0.04] blur-[130px]" />
 
-              {/* LARGE QB BACKGROUND */}
               <div className="pointer-events-none absolute bottom-[-40px] right-[-15px] select-none text-[130px] font-black leading-none tracking-[-0.08em] text-white/[0.025] md:text-[230px] lg:text-[300px]">
                 QB
               </div>
 
-              {/* HERO CONTENT */}
               <div className="relative z-10">
-
                 <div className="flex items-center gap-3">
                   <span className="h-[1px] w-10 bg-white/40" />
 
@@ -129,24 +103,17 @@ export default function Home() {
                   <br />
                   DEVELOP.
                   <br />
-
-                  <span className="text-white/35">
-                    COMPETE.
-                  </span>
+                  <span className="text-white/35">COMPETE.</span>
                 </h1>
 
                 <p className="mt-8 max-w-2xl text-base leading-relaxed text-white/60 md:text-xl">
                   Quarterback development, competitive 7v7 football,
                   mentorship, and athlete development throughout the DMV.
                 </p>
-
               </div>
 
-              {/* HERO BOTTOM */}
               <div className="relative z-10 mt-14 flex flex-col justify-between gap-8 border-t border-white/10 pt-8 md:flex-row md:items-end">
-
                 <div className="flex flex-col gap-3 sm:flex-row">
-
                   <a
                     href="#training"
                     className="rounded-full bg-white px-7 py-3 text-center font-bold text-black transition hover:scale-[1.02]"
@@ -160,11 +127,9 @@ export default function Home() {
                   >
                     DMV Attack 7v7
                   </a>
-
                 </div>
 
                 <div className="text-left md:text-right">
-
                   <p className="text-[10px] font-black tracking-[0.3em] text-white/25">
                     COACH TAE // QB DEVELOPMENT
                   </p>
@@ -172,25 +137,158 @@ export default function Home() {
                   <p className="mt-2 text-sm font-bold text-white/50">
                     Northern Virginia • DMV
                   </p>
-
                 </div>
+              </div>
+            </div>
+          </div>
+        </section>
 
+        {/* TRAINING */}
+        <section id="training" className="px-6 py-10 md:px-8 md:py-14">
+          <div className="mx-auto grid max-w-7xl gap-6 lg:grid-cols-2">
+            <div className="overflow-hidden rounded-[32px] border border-white/10">
+              <img
+                src="/Tae_Training.jpeg"
+                alt="Coach Tae quarterback training"
+                className="h-auto w-full"
+              />
+            </div>
+
+            <div className="rounded-[32px] border border-white/10 bg-white/[0.03] p-8 md:p-12">
+              <p className="text-[10px] font-black tracking-[0.35em] text-white/35">
+                TRAINING // QB DEVELOPMENT
+              </p>
+
+              <h2 className="mt-5 text-4xl font-black leading-[0.95] tracking-[-0.03em] md:text-6xl">
+                Build the
+                <br />
+                Complete
+                <br />
+                Quarterback.
+              </h2>
+
+              <p className="mt-6 max-w-2xl text-base leading-relaxed text-white/65 md:text-lg">
+                Training focused on mechanics, footwork, accuracy,
+                decision making, coverage recognition, football IQ,
+                pocket movement, and game-specific quarterback situations.
+              </p>
+
+              <div className="mt-9 grid gap-4 sm:grid-cols-2">
+                <a
+                  href={GROUP_BOOKING_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group rounded-2xl border border-white/10 bg-black/20 p-6 transition duration-300 hover:-translate-y-1 hover:border-white/30 hover:bg-white/[0.04]"
+                >
+                  <p className="text-[9px] font-black tracking-[0.25em] text-white/30">
+                    SESSION // 01
+                  </p>
+
+                  <p className="mt-4 text-lg font-black">GROUP TRAINING</p>
+
+                  <p className="mt-4 text-4xl font-black">$60</p>
+
+                  <div className="my-4 h-[1px] bg-white/10" />
+
+                  <p className="text-sm text-white/45">
+                    Per athlete • 1 hour
+                  </p>
+
+                  <p className="mt-5 text-xs font-black tracking-[0.15em] text-white/60 transition group-hover:text-white">
+                    BOOK GROUP →
+                  </p>
+                </a>
+
+                <a
+                  href={INDIVIDUAL_BOOKING_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group rounded-2xl border border-white/10 bg-black/20 p-6 transition duration-300 hover:-translate-y-1 hover:border-white/30 hover:bg-white/[0.04]"
+                >
+                  <p className="text-[9px] font-black tracking-[0.25em] text-white/30">
+                    SESSION // 02
+                  </p>
+
+                  <p className="mt-4 text-lg font-black">
+                    PRIVATE TRAINING
+                  </p>
+
+                  <p className="mt-4 text-4xl font-black">$85</p>
+
+                  <div className="my-4 h-[1px] bg-white/10" />
+
+                  <p className="text-sm text-white/45">
+                    1-on-1 • 1 hour
+                  </p>
+
+                  <p className="mt-5 text-xs font-black tracking-[0.15em] text-white/60 transition group-hover:text-white">
+                    BOOK PRIVATE →
+                  </p>
+                </a>
               </div>
 
+              <div className="mt-4 rounded-2xl border border-white/10 bg-black/20 p-6">
+                <p className="text-[9px] font-black tracking-[0.25em] text-white/30">
+                  PACKAGE // 03
+                </p>
+
+                <div className="mt-4 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+                  <div>
+                    <p className="text-xl font-black">
+                      3 Individual Sessions
+                    </p>
+
+                    <p className="mt-1 text-sm text-white/45">
+                      $80 per session
+                    </p>
+                  </div>
+
+                  <p className="text-4xl font-black">$240</p>
+                </div>
+              </div>
+
+              <div className="mt-8 grid gap-3 sm:grid-cols-2">
+                {trainingFocus.map((item, index) => (
+                  <div
+                    key={item}
+                    className="flex items-center gap-3 rounded-xl border border-white/10 px-4 py-3 text-sm text-white/60"
+                  >
+                    <span className="text-[9px] font-black text-white/25">
+                      {String(index + 1).padStart(2, "0")}
+                    </span>
+
+                    {item}
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+                <a
+                  href={INDIVIDUAL_BOOKING_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="rounded-full bg-white px-7 py-3 text-center font-bold text-black transition hover:scale-[1.02]"
+                >
+                  Book Private Training →
+                </a>
+
+                <a
+                  href={GROUP_BOOKING_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="rounded-full border border-white/20 px-7 py-3 text-center font-bold text-white transition hover:bg-white hover:text-black"
+                >
+                  Book Group Training →
+                </a>
+              </div>
             </div>
           </div>
         </section>
 
         {/* ABOUT */}
-        <section
-          id="about"
-          className="px-6 py-10 md:px-8 md:py-14"
-        >
+        <section id="about" className="px-6 py-10 md:px-8 md:py-14">
           <div className="mx-auto grid max-w-7xl gap-6 lg:grid-cols-[0.85fr_1.15fr]">
-
-            {/* ABOUT PHOTOS */}
             <div className="grid gap-5">
-
               <div className="overflow-hidden rounded-[32px] border border-white/10">
                 <img
                   src="/College.jpeg"
@@ -206,12 +304,9 @@ export default function Home() {
                   className="h-auto w-full"
                 />
               </div>
-
             </div>
 
-            {/* ABOUT INFORMATION */}
             <div className="rounded-[32px] border border-white/10 bg-white/[0.03] p-8 md:p-12">
-
               <div className="flex items-center gap-3">
                 <span className="h-[1px] w-8 bg-white/30" />
 
@@ -227,21 +322,16 @@ export default function Home() {
                 <br />
                 Trainer.
                 <br />
-
-                <span className="text-white/35">
-                  Founder.
-                </span>
+                <span className="text-white/35">Founder.</span>
               </h2>
 
               <p className="mt-7 max-w-2xl text-base leading-relaxed text-white/65 md:text-lg">
                 Former college quarterback turned quarterback coach,
-                trainer, mentor, DMV Attack 7v7 co-founder, and
-                DMV Attack Foundation founder.
+                trainer, mentor, DMV Attack 7v7 co-founder, and DMV Attack
+                Foundation founder.
               </p>
 
-              {/* RESUME */}
               <div className="mt-9 grid gap-x-8 gap-y-4 text-sm text-white/55 md:grid-cols-2">
-
                 <div className="border-b border-white/10 pb-3">
                   Former Fairmont State University Quarterback
                 </div>
@@ -269,14 +359,10 @@ export default function Home() {
                 <div className="border-b border-white/10 pb-3">
                   DMV Attack Foundation Founder
                 </div>
-
               </div>
 
-              {/* COLLEGE STATS */}
               <div className="mt-10">
-
                 <div className="mb-5 flex items-center justify-between">
-
                   <div>
                     <p className="text-[10px] font-black tracking-[0.3em] text-white/30">
                       CAREER // DATA
@@ -294,11 +380,9 @@ export default function Home() {
                       COLLEGE CAREER
                     </p>
                   </div>
-
                 </div>
 
                 <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-
                   <div className="rounded-2xl border border-white/10 bg-black/30 p-5">
                     <p className="text-[9px] font-black tracking-[0.25em] text-white/25">
                       01
@@ -362,186 +446,8 @@ export default function Home() {
                       NCAA Efficiency
                     </p>
                   </div>
-
                 </div>
-
               </div>
-
-            </div>
-
-          </div>
-        </section>
-
-        {/* TRAINING */}
-        <section
-          id="training"
-          className="px-6 py-10 md:px-8 md:py-14"
-        >
-          <div className="mx-auto grid max-w-7xl gap-6 lg:grid-cols-2">
-
-            {/* TRAINING PHOTO */}
-            <div className="overflow-hidden rounded-[32px] border border-white/10">
-              <img
-                src="/Tae_Training.jpeg"
-                alt="Coach Tae quarterback training"
-                className="h-auto w-full"
-              />
-            </div>
-
-            {/* TRAINING DETAILS */}
-            <div className="rounded-[32px] border border-white/10 bg-white/[0.03] p-8 md:p-12">
-
-              <p className="text-[10px] font-black tracking-[0.35em] text-white/35">
-                TRAINING // QB DEVELOPMENT
-              </p>
-
-              <h2 className="mt-5 text-4xl font-black leading-[0.95] tracking-[-0.03em] md:text-6xl">
-                Build the
-                <br />
-                Complete
-                <br />
-                Quarterback.
-              </h2>
-
-              <p className="mt-6 max-w-2xl text-base leading-relaxed text-white/65 md:text-lg">
-                Training focused on mechanics, footwork, accuracy,
-                decision making, coverage recognition, football IQ,
-                pocket movement, and game-specific quarterback situations.
-              </p>
-
-              {/* PRICING */}
-              <div className="mt-9 grid gap-4 sm:grid-cols-2">
-
-                {/* GROUP */}
-                <a
-                  href={GROUP_BOOKING_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group rounded-2xl border border-white/10 bg-black/20 p-6 transition duration-300 hover:-translate-y-1 hover:border-white/30 hover:bg-white/[0.04]"
-                >
-                  <p className="text-[9px] font-black tracking-[0.25em] text-white/30">
-                    SESSION // 01
-                  </p>
-
-                  <p className="mt-4 text-lg font-black">
-                    GROUP TRAINING
-                  </p>
-
-                  <p className="mt-4 text-4xl font-black">
-                    $60
-                  </p>
-
-                  <div className="my-4 h-[1px] bg-white/10" />
-
-                  <p className="text-sm text-white/45">
-                    Per athlete • 1 hour
-                  </p>
-
-                  <p className="mt-5 text-xs font-black tracking-[0.15em] text-white/60 transition group-hover:text-white">
-                    BOOK GROUP →
-                  </p>
-                </a>
-
-                {/* PRIVATE */}
-                <a
-                  href={INDIVIDUAL_BOOKING_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group rounded-2xl border border-white/10 bg-black/20 p-6 transition duration-300 hover:-translate-y-1 hover:border-white/30 hover:bg-white/[0.04]"
-                >
-                  <p className="text-[9px] font-black tracking-[0.25em] text-white/30">
-                    SESSION // 02
-                  </p>
-
-                  <p className="mt-4 text-lg font-black">
-                    PRIVATE TRAINING
-                  </p>
-
-                  <p className="mt-4 text-4xl font-black">
-                    $85
-                  </p>
-
-                  <div className="my-4 h-[1px] bg-white/10" />
-
-                  <p className="text-sm text-white/45">
-                    1-on-1 • 1 hour
-                  </p>
-
-                  <p className="mt-5 text-xs font-black tracking-[0.15em] text-white/60 transition group-hover:text-white">
-                    BOOK PRIVATE →
-                  </p>
-                </a>
-
-              </div>
-
-              {/* PACKAGE */}
-              <div className="mt-4 rounded-2xl border border-white/10 bg-black/20 p-6">
-
-                <p className="text-[9px] font-black tracking-[0.25em] text-white/30">
-                  PACKAGE // 03
-                </p>
-
-                <div className="mt-4 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
-
-                  <div>
-                    <p className="text-xl font-black">
-                      3 Individual Sessions
-                    </p>
-
-                    <p className="mt-1 text-sm text-white/45">
-                      $80 per session
-                    </p>
-                  </div>
-
-                  <p className="text-4xl font-black">
-                    $240
-                  </p>
-
-                </div>
-
-              </div>
-
-              {/* TRAINING FOCUS */}
-              <div className="mt-8 grid gap-3 sm:grid-cols-2">
-
-                {trainingFocus.map((item, index) => (
-                  <div
-                    key={item}
-                    className="flex items-center gap-3 rounded-xl border border-white/10 px-4 py-3 text-sm text-white/60"
-                  >
-                    <span className="text-[9px] font-black text-white/25">
-                      {String(index + 1).padStart(2, "0")}
-                    </span>
-
-                    {item}
-                  </div>
-                ))}
-
-              </div>
-
-              {/* BOOKING BUTTONS */}
-              <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-
-                <a
-                  href={INDIVIDUAL_BOOKING_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="rounded-full bg-white px-7 py-3 text-center font-bold text-black transition hover:scale-[1.02]"
-                >
-                  Book Private Training →
-                </a>
-
-                <a
-                  href={GROUP_BOOKING_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="rounded-full border border-white/20 px-7 py-3 text-center font-bold text-white transition hover:bg-white hover:text-black"
-                >
-                  Book Group Training →
-                </a>
-
-              </div>
-
             </div>
           </div>
         </section>
@@ -549,9 +455,7 @@ export default function Home() {
         {/* GROUP TRAINING */}
         <section className="px-6 py-10 md:px-8 md:py-14">
           <div className="mx-auto max-w-7xl">
-
             <div className="overflow-hidden rounded-[32px] border border-white/10 bg-white/[0.03]">
-
               <img
                 src="/QbGroupTraining.jpeg"
                 alt="Coach Tae quarterback group training"
@@ -559,7 +463,6 @@ export default function Home() {
               />
 
               <div className="flex flex-col justify-between gap-5 p-7 md:flex-row md:items-center md:p-9">
-
                 <div>
                   <p className="text-[10px] font-black tracking-[0.3em] text-white/30">
                     QB LAB // GROUP DEVELOPMENT
@@ -571,7 +474,6 @@ export default function Home() {
                 </div>
 
                 <div className="max-w-xl">
-
                   <p className="text-sm leading-relaxed text-white/50 md:text-base">
                     Every rep should develop mechanics, timing, movement,
                     confidence, and a better understanding of the quarterback
@@ -586,25 +488,16 @@ export default function Home() {
                   >
                     BOOK GROUP SESSION →
                   </a>
-
                 </div>
-
               </div>
-
             </div>
-
           </div>
         </section>
 
         {/* DMV ATTACK */}
-        <section
-          id="attack"
-          className="px-6 py-10 md:px-8 md:py-14"
-        >
+        <section id="attack" className="px-6 py-10 md:px-8 md:py-14">
           <div className="mx-auto max-w-7xl rounded-[32px] border border-white/10 bg-white/[0.03] p-8 md:p-12">
-
             <div className="mb-10 flex flex-col justify-between gap-6 border-b border-white/10 pb-8 md:flex-row md:items-end">
-
               <div>
                 <p className="text-[10px] font-black tracking-[0.35em] text-white/35">
                   DMV ATTACK // 7V7
@@ -615,10 +508,7 @@ export default function Home() {
                   <br />
                   Competition.
                   <br />
-
-                  <span className="text-white/35">
-                    Opportunity.
-                  </span>
+                  <span className="text-white/35">Opportunity.</span>
                 </h2>
               </div>
 
@@ -626,12 +516,9 @@ export default function Home() {
                 Competitive football built around athlete development,
                 relationships, exposure, and learning how to compete.
               </p>
-
             </div>
 
-            {/* ATTACK PHOTOS */}
             <div className="grid gap-5 md:grid-cols-2">
-
               <div>
                 <div className="overflow-hidden rounded-[28px] border border-white/10">
                   <img
@@ -671,11 +558,9 @@ export default function Home() {
                   </p>
                 </div>
               </div>
-
             </div>
 
             <div className="mt-8 grid gap-5 sm:grid-cols-2">
-
               <div className="overflow-hidden rounded-[28px] border border-white/10">
                 <img
                   src="/TaeCoach7v7.jpeg"
@@ -691,22 +576,17 @@ export default function Home() {
                   className="h-auto w-full"
                 />
               </div>
-
             </div>
-
           </div>
         </section>
 
         {/* FOUNDATION + APPAREL */}
         <section className="px-6 py-10 md:px-8 md:py-14">
           <div className="mx-auto grid max-w-7xl gap-6 lg:grid-cols-2">
-
-            {/* FOUNDATION */}
             <div
               id="foundation"
               className="relative overflow-hidden rounded-[32px] border border-white/10 bg-white/[0.03] p-8 md:p-12"
             >
-
               <div className="pointer-events-none absolute -right-20 -top-20 h-[250px] w-[250px] rounded-full bg-white/[0.04] blur-[90px]" />
 
               <p className="relative text-[10px] font-black tracking-[0.35em] text-white/35">
@@ -722,7 +602,6 @@ export default function Home() {
               </div>
 
               <div className="relative mt-9">
-
                 <h2 className="text-4xl font-black leading-[0.95] md:text-5xl">
                   DMV Attack
                   <br />
@@ -736,27 +615,19 @@ export default function Home() {
                 </p>
 
                 <div className="mt-8 border-t border-white/10 pt-6">
-
                   <p className="text-[9px] uppercase tracking-[0.25em] text-white/30">
                     Founder
                   </p>
 
-                  <p className="mt-2 text-2xl font-black">
-                    Coach Tae
-                  </p>
-
+                  <p className="mt-2 text-2xl font-black">Coach Tae</p>
                 </div>
-
               </div>
-
             </div>
 
-            {/* APPAREL */}
             <div
               id="apparel"
               className="rounded-[32px] border border-white/10 bg-white/[0.03] p-8 md:p-12"
             >
-
               <p className="text-[10px] font-black tracking-[0.35em] text-white/35">
                 APPAREL // DMV ATTACK
               </p>
@@ -766,7 +637,6 @@ export default function Home() {
               </h2>
 
               <div className="mt-8 grid gap-5 sm:grid-cols-2">
-
                 <img
                   src="/DMVAttackApparel.jpeg"
                   alt="DMV Attack apparel"
@@ -778,7 +648,6 @@ export default function Home() {
                   alt="DMV Attack apparel"
                   className="h-auto w-full rounded-3xl"
                 />
-
               </div>
 
               <a
@@ -789,22 +658,17 @@ export default function Home() {
               >
                 Shop DMV Attack →
               </a>
-
             </div>
-
           </div>
         </section>
 
         {/* CONTACT */}
         <section className="px-6 py-14 md:px-8 md:py-20">
           <div className="mx-auto max-w-7xl">
-
             <div className="relative overflow-hidden rounded-[32px] border border-white/10 bg-white/[0.03] p-9 text-center md:p-16">
-
               <div className="pointer-events-none absolute left-1/2 top-1/2 h-[300px] w-[550px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-white/[0.03] blur-[100px]" />
 
               <div className="relative">
-
                 <p className="text-[10px] font-black tracking-[0.35em] text-white/35">
                   BOOK // COACH TAE
                 </p>
@@ -819,7 +683,6 @@ export default function Home() {
                 </p>
 
                 <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
-
                   <a
                     href={INDIVIDUAL_BOOKING_URL}
                     target="_blank"
@@ -837,41 +700,28 @@ export default function Home() {
                   >
                     Book Group →
                   </a>
-
                 </div>
-
               </div>
-
             </div>
-
           </div>
         </section>
 
         {/* FOOTER */}
         <footer className="border-t border-white/10 px-6 py-10 md:px-8">
-
           <div className="mx-auto flex max-w-7xl flex-col justify-between gap-5 text-center md:flex-row md:items-center md:text-left">
-
             <div>
-
-              <p className="font-black tracking-[0.18em]">
-                COACH TAE
-              </p>
+              <p className="font-black tracking-[0.18em]">COACH TAE</p>
 
               <p className="mt-2 text-[10px] tracking-[0.28em] text-white/25">
                 TRAIN // DEVELOP // COMPETE
               </p>
-
             </div>
 
             <p className="text-xs text-white/25">
               © 2026 Coach Tae. All Rights Reserved.
             </p>
-
           </div>
-
         </footer>
-
       </main>
     </>
   );
