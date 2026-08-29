@@ -6,7 +6,7 @@ const INDIVIDUAL_BOOKING_URL =
   "https://calendly.com/taenextlevelqbs/individual-training-clone";
 
 const GROUP_BOOKING_URL =
-  "https://calendly.com/taenextlevelqbs/training";
+  "https://calendly.com/taenextlevelqbs/group-training";
 
 const trainingFocus = [
   "Throwing Mechanics",
