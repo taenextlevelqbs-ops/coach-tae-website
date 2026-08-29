@@ -24,3 +24,410 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+/* =========================================
+   COACH TAE FUTURISTIC INTRO
+========================================= */
+
+.site-intro {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  overflow: hidden;
+
+  background:
+    radial-gradient(
+      circle at center,
+      rgba(0, 180, 255, 0.14),
+      transparent 48%
+    ),
+    #020304;
+
+  opacity: 1;
+  visibility: visible;
+
+  transition:
+    opacity 0.9s ease,
+    visibility 0.9s ease;
+}
+
+.site-intro.intro-hide {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+
+/* AMBIENT GLOW */
+
+.intro-glow {
+  position: absolute;
+
+  width: 700px;
+  height: 700px;
+
+  border-radius: 50%;
+
+  background: rgba(0, 190, 255, 0.08);
+
+  filter: blur(140px);
+
+  animation: glowPulse 2.3s ease-in-out infinite;
+}
+
+@keyframes glowPulse {
+  0% {
+    transform: scale(0.9);
+    opacity: 0.4;
+  }
+
+  50% {
+    transform: scale(1.15);
+    opacity: 0.8;
+  }
+
+  100% {
+    transform: scale(0.9);
+    opacity: 0.4;
+  }
+}
+
+
+/* FOOTBALL FIELD */
+
+.field-wrap {
+  position: absolute;
+
+  width: min(1200px, 140vw);
+  height: min(700px, 90vh);
+
+  perspective: 900px;
+}
+
+.field {
+  position: absolute;
+  inset: 0;
+
+  overflow: hidden;
+
+  border: 1px solid rgba(0, 200, 255, 0.35);
+
+  transform:
+    rotateX(62deg)
+    translateY(170px)
+    scale(1.25);
+
+  background-color: rgba(0, 20, 25, 0.7);
+
+  background-image:
+
+    repeating-linear-gradient(
+      90deg,
+      rgba(0, 220, 255, 0.22) 0px,
+      rgba(0, 220, 255, 0.22) 2px,
+      transparent 2px,
+      transparent 90px
+    ),
+
+    repeating-linear-gradient(
+      0deg,
+      rgba(0, 220, 255, 0.10) 0px,
+      rgba(0, 220, 255, 0.10) 1px,
+      transparent 1px,
+      transparent 36px
+    );
+
+  box-shadow:
+    0 0 45px rgba(0, 190, 255, 0.18),
+    inset 0 0 70px rgba(0, 190, 255, 0.08);
+}
+
+
+/* CENTER FIELD LINE */
+
+.field-center-line {
+  position: absolute;
+
+  left: 50%;
+  top: 0;
+
+  width: 2px;
+  height: 100%;
+
+  background: rgba(255,255,255,0.75);
+
+  box-shadow:
+    0 0 10px rgba(255,255,255,0.8),
+    0 0 30px rgba(0,190,255,0.5);
+}
+
+
+/* MIDFIELD CIRCLE */
+
+.field-center-circle {
+  position: absolute;
+
+  left: 50%;
+  top: 50%;
+
+  width: 170px;
+  height: 170px;
+
+  border: 2px solid rgba(255,255,255,0.4);
+
+  border-radius: 50%;
+
+  transform: translate(-50%, -50%);
+
+  box-shadow:
+    0 0 35px rgba(0,190,255,0.25);
+}
+
+
+/* YARD NUMBERS */
+
+.yard {
+  position: absolute;
+
+  top: 46%;
+
+  font-size: 34px;
+  font-weight: 900;
+
+  color: rgba(255,255,255,0.13);
+
+  transform: rotate(90deg);
+
+  user-select: none;
+}
+
+.yard-10-left { left: 7%; }
+.yard-20-left { left: 16%; }
+.yard-30-left { left: 25%; }
+.yard-40-left { left: 34%; }
+
+.yard-40-right { right: 34%; }
+.yard-30-right { right: 25%; }
+.yard-20-right { right: 16%; }
+.yard-10-right { right: 7%; }
+
+
+/* FIELD SCANNER */
+
+.scan-line {
+  position: absolute;
+
+  left: 0;
+  top: -10%;
+
+  width: 100%;
+  height: 5px;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(0, 220, 255, 0.9),
+      transparent
+    );
+
+  box-shadow:
+    0 0 30px rgba(0, 220, 255, 0.8);
+
+  animation: fieldScan 2.1s linear infinite;
+}
+
+@keyframes fieldScan {
+  from {
+    top: -10%;
+  }
+
+  to {
+    top: 110%;
+  }
+}
+
+
+/* INTRO TEXT */
+
+.intro-content {
+  position: relative;
+
+  z-index: 5;
+
+  padding: 24px;
+
+  text-align: center;
+
+  transform: translateY(-20px);
+}
+
+.intro-small {
+  margin: 0 0 14px;
+
+  font-size: 11px;
+  font-weight: 700;
+
+  letter-spacing: 0.42em;
+
+  color: rgba(255,255,255,0.45);
+}
+
+.intro-logo {
+  margin: 0;
+
+  font-size: clamp(48px, 9vw, 125px);
+
+  font-weight: 950;
+
+  letter-spacing: -0.05em;
+
+  line-height: 0.9;
+
+  color: white;
+
+  text-shadow:
+    0 0 12px rgba(255,255,255,0.3),
+    0 0 45px rgba(0,190,255,0.25);
+
+  animation:
+    logoEnter 0.9s cubic-bezier(.16,1,.3,1);
+}
+
+@keyframes logoEnter {
+  from {
+    opacity: 0;
+
+    transform:
+      translateY(25px)
+      scale(0.92);
+
+    filter: blur(10px);
+  }
+
+  to {
+    opacity: 1;
+
+    transform:
+      translateY(0)
+      scale(1);
+
+    filter: blur(0);
+  }
+}
+
+
+/* LINE UNDER LOGO */
+
+.intro-divider {
+  width: 100px;
+  height: 2px;
+
+  margin: 25px auto;
+
+  background: white;
+
+  box-shadow:
+    0 0 16px rgba(0,190,255,0.8);
+
+  animation:
+    lineExpand 1.2s ease;
+}
+
+@keyframes lineExpand {
+  from {
+    width: 0;
+    opacity: 0;
+  }
+
+  to {
+    width: 100px;
+    opacity: 1;
+  }
+}
+
+
+/* TAGLINE */
+
+.intro-tagline {
+  margin: 0;
+
+  font-size: 13px;
+
+  font-weight: 700;
+
+  letter-spacing: 0.3em;
+
+  color: rgba(255,255,255,0.7);
+}
+
+
+/* STATUS */
+
+.intro-status {
+  margin-top: 18px;
+
+  font-size: 9px;
+
+  letter-spacing: 0.3em;
+
+  color: rgba(0,220,255,0.75);
+
+  animation:
+    statusBlink 1s linear infinite;
+}
+
+@keyframes statusBlink {
+  0%,
+  100% {
+    opacity: 0.25;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+
+/* MOBILE */
+
+@media (max-width: 700px) {
+
+  .field-wrap {
+    width: 180vw;
+    height: 80vh;
+  }
+
+  .field {
+    transform:
+      rotateX(65deg)
+      translateY(190px)
+      scale(1.4);
+  }
+
+  .intro-small {
+    font-size: 8px;
+  }
+
+  .intro-tagline {
+    font-size: 10px;
+  }
+}
+
+
+/* REDUCED MOTION */
+
+@media (prefers-reduced-motion: reduce) {
+
+  .scan-line,
+  .intro-glow,
+  .intro-logo,
+  .intro-status {
+    animation: none;
+  }
+
+}
