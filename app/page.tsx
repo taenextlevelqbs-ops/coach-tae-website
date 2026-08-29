@@ -23,6 +23,7 @@ export default function Home() {
       <Intro />
 
       <main className="min-h-screen bg-black text-white">
+
         {/* GLOBAL BACKGROUND */}
         <div className="pointer-events-none fixed inset-0 -z-10">
           <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:42px_42px]" />
@@ -79,6 +80,7 @@ export default function Home() {
         <section className="px-6 py-8 md:px-8 md:py-12">
           <div className="mx-auto max-w-7xl">
             <div className="relative min-h-[650px] overflow-hidden rounded-[32px] border border-white/10">
+
               <img
                 src="/QbGroupTraining.jpeg"
                 alt="Coach Tae quarterback group training"
@@ -92,6 +94,7 @@ export default function Home() {
               <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:42px_42px]" />
 
               <div className="relative z-10 flex min-h-[650px] flex-col justify-between p-8 md:p-12 lg:p-16">
+
                 <div>
                   <div className="flex items-center gap-3">
                     <span className="h-[1px] w-10 bg-white/50" />
@@ -106,7 +109,9 @@ export default function Home() {
                     <br />
                     DEVELOP.
                     <br />
-                    <span className="text-white/65">COMPETE.</span>
+                    <span className="text-white/65">
+                      COMPETE.
+                    </span>
                   </h1>
 
                   <p className="mt-8 max-w-2xl text-base leading-relaxed text-white/80 md:text-xl">
@@ -116,6 +121,7 @@ export default function Home() {
                 </div>
 
                 <div className="mt-14 flex flex-col justify-between gap-8 border-t border-white/20 pt-8 md:flex-row md:items-end">
+
                   <div className="flex flex-col gap-3 sm:flex-row">
                     <a
                       href="#training"
@@ -141,15 +147,21 @@ export default function Home() {
                       Northern Virginia • DMV
                     </p>
                   </div>
+
                 </div>
+
               </div>
             </div>
           </div>
         </section>
 
         {/* TRAINING */}
-        <section id="training" className="px-6 py-10 md:px-8 md:py-14">
+        <section
+          id="training"
+          className="px-6 py-10 md:px-8 md:py-14"
+        >
           <div className="mx-auto grid max-w-7xl gap-6 lg:grid-cols-2">
+
             <div className="overflow-hidden rounded-[32px] border border-white/10">
               <img
                 src="/Tae_Training.jpeg"
@@ -159,6 +171,7 @@ export default function Home() {
             </div>
 
             <div className="rounded-[32px] border border-white/10 bg-white/[0.03] p-8 md:p-12">
+
               <p className="text-[10px] font-black tracking-[0.35em] text-white/35">
                 TRAINING // QB DEVELOPMENT
               </p>
@@ -177,7 +190,10 @@ export default function Home() {
                 pocket movement, and game-specific quarterback situations.
               </p>
 
+              {/* PRICING */}
               <div className="mt-9 grid gap-4 sm:grid-cols-2">
+
+                {/* GROUP */}
                 <a
                   href={GROUP_BOOKING_URL}
                   target="_blank"
@@ -188,9 +204,13 @@ export default function Home() {
                     SESSION // 01
                   </p>
 
-                  <p className="mt-4 text-lg font-black">GROUP TRAINING</p>
+                  <p className="mt-4 text-lg font-black">
+                    GROUP TRAINING
+                  </p>
 
-                  <p className="mt-4 text-4xl font-black">$60</p>
+                  <p className="mt-4 text-4xl font-black">
+                    $60
+                  </p>
 
                   <div className="my-4 h-[1px] bg-white/10" />
 
@@ -203,6 +223,7 @@ export default function Home() {
                   </p>
                 </a>
 
+                {/* PRIVATE */}
                 <a
                   href={INDIVIDUAL_BOOKING_URL}
                   target="_blank"
@@ -217,7 +238,9 @@ export default function Home() {
                     PRIVATE TRAINING
                   </p>
 
-                  <p className="mt-4 text-4xl font-black">$85</p>
+                  <p className="mt-4 text-4xl font-black">
+                    $85
+                  </p>
 
                   <div className="my-4 h-[1px] bg-white/10" />
 
@@ -229,14 +252,18 @@ export default function Home() {
                     BOOK PRIVATE →
                   </p>
                 </a>
+
               </div>
 
+              {/* PACKAGE */}
               <div className="mt-4 rounded-2xl border border-white/10 bg-black/20 p-6">
+
                 <p className="text-[9px] font-black tracking-[0.25em] text-white/30">
                   PACKAGE // 03
                 </p>
 
                 <div className="mt-4 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+
                   <div>
                     <p className="text-xl font-black">
                       3 Individual Sessions
@@ -247,11 +274,16 @@ export default function Home() {
                     </p>
                   </div>
 
-                  <p className="text-4xl font-black">$240</p>
+                  <p className="text-4xl font-black">
+                    $240
+                  </p>
+
                 </div>
               </div>
 
+              {/* FOCUS */}
               <div className="mt-8 grid gap-3 sm:grid-cols-2">
+
                 {trainingFocus.map((item, index) => (
                   <div
                     key={item}
@@ -264,9 +296,12 @@ export default function Home() {
                     {item}
                   </div>
                 ))}
+
               </div>
 
+              {/* BOOK BUTTONS */}
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+
                 <a
                   href={INDIVIDUAL_BOOKING_URL}
                   target="_blank"
@@ -284,15 +319,22 @@ export default function Home() {
                 >
                   Book Group Training →
                 </a>
+
               </div>
+
             </div>
           </div>
         </section>
 
         {/* ABOUT */}
-        <section id="about" className="px-6 py-10 md:px-8 md:py-14">
+        <section
+          id="about"
+          className="px-6 py-10 md:px-8 md:py-14"
+        >
           <div className="mx-auto grid max-w-7xl gap-6 lg:grid-cols-[0.85fr_1.15fr]">
+
             <div className="grid gap-5">
+
               <div className="overflow-hidden rounded-[32px] border border-white/10">
                 <img
                   src="/College.jpeg"
@@ -308,9 +350,11 @@ export default function Home() {
                   className="h-auto w-full"
                 />
               </div>
+
             </div>
 
             <div className="rounded-[32px] border border-white/10 bg-white/[0.03] p-8 md:p-12">
+
               <div className="flex items-center gap-3">
                 <span className="h-[1px] w-8 bg-white/30" />
 
@@ -326,16 +370,20 @@ export default function Home() {
                 <br />
                 Trainer.
                 <br />
-                <span className="text-white/35">Founder.</span>
+                <span className="text-white/35">
+                  Founder.
+                </span>
               </h2>
 
               <p className="mt-7 max-w-2xl text-base leading-relaxed text-white/65 md:text-lg">
                 Former college quarterback turned quarterback coach,
-                trainer, mentor, DMV Attack 7v7 co-founder, and DMV Attack
-                Foundation founder.
+                trainer, mentor, DMV Attack 7v7 co-founder, and
+                DMV Attack Foundation founder.
               </p>
 
+              {/* RESUME */}
               <div className="mt-9 grid gap-x-8 gap-y-4 text-sm text-white/55 md:grid-cols-2">
+
                 <div className="border-b border-white/10 pb-3">
                   Former Fairmont State University Quarterback
                 </div>
@@ -363,10 +411,14 @@ export default function Home() {
                 <div className="border-b border-white/10 pb-3">
                   DMV Attack Foundation Founder
                 </div>
+
               </div>
 
+              {/* COLLEGE STATS */}
               <div className="mt-10">
+
                 <div className="mb-5 flex items-center justify-between">
+
                   <div>
                     <p className="text-[10px] font-black tracking-[0.3em] text-white/30">
                       CAREER // DATA
@@ -384,9 +436,11 @@ export default function Home() {
                       COLLEGE CAREER
                     </p>
                   </div>
+
                 </div>
 
                 <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+
                   <div className="rounded-2xl border border-white/10 bg-black/30 p-5">
                     <p className="text-[9px] font-black tracking-[0.25em] text-white/25">
                       01
@@ -450,16 +504,25 @@ export default function Home() {
                       NCAA Efficiency
                     </p>
                   </div>
+
                 </div>
+
               </div>
+
             </div>
+
           </div>
         </section>
 
         {/* DMV ATTACK */}
-        <section id="attack" className="px-6 py-10 md:px-8 md:py-14">
+        <section
+          id="attack"
+          className="px-6 py-10 md:px-8 md:py-14"
+        >
           <div className="mx-auto max-w-7xl rounded-[32px] border border-white/10 bg-white/[0.03] p-8 md:p-12">
+
             <div className="mb-10 flex flex-col justify-between gap-6 border-b border-white/10 pb-8 md:flex-row md:items-end">
+
               <div>
                 <p className="text-[10px] font-black tracking-[0.35em] text-white/35">
                   DMV ATTACK // 7V7
@@ -470,7 +533,9 @@ export default function Home() {
                   <br />
                   Competition.
                   <br />
-                  <span className="text-white/35">Opportunity.</span>
+                  <span className="text-white/35">
+                    Opportunity.
+                  </span>
                 </h2>
               </div>
 
@@ -478,9 +543,11 @@ export default function Home() {
                 Competitive football built around athlete development,
                 relationships, exposure, and learning how to compete.
               </p>
+
             </div>
 
             <div className="grid gap-5 md:grid-cols-2">
+
               <div>
                 <div className="overflow-hidden rounded-[28px] border border-white/10">
                   <img
@@ -520,9 +587,11 @@ export default function Home() {
                   </p>
                 </div>
               </div>
+
             </div>
 
             <div className="mt-8 grid gap-5 sm:grid-cols-2">
+
               <div className="overflow-hidden rounded-[28px] border border-white/10">
                 <img
                   src="/TaeCoach7v7.jpeg"
@@ -538,13 +607,17 @@ export default function Home() {
                   className="h-auto w-full"
                 />
               </div>
+
             </div>
+
           </div>
         </section>
 
         {/* FOUNDATION + APPAREL */}
         <section className="px-6 py-10 md:px-8 md:py-14">
           <div className="mx-auto grid max-w-7xl gap-6 lg:grid-cols-2">
+
+            {/* FOUNDATION */}
             <div
               id="foundation"
               className="relative overflow-hidden rounded-[32px] border border-white/10 bg-white/[0.03] p-8 md:p-12"
@@ -564,6 +637,7 @@ export default function Home() {
               </div>
 
               <div className="relative mt-9">
+
                 <h2 className="text-4xl font-black leading-[0.95] md:text-5xl">
                   DMV Attack
                   <br />
@@ -581,15 +655,21 @@ export default function Home() {
                     Founder
                   </p>
 
-                  <p className="mt-2 text-2xl font-black">Coach Tae</p>
+                  <p className="mt-2 text-2xl font-black">
+                    Coach Tae
+                  </p>
                 </div>
+
               </div>
+
             </div>
 
+            {/* APPAREL */}
             <div
               id="apparel"
               className="rounded-[32px] border border-white/10 bg-white/[0.03] p-8 md:p-12"
             >
+
               <p className="text-[10px] font-black tracking-[0.35em] text-white/35">
                 APPAREL // DMV ATTACK
               </p>
@@ -599,6 +679,7 @@ export default function Home() {
               </h2>
 
               <div className="mt-8 grid gap-5 sm:grid-cols-2">
+
                 <img
                   src="/DMVAttackApparel.jpeg"
                   alt="DMV Attack apparel"
@@ -610,6 +691,7 @@ export default function Home() {
                   alt="DMV Attack apparel"
                   className="h-auto w-full rounded-3xl"
                 />
+
               </div>
 
               <a
@@ -620,17 +702,22 @@ export default function Home() {
               >
                 Shop DMV Attack →
               </a>
+
             </div>
+
           </div>
         </section>
 
         {/* CONTACT */}
         <section className="px-6 py-14 md:px-8 md:py-20">
           <div className="mx-auto max-w-7xl">
+
             <div className="relative overflow-hidden rounded-[32px] border border-white/10 bg-white/[0.03] p-9 text-center md:p-16">
+
               <div className="pointer-events-none absolute left-1/2 top-1/2 h-[300px] w-[550px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-white/[0.03] blur-[100px]" />
 
               <div className="relative">
+
                 <p className="text-[10px] font-black tracking-[0.35em] text-white/35">
                   BOOK // COACH TAE
                 </p>
@@ -645,6 +732,7 @@ export default function Home() {
                 </p>
 
                 <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
+
                   <a
                     href={INDIVIDUAL_BOOKING_URL}
                     target="_blank"
@@ -662,17 +750,25 @@ export default function Home() {
                   >
                     Book Group →
                   </a>
+
                 </div>
+
               </div>
+
             </div>
+
           </div>
         </section>
 
         {/* FOOTER */}
         <footer className="border-t border-white/10 px-6 py-10 md:px-8">
+
           <div className="mx-auto flex max-w-7xl flex-col justify-between gap-5 text-center md:flex-row md:items-center md:text-left">
+
             <div>
-              <p className="font-black tracking-[0.18em]">COACH TAE</p>
+              <p className="font-black tracking-[0.18em]">
+                COACH TAE
+              </p>
 
               <p className="mt-2 text-[10px] tracking-[0.28em] text-white/25">
                 TRAIN // DEVELOP // COMPETE
@@ -682,8 +778,11 @@ export default function Home() {
             <p className="text-xs text-white/25">
               © 2026 Coach Tae. All Rights Reserved.
             </p>
+
           </div>
+
         </footer>
+
       </main>
     </>
   );
