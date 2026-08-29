@@ -533,8 +533,8 @@ export default function Home() {
 
               <div className="overflow-hidden rounded-[28px] border border-white/10">
                 <img
-                  src="/DMVAttackVideo.jpeg"
-                  alt="DMV Attack football"
+                  src="/2024dmvattack_trophy.jpeg"
+                  alt="DMV Attack championship trophy"
                   className="h-auto w-full"
                 />
               </div>
