@@ -1,6 +1,6 @@
 import Intro from "./intro";
 
-const SHOP_URL = "https://YOUR-SHOPIFY-STORE.myshopify.com";
+const SHOP_URL = "https://dmvattack.myshopify.com/";
 
 const INDIVIDUAL_BOOKING_URL =
   "https://calendly.com/taenextlevelqbs/individual-training-clone";
@@ -36,6 +36,7 @@ export default function Home() {
         {/* NAVIGATION */}
         <nav className="sticky top-0 z-50 border-b border-white/10 bg-black/80 backdrop-blur-xl">
           <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 px-6 py-4 md:px-8">
+
             <a
               href="#"
               className="text-xl font-black tracking-[0.18em] md:text-2xl"
@@ -44,6 +45,7 @@ export default function Home() {
             </a>
 
             <div className="flex flex-wrap items-center gap-4 text-xs font-semibold text-white/65 md:gap-7 md:text-sm">
+
               <a href="#training" className="transition hover:text-white">
                 Training
               </a>
@@ -72,6 +74,7 @@ export default function Home() {
               >
                 Shop
               </a>
+
             </div>
           </div>
         </nav>
@@ -79,6 +82,7 @@ export default function Home() {
         {/* HERO */}
         <section className="px-6 py-8 md:px-8 md:py-12">
           <div className="mx-auto max-w-7xl">
+
             <div className="relative min-h-[650px] overflow-hidden rounded-[32px] border border-white/10">
 
               <img
@@ -123,6 +127,7 @@ export default function Home() {
                 <div className="mt-14 flex flex-col justify-between gap-8 border-t border-white/20 pt-8 md:flex-row md:items-end">
 
                   <div className="flex flex-col gap-3 sm:flex-row">
+
                     <a
                       href="#training"
                       className="rounded-full bg-white px-7 py-3 text-center font-bold text-black transition hover:scale-[1.02]"
@@ -136,9 +141,11 @@ export default function Home() {
                     >
                       DMV Attack 7v7
                     </a>
+
                   </div>
 
                   <div className="text-left md:text-right">
+
                     <p className="text-[10px] font-black tracking-[0.3em] text-white/50">
                       COACH TAE // QB DEVELOPMENT
                     </p>
@@ -146,12 +153,15 @@ export default function Home() {
                     <p className="mt-2 text-sm font-bold text-white/70">
                       Northern Virginia • DMV
                     </p>
+
                   </div>
 
                 </div>
 
               </div>
+
             </div>
+
           </div>
         </section>
 
@@ -190,10 +200,8 @@ export default function Home() {
                 pocket movement, and game-specific quarterback situations.
               </p>
 
-              {/* PRICING */}
               <div className="mt-9 grid gap-4 sm:grid-cols-2">
 
-                {/* GROUP */}
                 <a
                   href={GROUP_BOOKING_URL}
                   target="_blank"
@@ -223,7 +231,6 @@ export default function Home() {
                   </p>
                 </a>
 
-                {/* PRIVATE */}
                 <a
                   href={INDIVIDUAL_BOOKING_URL}
                   target="_blank"
@@ -255,7 +262,6 @@ export default function Home() {
 
               </div>
 
-              {/* PACKAGE */}
               <div className="mt-4 rounded-2xl border border-white/10 bg-black/20 p-6">
 
                 <p className="text-[9px] font-black tracking-[0.25em] text-white/30">
@@ -279,9 +285,9 @@ export default function Home() {
                   </p>
 
                 </div>
+
               </div>
 
-              {/* FOCUS */}
               <div className="mt-8 grid gap-3 sm:grid-cols-2">
 
                 {trainingFocus.map((item, index) => (
@@ -299,7 +305,6 @@ export default function Home() {
 
               </div>
 
-              {/* BOOK BUTTONS */}
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
 
                 <a
@@ -323,6 +328,7 @@ export default function Home() {
               </div>
 
             </div>
+
           </div>
         </section>
 
@@ -381,7 +387,6 @@ export default function Home() {
                 DMV Attack Foundation founder.
               </p>
 
-              {/* RESUME */}
               <div className="mt-9 grid gap-x-8 gap-y-4 text-sm text-white/55 md:grid-cols-2">
 
                 <div className="border-b border-white/10 pb-3">
@@ -414,7 +419,6 @@ export default function Home() {
 
               </div>
 
-              {/* COLLEGE STATS */}
               <div className="mt-10">
 
                 <div className="mb-5 flex items-center justify-between">
@@ -651,6 +655,7 @@ export default function Home() {
                 </p>
 
                 <div className="mt-8 border-t border-white/10 pt-6">
+
                   <p className="text-[9px] uppercase tracking-[0.25em] text-white/30">
                     Founder
                   </p>
@@ -658,6 +663,7 @@ export default function Home() {
                   <p className="mt-2 text-2xl font-black">
                     Coach Tae
                   </p>
+
                 </div>
 
               </div>
