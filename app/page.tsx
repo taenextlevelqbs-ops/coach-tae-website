@@ -1,4 +1,4 @@
-import Intro from "./intro";
+import Intro from "./CoachIntro";
 
 const SHOP_URL = "https://dmvattack.myshopify.com/";
 
@@ -100,13 +100,32 @@ export default function Home() {
               <div className="relative z-10 flex min-h-[650px] flex-col justify-between p-8 md:p-12 lg:p-16">
 
                 <div>
-                  <div className="flex items-center gap-3">
-                    <span className="h-[1px] w-10 bg-white/50" />
+                  <div
+              data-coach-tae-logo="hero"
+              className="flex items-center gap-4"
+            >
+              <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-2xl border border-white/15 bg-black/75 shadow-2xl backdrop-blur md:h-20 md:w-20">
+                <img
+                  src="/CTLOGO.jpeg"
+                  alt="Coach Tae QB Development"
+                  className="h-full w-full object-cover"
+                />
+              </div>
 
-                    <p className="text-[10px] font-black tracking-[0.38em] text-white/60">
-                      QUARTERBACK DEVELOPMENT // DMV
-                    </p>
-                  </div>
+              <div>
+                <div className="mb-2 flex items-center gap-3">
+                  <span className="h-[1px] w-8 bg-white/50" />
+
+                  <span className="text-[9px] font-black uppercase tracking-[0.3em] text-white/45">
+                    Coach Tae
+                  </span>
+                </div>
+
+                <p className="text-[10px] font-black tracking-[0.32em] text-white/65 md:text-xs">
+                  QUARTERBACK DEVELOPMENT // DMV
+                </p>
+              </div>
+            </div>
 
                   <h1 className="mt-8 text-6xl font-black leading-[0.86] tracking-[-0.05em] md:text-8xl lg:text-9xl">
                     TRAIN.
