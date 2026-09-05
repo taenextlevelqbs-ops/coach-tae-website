@@ -2,15 +2,21 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://coachtaeqb.com"),
+
   title: {
     default: "Coach Tae | QB Development",
     template: "%s | Coach Tae",
   },
 
   description:
-    "Quarterback development and private QB training with Coach Tae in Northern Virginia and the DMV. Develop. Compete. Lead.",
+    "Quarterback development and private QB training in Northern Virginia and the DMV. Develop. Compete. Lead.",
 
   applicationName: "Coach Tae QB Development",
+
+  alternates: {
+    canonical: "/",
+  },
 
   keywords: [
     "Coach Tae",
@@ -26,6 +32,7 @@ export const metadata: Metadata = {
   authors: [
     {
       name: "Coach Tae",
+      url: "https://coachtaeqb.com",
     },
   ],
 
@@ -33,14 +40,21 @@ export const metadata: Metadata = {
 
   openGraph: {
     title: "Coach Tae | QB Development",
+
     description:
       "Quarterback development and private QB training in Northern Virginia and the DMV. Develop. Compete. Lead.",
+
+    url: "https://coachtaeqb.com",
+
     siteName: "Coach Tae QB Development",
+
     type: "website",
+
+    locale: "en_US",
 
     images: [
       {
-        url: "/CTLOGO.jpeg",
+        url: "/opengraph-image.jpeg",
         width: 1200,
         height: 630,
         alt: "Coach Tae QB Development",
@@ -50,10 +64,15 @@ export const metadata: Metadata = {
 
   twitter: {
     card: "summary_large_image",
+
     title: "Coach Tae | QB Development",
+
     description:
       "Quarterback development and private QB training in Northern Virginia and the DMV.",
-    images: ["/CTLOGO.jpeg"],
+
+    images: [
+      "/opengraph-image.jpeg",
+    ],
   },
 
   icons: {
@@ -63,7 +82,9 @@ export const metadata: Metadata = {
         type: "image/jpeg",
       },
     ],
+
     shortcut: "/CTLOGO.jpeg",
+
     apple: "/CTLOGO.jpeg",
   },
 
