@@ -155,7 +155,7 @@ export default function Home() {
                     </a>
 
                     <a
-                      href="#attack"
+                      href="https://dmvattack.com" target="_blank" rel="noopener noreferrer"
                       className="rounded-full border border-white/30 bg-black/20 px-7 py-3 text-center font-bold text-white backdrop-blur-sm transition hover:bg-white hover:text-black"
                     >
                       DMV Attack 7v7
