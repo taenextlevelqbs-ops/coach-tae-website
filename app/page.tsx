@@ -54,7 +54,7 @@ export default function Home() {
                 About
               </a>
 
-              <a href="#attack" className="transition hover:text-white">
+              <a href="https://dmvattack.com" target="_blank" rel="noopener noreferrer" className="transition hover:text-white">
                 DMV Attack
               </a>
 
