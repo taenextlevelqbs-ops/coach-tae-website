@@ -1,4 +1,5 @@
-import Intro from "./CoachIntro";
+import Image from "next/image";
+import SiteNav from "./SiteNav";
 
 const SHOP_URL = "https://dmvattack.myshopify.com/";
 
@@ -20,9 +21,9 @@ const trainingFocus = [
 export default function Home() {
   return (
     <>
-      <Intro />
+      <SiteNav />
 
-      <main className="min-h-screen bg-black text-white">
+      <main id="main-content" className="min-h-screen bg-black text-white">
 
         {/* GLOBAL BACKGROUND */}
         <div className="pointer-events-none fixed inset-0 -z-10">
@@ -33,61 +34,18 @@ export default function Home() {
           <div className="absolute right-[-200px] top-[1200px] h-[420px] w-[420px] rounded-full bg-white/[0.04] blur-[130px]" />
         </div>
 
-        {/* NAVIGATION */}
-        <nav className="sticky top-0 z-50 border-b border-white/10 bg-black/80 backdrop-blur-xl">
-          <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 px-6 py-4 md:px-8">
-
-            <a
-              href="#"
-              className="text-xl font-black tracking-[0.18em] md:text-2xl"
-            >
-              COACH TAE
-            </a>
-
-            <div className="flex flex-wrap items-center gap-4 text-xs font-semibold text-white/65 md:gap-7 md:text-sm">
-
-              <a href="#training" className="transition hover:text-white">
-                Training
-              </a>
-
-              <a href="#about" className="transition hover:text-white">
-                About
-              </a>
-
-              <a href="https://dmvattack.com" target="_blank" rel="noopener noreferrer" className="transition hover:text-white">
-                DMV Attack
-              </a>
-
-              <a href="#foundation" className="transition hover:text-white">
-                Foundation
-              </a>
-
-              <a href="#apparel" className="transition hover:text-white">
-                Apparel
-              </a>
-
-              <a
-                href={SHOP_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="rounded-full border border-white/20 bg-white/[0.06] px-4 py-2 text-white transition hover:bg-white hover:text-black"
-              >
-                Shop
-              </a>
-
-            </div>
-          </div>
-        </nav>
-
         {/* HERO */}
-        <section className="px-6 py-8 md:px-8 md:py-12">
+        <section className="hero-section">
           <div className="mx-auto max-w-7xl">
 
-            <div className="relative min-h-[650px] overflow-hidden rounded-[32px] border border-white/10">
+            <div className="hero-panel relative min-h-[650px] overflow-hidden rounded-[32px] border border-white/10">
 
-              <img
+              <Image
                 src="/QbGroupTraining.jpeg"
                 alt="Coach Tae quarterback group training"
+                fill
+                preload
+                sizes="100vw"
                 className="absolute inset-0 h-full w-full object-cover object-center"
               />
 
@@ -105,9 +63,12 @@ export default function Home() {
               className="flex items-center gap-4"
             >
               <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-2xl border border-white/15 bg-black/75 shadow-2xl backdrop-blur md:h-20 md:w-20">
-                <img
+                <Image
                   src="/CTLOGO.jpeg"
                   alt="Coach Tae QB Development"
+                  width={886}
+                  height={886}
+                  sizes="(max-width: 768px) 64px, 80px"
                   className="h-full w-full object-cover"
                 />
               </div>
@@ -159,6 +120,7 @@ export default function Home() {
                       className="rounded-full border border-white/30 bg-black/20 px-7 py-3 text-center font-bold text-white backdrop-blur-sm transition hover:bg-white hover:text-black"
                     >
                       DMV Attack 7v7
+                      <span className="sr-only"> (opens in a new tab)</span>
                     </a>
 
                   </div>
@@ -192,9 +154,12 @@ export default function Home() {
           <div className="mx-auto grid max-w-7xl gap-6 lg:grid-cols-2">
 
             <div className="overflow-hidden rounded-[32px] border border-white/10">
-              <img
+              <Image
                 src="/Tae_Training.jpeg"
                 alt="Coach Tae quarterback training"
+                width={724}
+                height={1086}
+                sizes="(max-width: 1024px) 100vw, 50vw"
                 className="h-auto w-full"
               />
             </div>
@@ -247,6 +212,7 @@ export default function Home() {
 
                   <p className="mt-5 text-xs font-black tracking-[0.15em] text-white/60 transition group-hover:text-white">
                     BOOK GROUP →
+                    <span className="sr-only"> (opens in a new tab)</span>
                   </p>
                 </a>
 
@@ -276,6 +242,7 @@ export default function Home() {
 
                   <p className="mt-5 text-xs font-black tracking-[0.15em] text-white/60 transition group-hover:text-white">
                     BOOK PRIVATE →
+                    <span className="sr-only"> (opens in a new tab)</span>
                   </p>
                 </a>
 
@@ -333,6 +300,7 @@ export default function Home() {
                   className="rounded-full bg-white px-7 py-3 text-center font-bold text-black transition hover:scale-[1.02]"
                 >
                   Book Private Training →
+                  <span className="sr-only"> (opens in a new tab)</span>
                 </a>
 
                 <a
@@ -342,6 +310,7 @@ export default function Home() {
                   className="rounded-full border border-white/20 px-7 py-3 text-center font-bold text-white transition hover:bg-white hover:text-black"
                 >
                   Book Group Training →
+                  <span className="sr-only"> (opens in a new tab)</span>
                 </a>
 
               </div>
@@ -361,17 +330,23 @@ export default function Home() {
             <div className="grid gap-5">
 
               <div className="overflow-hidden rounded-[32px] border border-white/10">
-                <img
+                <Image
                   src="/College.jpeg"
                   alt="Coach Tae college quarterback"
+                  width={991}
+                  height={793}
+                  sizes="(max-width: 1024px) 100vw, 40vw"
                   className="h-auto w-full"
                 />
               </div>
 
               <div className="overflow-hidden rounded-[32px] border border-white/10">
-                <img
+                <Image
                   src="/Tae_Sideline.jpeg"
                   alt="Coach Tae coaching on the sideline"
+                  width={1086}
+                  height={724}
+                  sizes="(max-width: 1024px) 100vw, 40vw"
                   className="h-auto w-full"
                 />
               </div>
@@ -573,9 +548,12 @@ export default function Home() {
 
               <div>
                 <div className="overflow-hidden rounded-[28px] border border-white/10">
-                  <img
+                  <Image
                     src="/Tae_DMVAttack.jpeg"
                     alt="DMV Attack development"
+                    width={724}
+                    height={1086}
+                    sizes="(max-width: 768px) 100vw, 50vw"
                     className="h-auto w-full transition duration-500 hover:scale-[1.01]"
                   />
                 </div>
@@ -593,9 +571,12 @@ export default function Home() {
 
               <div>
                 <div className="overflow-hidden rounded-[28px] border border-white/10">
-                  <img
+                  <Image
                     src="/Tae_DMVAttack2.jpeg"
                     alt="DMV Attack competition"
+                    width={724}
+                    height={1086}
+                    sizes="(max-width: 768px) 100vw, 50vw"
                     className="h-auto w-full transition duration-500 hover:scale-[1.01]"
                   />
                 </div>
@@ -616,17 +597,23 @@ export default function Home() {
             <div className="mt-8 grid gap-5 sm:grid-cols-2">
 
               <div className="overflow-hidden rounded-[28px] border border-white/10">
-                <img
+                <Image
                   src="/TaeCoach7v7.jpeg"
                   alt="Coach Tae coaching DMV Attack"
+                  width={724}
+                  height={1086}
+                  sizes="(max-width: 640px) 100vw, 50vw"
                   className="h-auto w-full"
                 />
               </div>
 
               <div className="overflow-hidden rounded-[28px] border border-white/10">
-                <img
+                <Image
                   src="/2024dmvattack_trophy.jpeg"
                   alt="DMV Attack championship trophy"
+                  width={1086}
+                  height={724}
+                  sizes="(max-width: 640px) 100vw, 50vw"
                   className="h-auto w-full"
                 />
               </div>
@@ -652,9 +639,12 @@ export default function Home() {
               </p>
 
               <div className="relative mt-8 flex justify-center">
-                <img
+                <Image
                   src="/DMVAttackLogo1.jpeg"
                   alt="DMV Attack Foundation"
+                  width={886}
+                  height={886}
+                  sizes="(max-width: 1024px) 75vw, 320px"
                   className="h-auto w-full max-w-[320px] rounded-3xl"
                 />
               </div>
@@ -705,15 +695,21 @@ export default function Home() {
 
               <div className="mt-8 grid gap-5 sm:grid-cols-2">
 
-                <img
+                <Image
                   src="/DMVAttackApparel.jpeg"
                   alt="DMV Attack apparel"
+                  width={842}
+                  height={934}
+                  sizes="(max-width: 640px) 100vw, 50vw"
                   className="h-auto w-full rounded-3xl"
                 />
 
-                <img
+                <Image
                   src="/DMVAttackApparel2.jpeg"
                   alt="DMV Attack apparel"
+                  width={789}
+                  height={995}
+                  sizes="(max-width: 640px) 100vw, 50vw"
                   className="h-auto w-full rounded-3xl"
                 />
 
@@ -726,6 +722,7 @@ export default function Home() {
                 className="mt-8 inline-block rounded-full bg-white px-8 py-4 font-bold text-black transition hover:scale-[1.02]"
               >
                 Shop DMV Attack →
+                <span className="sr-only"> (opens in a new tab)</span>
               </a>
 
             </div>
@@ -765,6 +762,7 @@ export default function Home() {
                     className="rounded-full bg-white px-8 py-4 font-bold text-black transition hover:scale-[1.02]"
                   >
                     Book Private →
+                    <span className="sr-only"> (opens in a new tab)</span>
                   </a>
 
                   <a
@@ -774,6 +772,7 @@ export default function Home() {
                     className="rounded-full border border-white/20 px-8 py-4 font-bold text-white transition hover:bg-white hover:text-black"
                   >
                     Book Group →
+                    <span className="sr-only"> (opens in a new tab)</span>
                   </a>
 
                 </div>
