@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import { fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { LabShell } from "../../modules/qb-lab/LabShell";
+import { Landing } from "../../modules/qb-lab/Landing";
 import { Athlete } from "../../modules/qb-lab/Athlete";
 import { FootballIQ } from "../../modules/qb-lab/FootballIQ";
 import { Family } from "../../modules/qb-lab/Family";
@@ -220,5 +221,29 @@ describe("QB LAB review desk", () => {
       screen.getByRole("button", { name: "Open Alignment study" }),
     );
     expect(screen.getByRole("slider")).toHaveValue("0");
+  });
+});
+
+describe("personal athlete home", () => {
+  it("offers a clear first action, honest feedback and a distinct flag context", async () => {
+    const user = userEvent.setup();
+    render(
+      <LabShell>
+        <Landing />
+      </LabShell>,
+    );
+    expect(
+      screen.getByRole("heading", { name: "Good to have you back, QB." }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("link", { name: "Let’s get started →" }),
+    ).toHaveAttribute("href", "/qb-lab/iq");
+    expect(
+      screen.getByText(/No personal coaching feedback yet/),
+    ).toBeInTheDocument();
+    await user.click(screen.getByRole("radio", { name: "Flag" }));
+    expect(
+      screen.getByText(/Rush, contact, eligibility and clock rules depend/),
+    ).toBeInTheDocument();
   });
 });

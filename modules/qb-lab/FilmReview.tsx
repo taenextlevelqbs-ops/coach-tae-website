@@ -99,7 +99,7 @@ export function FilmReview() {
               }}
             >
               <span className="lab-clip-icon" aria-hidden="true">
-                {i === 0 ? "01" : "02"}
+                {i === 0 ? "◉" : "→"}
               </span>
               <span>
                 <strong>{c.title}</strong>

@@ -36,7 +36,6 @@ export function FilmTimeline({
             onClick={() => onSeek(c.time)}
             aria-label={`Seek chapter ${i + 1} at ${c.time} seconds`}
           >
-            <span>0{i + 1}</span>
             {["Alignment", "Rotation", "Reflect"][i]}
           </button>
         ))}

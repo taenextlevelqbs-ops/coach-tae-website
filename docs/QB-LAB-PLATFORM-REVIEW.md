@@ -1,5 +1,7 @@
 # QB LAB integrated platform — implementation review
 
+This records the underlying platform implementation. [Personal quarterback development](QB-LAB-PERSONAL-EXPERIENCE.md) supersedes its visual direction, dependency versions and latest validation/delivery results.
+
 ## Scope and release boundary
 
 This implementation extends `feat/qb-lab-experience` from `8f91b72` for draft PR #3. It is a substantial, connected **local prototype plus a locally tested private-service foundation**, not a finished production platform. No main merge, production change, real athlete registration, private video ingestion, paid service provisioning or payment activation is performed. Phase 0/PR #2 remains separate and unchanged.

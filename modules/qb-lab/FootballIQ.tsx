@@ -41,7 +41,7 @@ export function FootballIQ() {
     <>
       <div className="lab-page-heading">
         <div>
-          <p className="lab-kicker">FOOTBALL IQ / FIELD STUDY 001</p>
+          <p className="lab-kicker">FOOTBALL IQ · NOTICE THE CHANGE</p>
           <h1>
             Eyes up.
             <br />
@@ -158,7 +158,10 @@ export function FootballIQ() {
               onClick={() => {
                 if (answer !== null) {
                   if (question === questions.length - 1)
-                    recordActivity("lesson", `observation-${pathway}`);
+                    recordActivity(
+                      "lesson",
+                      `observation-${pathway}${questions.some((q, i) => (i === question ? answer : responses[i]) !== q.correct) ? "-revisit" : ""}`,
+                    );
                   setSubmitted(true);
                   setResponses({ ...responses, [question]: answer });
                 }
@@ -201,6 +204,9 @@ export function FootballIQ() {
               <button className="lab-button" onClick={reset}>
                 Repeat field study
               </button>
+              <Link className="lab-text-link" href="/qb-lab">
+                See my next step →
+              </Link>
             </div>
           )}
         </section>

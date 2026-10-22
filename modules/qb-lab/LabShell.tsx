@@ -7,15 +7,15 @@ import type { Pathway } from "./demo";
 const nav = [
   ["/qb-lab", "The Lab"],
   ["/qb-lab/athlete", "Command center"],
-  ["/qb-lab/simulator", "QB Simulator"],
-  ["/qb-lab/playbook", "Playbook"],
+  ["/qb-lab/simulator", "Scenario practice"],
+  ["/qb-lab/playbook", "Playbook Studio"],
   ["/qb-lab/iq", "Football IQ"],
   ["/qb-lab/workouts", "Workouts"],
-  ["/qb-lab/mechanics", "Mechanics"],
+  ["/qb-lab/mechanics", "2D QB Trainer"],
   ["/qb-lab/film", "Film room"],
   ["/qb-lab/progress", "Progress"],
   ["/qb-lab/family", "Family hub"],
-  ["/qb-lab/coach", "Coach sandbox"],
+  ["/qb-lab/coach", "Coach Admin"],
   ["/qb-lab/access", "Account status"],
 ];
 const DemoContext = createContext<{
@@ -49,6 +49,7 @@ export function PathwaySwitch() {
 }
 export function LabShell({ children }: { children: ReactNode }) {
   const current = usePathname();
+  const [menuOpen, setMenuOpen] = useState(false);
   const [pathway, setPathway] = useState<Pathway>("tackle");
   return (
     <DemoContext.Provider value={{ pathway, setPathway }}>
@@ -71,20 +72,29 @@ export function LabShell({ children }: { children: ReactNode }) {
               </strong>
             </span>
           </Link>
-          <p className="lab-masthead-motto">
-            QUARTERBACK DEVELOPMENT
-            <br />
-            PRACTICE WORKSPACE
-          </p>
+          <p className="lab-masthead-motto">With you wherever you train.</p>
           <Link href="/#training" className="lab-book-link">
-            On-field training <span aria-hidden="true">→</span>
+            Train with Coach Tae <span aria-hidden="true">→</span>
           </Link>
         </header>
-        <nav className="lab-nav" aria-label="QB LAB navigation">
+        <button
+          className="lab-menu-toggle"
+          aria-expanded={menuOpen}
+          aria-controls="lab-navigation"
+          onClick={() => setMenuOpen(!menuOpen)}
+        >
+          Explore QB LAB <span aria-hidden="true">{menuOpen ? "−" : "+"}</span>
+        </button>
+        <nav
+          id="lab-navigation"
+          className={`lab-nav ${menuOpen ? "is-open" : ""}`}
+          aria-label="QB LAB navigation"
+        >
           {nav.map(([href, label]) => (
             <Link
               key={href}
               href={href}
+              onClick={() => setMenuOpen(false)}
               aria-current={current === href ? "page" : undefined}
             >
               {label}
@@ -105,7 +115,7 @@ export function LabShell({ children }: { children: ReactNode }) {
           <span>
             COACH TAE <b>/</b> QB DEVELOPMENT
           </span>
-          <span>OBSERVE. UNDERSTAND. TAKE THE NEXT REP.</span>
+          <span>One athlete. One next step. Wherever you train.</span>
           <Link href="/">Coach Tae website →</Link>
         </footer>
       </div>

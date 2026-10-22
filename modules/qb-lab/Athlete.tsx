@@ -22,11 +22,7 @@ export function Athlete() {
       <div className="lab-page-heading">
         <div>
           <p className="lab-kicker">COMMAND CENTER / YOUR WORKING SESSION</p>
-          <h1>
-            One focus.
-            <br />
-            <em>A better next rep.</em>
-          </h1>
+          <h1>Your plan. Your next step.</h1>
           <p className="lab-lede">
             Choose a learning context, explore a field study and reflect on what
             you notice.
@@ -130,7 +126,7 @@ export function Athlete() {
             record.
           </p>
           <div className="lab-checklist">
-            {tasks.map((task, i) => (
+            {tasks.map((task) => (
               <label key={task}>
                 <input
                   type="checkbox"
@@ -144,10 +140,7 @@ export function Athlete() {
                     );
                   }}
                 />
-                <span>
-                  <small>0{i + 1}</small>
-                  {task}
-                </span>
+                <span>{task}</span>
               </label>
             ))}
           </div>
@@ -179,7 +172,6 @@ export function Athlete() {
         </p>
         <ol>
           <li>
-            <span>01</span>
             <div>
               <h3>Observe the alignment</h3>
               <p>Start with the visible depth. Nothing to memorize yet.</p>
@@ -187,7 +179,6 @@ export function Athlete() {
             <Link href="/qb-lab/iq">Classroom →</Link>
           </li>
           <li>
-            <span>02</span>
             <div>
               <h3>Return to the moment</h3>
               <p>Scrub the illustration. Tag a detail worth discussing.</p>
@@ -195,7 +186,6 @@ export function Athlete() {
             <Link href="/qb-lab/film">Film room →</Link>
           </li>
           <li>
-            <span>03</span>
             <div>
               <h3>Take one question to a coach</h3>
               <p>Connect the observation to your own football context.</p>
@@ -203,6 +193,31 @@ export function Athlete() {
             <Link href="/#training">Training options →</Link>
           </li>
         </ol>
+      </section>
+      <section
+        className="personal-command-support"
+        aria-label="Your coaching and schedule"
+      >
+        <div>
+          <h2>Your schedule</h2>
+          <p>
+            No training appointments are connected. Completing a demo assignment
+            does not book a session.
+          </p>
+          <Link className="lab-text-link" href="/qb-lab/family">
+            View family planning →
+          </Link>
+        </div>
+        <div>
+          <h2>Coaching messages</h2>
+          <p>
+            No private messages yet. Secure coach communication is not available
+            in this prototype.
+          </p>
+          <Link className="lab-text-link" href="/qb-lab/progress">
+            Choose a development goal →
+          </Link>
+        </div>
       </section>
       <section className="lab-bottom-grid">
         <div className="lab-panel">
@@ -223,9 +238,9 @@ export function Athlete() {
           </span>
           <h2>A clean starting point.</h2>
           <p>
-            No training sessions, film reviews or athlete statistics are
-            recorded here. A connected account and reviewed content are future
-            work.
+            Completed local activities appear in Progress Center. Personal
+            coaching, verified training records and private film need a secure
+            connected account.
           </p>
           <Link className="lab-text-link" href="/qb-lab/film">
             Explore the illustrated film room →

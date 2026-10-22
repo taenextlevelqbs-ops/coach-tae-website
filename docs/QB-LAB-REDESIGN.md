@@ -1,5 +1,7 @@
 # QB LAB redesign — field notebook / film console
 
+Superseded visual direction: see [Personal quarterback development](QB-LAB-PERSONAL-EXPERIENCE.md) for the current athlete-first application.
+
 Historical visual-redesign record. The [integrated platform review](QB-LAB-PLATFORM-REVIEW.md) supersedes this document for current navigation, persistence, features and verification.
 
 ## Design concept (recorded before implementation)

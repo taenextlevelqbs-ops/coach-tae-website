@@ -268,29 +268,60 @@ test("review desk keyboard tagging, chapter seeking and study changes are local"
   expect(await page.evaluate(() => localStorage.length)).toBe(0);
 });
 
-test("cover diagram is interactive and navigation provides a clear return path", async ({
+test("personal home gives an honest next step and accessible navigation", async ({
   page,
 }) => {
   await page.goto("/qb-lab");
-  const slider = page.getByRole("slider", {
-    name: "Cover illustration timeline",
-  });
-  await slider.focus();
-  await page.keyboard.press("End");
-  await expect(slider).toHaveValue("100");
   await expect(
-    page.getByText("02 / Watch the picture change.", { exact: true }),
+    page.getByRole("heading", { name: "Good to have you back, QB." }),
   ).toBeVisible();
-  await page.getByRole("link", { name: /Start your first session/ }).click();
-  await expect(page).toHaveURL(/\/athlete$/);
   await expect(
-    page
-      .getByRole("navigation", { name: "QB LAB navigation" })
-      .getByRole("link", { name: /Command center/ }),
-  ).toHaveAttribute("aria-current", "page");
+    page.getByText("No completed work yet.", { exact: false }),
+  ).toBeVisible();
+  await page.getByRole("link", { name: "Let’s get started →" }).click();
+  await expect(page).toHaveURL(/\/iq$/);
+  const menu = page.getByRole("button", { name: "Explore QB LAB" });
+  if (await menu.isVisible()) {
+    await menu.click();
+    await expect(menu).toHaveAttribute("aria-expanded", "true");
+  }
   await page
     .getByRole("navigation", { name: "QB LAB navigation" })
-    .getByRole("link", { name: /The Lab/ })
+    .getByRole("link", { name: "The Lab", exact: true })
     .click();
   await expect(page).toHaveURL(/\/qb-lab$/);
+  if (await menu.isVisible())
+    await expect(menu).toHaveAttribute("aria-expanded", "false");
+});
+
+test("IQ feedback connects to the athlete home and a matching guided workout", async ({
+  page,
+}) => {
+  await page.goto("/qb-lab/iq");
+  for (const answer of [
+    "One deep defender",
+    "No, confirm the assignments after the snap",
+    "The defenders’ movement and developing throwing windows",
+  ]) {
+    await page.getByRole("radio", { name: answer, exact: true }).check();
+    await page.getByRole("button", { name: /Explain my answer/ }).click();
+    const next = page.getByRole("button", { name: /Next observation/ });
+    if (await next.count()) await next.click();
+  }
+  await page.getByRole("link", { name: "See my next step →" }).click();
+  await expect(
+    page.getByRole("heading", { name: "Walk the starting picture" }),
+  ).toBeVisible();
+  await expect(
+    page.getByText("1 local interactions · 0 completed workouts"),
+  ).toBeVisible();
+  await page.reload();
+  await page.getByRole("link", { name: "Let’s get started →" }).click();
+  await expect(page).toHaveURL(/activity=observe&profile=A/);
+  await expect(
+    page.getByRole("heading", {
+      name: "Walk the starting picture",
+      exact: true,
+    }),
+  ).toBeVisible();
 });

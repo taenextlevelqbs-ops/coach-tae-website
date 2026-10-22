@@ -61,9 +61,7 @@ export function Family() {
         <div>
           <p className="lab-kicker">FAMILY HUB / GROW TOGETHER</p>
           <h1>
-            Room to grow.
-            <br />
-            <em>Someone in their corner.</em>
+            Their development. Your support.
           </h1>
           <p className="lab-lede">
             A thoughtful space for guardians to guide the experience, understand
