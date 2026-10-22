@@ -126,3 +126,7 @@ Desktop and mobile screenshots were captured from the final production build and
 - `tests/domain/football.test.ts`
 - `tests/e2e/platform.spec.ts`
 - `tests/e2e/recognition.spec.ts`
+
+## New incremental live engine
+
+The schematic recognition behavior described above is preserved. A separate playable positional engine now builds on its shared rosters/assignments; see [live-engine delivery](QB-LAB-LIVE-ENGINE.md). Its contact, protection and ball behavior is limited to that route. This does not retroactively make the original geometry exercises physical-game simulations.

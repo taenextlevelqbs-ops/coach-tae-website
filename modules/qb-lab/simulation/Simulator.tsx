@@ -31,6 +31,12 @@ export function Simulator() {
         </div>
         <PathwaySwitch />
       </div>
+      <div className="lab-panel">
+        <p className="lab-kicker">NEW · LIVE POCKET ENGINE</p>
+        <h2>Set protection. Experience the rush.</h2>
+        <p>Play the new positional blocking and pocket model, or configure a separate non-contact passing 7v7 or flag teaching rep. Existing recognition and spacing tools remain below.</p>
+        <Link className="lab-button primary" href="/qb-lab/simulator/engine">Enter live pocket →</Link>
+      </div>
       <RecognitionLab />
       <h2>Open spacing practice</h2>
       {pathway === "flag" && (

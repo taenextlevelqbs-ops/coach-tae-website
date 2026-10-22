@@ -62,3 +62,52 @@ describe("bounded prototype persistence", () => {
     ).toThrow();
   });
 });
+
+describe("validated local engine evidence", () => {
+  it("retains bounded completed engine summaries, strips unknown fields and rejects forged ranges", () => {
+    const report = {
+      format: "passing7",
+      outcome: "completion",
+      elapsed: 2,
+      throwTime: 1,
+      peakPressure: 0,
+      engagements: 0,
+      sheds: 0,
+      seed: 42,
+      privateNote: "discard",
+    };
+    const activity = {
+      id: "engine-test",
+      kind: "simulation",
+      reference: "live-passing7-completion",
+      at: new Date().toISOString(),
+      profile: "B",
+      engine: report,
+    };
+    const result = parseState(
+      JSON.stringify({ ...empty, activities: [activity] }),
+    );
+    expect(result.activities[0].engine?.throwTime).toBe(1);
+    expect(result.activities[0].engine).not.toHaveProperty("privateNote");
+    for (const bad of [
+      { elapsed: 99 },
+      { peakPressure: 12 },
+      { throwTime: 3 },
+      { engagements: -1 },
+      { outcome: "guaranteed touchdown" },
+    ])
+      expect(() =>
+        parseState(
+          JSON.stringify({
+            ...empty,
+            activities: [{ ...activity, engine: { ...report, ...bad } }],
+          }),
+        ),
+      ).toThrow(/activity/);
+    expect(() =>
+      parseState(
+        JSON.stringify({ ...empty, activities: [{ ...activity, points: 2 }] }),
+      ),
+    ).toThrow(/activity/);
+  });
+});

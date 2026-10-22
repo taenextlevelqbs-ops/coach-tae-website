@@ -1,5 +1,10 @@
 "use client";
 import { useSyncExternalStore } from "react";
+import {
+  validReport,
+  cleanReport,
+  type EngineReport,
+} from "../live-engine/report";
 import { recognitionPreset } from "../football/presets";
 import { drills, goals } from "./catalog";
 import { rosterSize, type Play } from "../simulation/model";
@@ -9,6 +14,7 @@ export type Activity = {
   reference: string;
   at: string;
   points?: number;
+  engine?: EngineReport;
   profile?: "A" | "B";
 };
 export type Assignment = {
@@ -119,7 +125,11 @@ export function parseState(raw: string): LocalState {
         text(a.reference) &&
         text(a.at) &&
         !Number.isNaN(Date.parse(a.at)) &&
-        (a.points === undefined || [0, 1, 2].includes(a.points)),
+        (a.points === undefined || [0, 1, 2].includes(a.points)) &&
+        (a.engine === undefined ||
+          (a.kind === "simulation" &&
+            a.points === undefined &&
+            validReport(a.engine))),
     )
   )
     throw new Error("Invalid activity history.");
@@ -170,6 +180,7 @@ export function parseState(raw: string): LocalState {
       reference: a.reference,
       at: a.at,
       ...(a.points !== undefined ? { points: a.points } : {}),
+      ...(a.engine ? { engine: cleanReport(a.engine) } : {}),
     })),
     assignments: input.assignments.map((a) => ({
       id: a.id,
@@ -228,6 +239,7 @@ export function recordActivity(
   reference: string,
   points?: number,
   profile: "A" | "B" = "A",
+  engine?: EngineReport,
 ) {
   updateLab((s) => ({
     ...s,
@@ -240,6 +252,7 @@ export function recordActivity(
         reference,
         at: new Date().toISOString(),
         ...(points !== undefined ? { points } : {}),
+        ...(engine ? { engine: cleanReport(engine) } : {}),
       },
     ].slice(-200),
     assignments: s.assignments.map((a) =>

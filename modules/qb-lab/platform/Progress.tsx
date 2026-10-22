@@ -78,6 +78,19 @@ export function Progress() {
                       a.reference}
                   </strong>
                   <time dateTime={a.at}>{new Date(a.at).toLocaleString()}</time>
+                  {a.engine && (
+                    <span>
+                      Engine rep · {a.engine.format} · {a.engine.outcome} ·{" "}
+                      {a.engine.elapsed.toFixed(2)}s
+                      {a.engine.throwTime !== undefined
+                        ? ` · release ${a.engine.throwTime.toFixed(2)}s`
+                        : ""}{" "}
+                      · {a.engine.engagements} engagements / {a.engine.sheds}{" "}
+                      sheds · model pressure {a.engine.peakPressure.toFixed(2)}{" "}
+                      · seed {a.engine.seed}. Synthetic event, not an athlete
+                      rating.
+                    </span>
+                  )}
                   {a.points !== undefined && (
                     <span>{a.points}/2 geometry checks · not a QB rating</span>
                   )}
