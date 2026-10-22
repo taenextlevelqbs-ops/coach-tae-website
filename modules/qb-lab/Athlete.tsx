@@ -4,6 +4,7 @@ import Link from "next/link";
 import { PathwaySwitch, useDemo } from "./LabShell";
 import { ageGroups, experiences, pathways } from "./demo";
 import { Field } from "./Field";
+import { ActivityDesk } from "./platform/ActivityDesk";
 
 export function Athlete() {
   const { pathway } = useDemo();
@@ -33,6 +34,7 @@ export function Athlete() {
         </div>
         <PathwaySwitch />
       </div>
+      <ActivityDesk />
       <section className="lab-settings" aria-label="Learning context">
         <label>
           Age group

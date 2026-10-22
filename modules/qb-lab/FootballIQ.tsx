@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import { Field } from "./Field";
 import { PathwaySwitch, useDemo } from "./LabShell";
 import { questions } from "./demo";
+import { recordActivity } from "./platform/store";
+import Link from "next/link";
 import { ReadSequence } from "./ReadSequence";
 import type { ReadFocus } from "./review-model";
 
@@ -155,6 +157,8 @@ export function FootballIQ() {
               disabled={answer === null}
               onClick={() => {
                 if (answer !== null) {
+                  if (question === questions.length - 1)
+                    recordActivity("lesson", `observation-${pathway}`);
                   setSubmitted(true);
                   setResponses({ ...responses, [question]: answer });
                 }
@@ -200,6 +204,15 @@ export function FootballIQ() {
             </div>
           )}
         </section>
+      </div>
+      <div className="lab-app-toolbar">
+        <p>
+          Apply the observation process to a playable scenario. Coverage, blitz,
+          two-minute and situational curricula are not yet published.
+        </p>
+        <Link className="lab-button primary" href="/qb-lab/simulator">
+          Open playable simulator →
+        </Link>
       </div>
       <aside className="lab-callout">
         <span aria-hidden="true">→</span>

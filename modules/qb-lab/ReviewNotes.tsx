@@ -1,6 +1,7 @@
 "use client";
 import { useRef, useState } from "react";
 import { filmComments } from "./demo";
+import { updateLab, useLocalLab } from "./platform/store";
 import { reviewTags, type FilmMoment, type ReviewTag } from "./review-model";
 export function ReviewNotes({
   time,
@@ -13,6 +14,7 @@ export function ReviewNotes({
   onMomentsChange: (moments: FilmMoment[]) => void;
   onSeek: (time: number) => void;
 }) {
+  const { state } = useLocalLab();
   const [tag, setTag] = useState<ReviewTag>("Alignment");
   const [notice, setNotice] = useState("");
   const nextId = useRef(Math.max(0, ...moments.map((moment) => moment.id)) + 1);
@@ -41,6 +43,37 @@ export function ReviewNotes({
           </button>
         ))}
       </div>
+      <button
+        className="lab-button"
+        onClick={() => {
+          if (
+            !state.assignments.some(
+              (a) =>
+                a.profile === "A" &&
+                a.drill === "observe" &&
+                a.status === "assigned",
+            )
+          ) {
+            updateLab((s) => ({
+              ...s,
+              assignments: [
+                ...s.assignments,
+                {
+                  id: crypto.randomUUID(),
+                  profile: "A" as const,
+                  drill: "observe",
+                  status: "assigned" as const,
+                },
+              ].slice(-40),
+            }));
+          }
+          setNotice(
+            "Observation correction assigned locally to demo A. No coach or athlete was notified.",
+          );
+        }}
+      >
+        Assign observation correction locally
+      </button>
       <div className="lab-tag-form">
         <p className="lab-kicker">MARK A MOMENT / LOCAL ONLY</p>
         <label>

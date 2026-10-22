@@ -5,11 +5,18 @@ import { usePathname } from "next/navigation";
 import { createContext, useContext, useState, type ReactNode } from "react";
 import type { Pathway } from "./demo";
 const nav = [
-  ["/qb-lab", "The Lab", "01"],
-  ["/qb-lab/athlete", "Command center", "02"],
-  ["/qb-lab/iq", "Football IQ", "03"],
-  ["/qb-lab/film", "Film room", "04"],
-  ["/qb-lab/family", "Family hub", "05"],
+  ["/qb-lab", "The Lab"],
+  ["/qb-lab/athlete", "Command center"],
+  ["/qb-lab/simulator", "QB Simulator"],
+  ["/qb-lab/playbook", "Playbook"],
+  ["/qb-lab/iq", "Football IQ"],
+  ["/qb-lab/workouts", "Workouts"],
+  ["/qb-lab/mechanics", "Mechanics"],
+  ["/qb-lab/film", "Film room"],
+  ["/qb-lab/progress", "Progress"],
+  ["/qb-lab/family", "Family hub"],
+  ["/qb-lab/coach", "Coach sandbox"],
+  ["/qb-lab/access", "Account status"],
 ];
 const DemoContext = createContext<{
   pathway: Pathway;
@@ -65,22 +72,21 @@ export function LabShell({ children }: { children: ReactNode }) {
             </span>
           </Link>
           <p className="lab-masthead-motto">
-            THE QUARTERBACK
+            QUARTERBACK DEVELOPMENT
             <br />
-            DEVELOPMENT NOTEBOOK
+            PRACTICE WORKSPACE
           </p>
           <Link href="/#training" className="lab-book-link">
             On-field training <span aria-hidden="true">→</span>
           </Link>
         </header>
         <nav className="lab-nav" aria-label="QB LAB navigation">
-          {nav.map(([href, label, number]) => (
+          {nav.map(([href, label]) => (
             <Link
               key={href}
               href={href}
               aria-current={current === href ? "page" : undefined}
             >
-              <span>{number}</span>
               {label}
             </Link>
           ))}
@@ -88,7 +94,8 @@ export function LabShell({ children }: { children: ReactNode }) {
         <div className="lab-demo-note">
           <span className="lab-demo-badge">INTERACTIVE DEMO</span>
           <span>
-            Synthetic athletes & illustrated film. Nothing saved after reload.
+            Synthetic workspace. Plays and activity can be saved in this
+            browser; no accounts or private uploads.
           </span>
         </div>
         <main id="lab-main" tabIndex={-1}>

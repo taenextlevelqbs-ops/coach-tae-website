@@ -2,6 +2,8 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useDemo } from "./LabShell";
+import { useLocalLab } from "./platform/store";
+import { ActivityDesk } from "./platform/ActivityDesk";
 const athletes = [
   {
     id: "A",
@@ -23,10 +25,14 @@ const defaults = {
   B: { reminders: false, feedback: true },
 };
 export function Family() {
+  const { state: localState } = useLocalLab();
   const [selected, setSelected] = useState<"A" | "B">("A");
   const [preferences, setPreferences] = useState(defaults);
   const [message, setMessage] = useState("");
   const { setPathway } = useDemo();
+  const localCount = localState.activities.filter(
+    (a) => (a.profile ?? "A") === selected,
+  ).length;
   const athlete = athletes.find((a) => a.id === selected)!;
   function exportDemo() {
     const blob = new Blob(
@@ -96,6 +102,7 @@ export function Family() {
           </button>
         ))}
       </section>
+      <ActivityDesk profile={selected} />
       <section className="lab-family-briefing" aria-label="Family briefing">
         <div>
           <p className="lab-kicker">THE GUARDIAN BRIEFING</p>
@@ -113,7 +120,11 @@ export function Family() {
         <dl>
           <div>
             <dt>Development records</dt>
-            <dd>No activity recorded</dd>
+            <dd>
+              {localCount
+                ? `${localCount} local demo events`
+                : "No activity recorded"}
+            </dd>
           </div>
           <div>
             <dt>Upcoming sessions</dt>
@@ -144,12 +155,15 @@ export function Family() {
             </div>
             <div>
               <span>ACTIVITY</span>
-              <strong>No records</strong>
+              <strong>
+                {localCount ? `${localCount} local events` : "No records"}
+              </strong>
             </div>
           </div>
           <p>
-            No workouts, quiz results or coach reviews have been recorded for
-            these sample profiles. There are no hidden performance scores.
+            Only browser demonstration events are connected here. No real
+            athlete records or released coach reviews exist. There are no hidden
+            performance scores.
           </p>
           <Link
             className="lab-button primary"
