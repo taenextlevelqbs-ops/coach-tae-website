@@ -12,6 +12,7 @@ describe("QB LAB interactive components", () => {
   it("keeps tackle and flag rosters distinct and exposes a descriptive diagram", () => {
     const { container, rerender } = render(<Field pathway="tackle" />);
     expect(container.querySelectorAll("circle")).toHaveLength(22);
+    expect(screen.getAllByText("50")).toHaveLength(1);
     expect(screen.getByRole("img")).toHaveAccessibleName(
       /Eleven players per side/,
     );
@@ -130,5 +131,94 @@ describe("QB LAB interactive components", () => {
     expect(screen.getByRole("status")).toHaveTextContent(
       "reset for both sample profiles",
     );
+  });
+});
+
+describe("QB LAB review desk", () => {
+  it("tags exact moments, prevents duplicates, revisits and removes tags", async () => {
+    const user = userEvent.setup();
+    render(
+      <LabShell>
+        <FilmReview />
+      </LabShell>,
+    );
+    await user.click(screen.getByRole("button", { name: /Jump to 5 seconds/ }));
+    await user.selectOptions(
+      screen.getByLabelText("Observation tag"),
+      "Rotation",
+    );
+    await user.click(
+      screen.getByRole("button", { name: "Tag current moment" }),
+    );
+    expect(screen.getByRole("status")).toHaveTextContent(
+      "Tagged 5.0 seconds: Rotation",
+    );
+    await user.click(
+      screen.getByRole("button", { name: "Tag current moment" }),
+    );
+    expect(screen.getByRole("status")).toHaveTextContent(
+      "already has that tag",
+    );
+    expect(
+      screen.getAllByRole("button", { name: /Remove Rotation/ }),
+    ).toHaveLength(1);
+    await user.click(
+      screen.getByRole("button", { name: "Open Rotation study" }),
+    );
+    expect(
+      screen.queryByRole("button", { name: /Revisit tagged/ }),
+    ).not.toBeInTheDocument();
+    await user.click(
+      screen.getByRole("button", { name: "Open Alignment study" }),
+    );
+    await user.click(
+      screen.getByRole("button", {
+        name: "Revisit tagged 5.0 seconds: Rotation",
+      }),
+    );
+
+    await user.click(screen.getByRole("button", { name: "+0.1s" }));
+    await user.click(
+      screen.getByRole("button", {
+        name: "Revisit tagged 5.0 seconds: Rotation",
+      }),
+    );
+    expect(screen.getByRole("slider", { name: "Review timeline" })).toHaveValue(
+      "5",
+    );
+    await user.click(
+      screen.getByRole("button", { name: "Remove Rotation at 5.0 seconds" }),
+    );
+    expect(
+      screen.queryByRole("button", { name: /Revisit tagged/ }),
+    ).not.toBeInTheDocument();
+  });
+  it("changes the study starting point and observation focus without claiming a receiver read", async () => {
+    const user = userEvent.setup();
+    render(
+      <LabShell>
+        <FilmReview />
+      </LabShell>,
+    );
+    await user.click(
+      screen.getByRole("button", { name: "Open Rotation study" }),
+    );
+    expect(screen.getByRole("slider")).toHaveValue("5");
+    await user.click(screen.getByRole("button", { name: /Track D2/ }));
+    expect(screen.getByRole("button", { name: /Track D2/ })).toHaveAttribute(
+      "aria-pressed",
+      "true",
+    );
+    expect(
+      screen.getByText(/Follow the right deep marker/),
+    ).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: /Inspect space/ }));
+    expect(
+      screen.getByText(/not a prescribed receiver progression/),
+    ).toBeInTheDocument();
+    await user.click(
+      screen.getByRole("button", { name: "Open Alignment study" }),
+    );
+    expect(screen.getByRole("slider")).toHaveValue("0");
   });
 });

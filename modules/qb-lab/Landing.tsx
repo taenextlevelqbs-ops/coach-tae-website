@@ -1,4 +1,5 @@
 "use client";
+import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Field } from "./Field";
@@ -7,139 +8,157 @@ import { pathways } from "./demo";
 
 export function Landing() {
   const { pathway } = useDemo();
+  const [moment, setMoment] = useState(0);
   return (
     <>
-      <section className="lab-hero">
-        <div className="lab-hero-copy">
-          <p className="lab-kicker">
-            <span className="lab-status-dot" /> WELCOME TO THE LAB
-          </p>
+      <section className="lab-cover">
+        <div className="lab-cover-copy">
+          <p className="lab-kicker">COACH TAE QB LAB / FIELD NOTES, VOL. 01</p>
           <h1>
-            A sharper mind.
-            <br />A stronger <em>game.</em>
+            THE GAME
+            <br />
+            BEFORE
+            <br />
+            <em>THE THROW.</em>
           </h1>
           <p className="lab-lede">
-            The next rep starts before you touch a football. Explore a smarter
-            way to learn, reflect and prepare with Coach Tae.
+            A working space for quarterbacks who want to see more. Read the
+            field, study the details and take a better question to your next
+            rep.
           </p>
-          <div className="lab-actions">
-            <Link className="lab-button primary" href="/qb-lab/athlete">
-              Enter the athlete studio <span>→</span>
-            </Link>
-            <Link className="lab-button" href="/qb-lab/iq">
-              Try a field study →
-            </Link>
-          </div>
-          <div className="lab-hero-tags">
-            <span>TACKLE + FLAG</span>
-            <span>AGES 8 THROUGH COLLEGE</span>
-            <span>ONE REP AT A TIME</span>
-          </div>
+          <Link className="lab-button primary" href="/qb-lab/athlete">
+            Start your first session <span aria-hidden="true">→</span>
+          </Link>
+          <p className="lab-cover-caption">
+            TACKLE + FLAG <span>/</span> AGES 8 THROUGH COLLEGE
+          </p>
         </div>
-        <div className="lab-hero-visual">
-          <Image
-            src="/Tae_Training.jpeg"
-            alt="Coach Tae during quarterback training"
-            fill
-            sizes="(max-width: 900px) 100vw, 45vw"
-            preload
-            className="lab-hero-photo"
-          />
-          <div className="lab-photo-shade" />
-          <span className="lab-visual-tag">THE WORK BEHIND THE GAME</span>
-          <div className="lab-visual-copy">
-            <span>COACH TAE / QB LAB</span>
-            <p>
-              See more.
-              <br />
-              Understand more.
-              <br />
-              <strong>Bring it to the field.</strong>
-            </p>
-            <span className="lab-outline-arrow" aria-hidden="true">
-              →
-            </span>
+        <div className="lab-cover-board">
+          <div className="lab-board-top">
+            <span>FIELD STUDY 001</span>
+            <span>LIVE DIAGRAM / DEMO</span>
           </div>
+          <Field
+            pathway={pathway}
+            progress={moment}
+            routes={false}
+            annotate={moment > 45}
+          />
+          <div className="lab-board-caption">
+            <strong>
+              {moment < 40
+                ? "01 / Start with the shell."
+                : "02 / Watch the picture change."}
+            </strong>
+            <p>A starting alignment is a clue. It is never the whole answer.</p>
+          </div>
+          <label className="lab-slider-label">
+            Scrub the observation <span>{moment}%</span>
+            <input
+              aria-label="Cover illustration timeline"
+              type="range"
+              min="0"
+              max="100"
+              value={moment}
+              onChange={(e) => setMoment(Number(e.target.value))}
+            />
+          </label>
+          <Link href="/qb-lab/iq" className="lab-text-link">
+            Explore this field study →
+          </Link>
         </div>
       </section>
-      <section className="lab-section">
+      <section className="lab-process" aria-label="How QB LAB works">
+        {[
+          ["01", "SEE THE PICTURE", "Read what is there."],
+          ["02", "STUDY THE MOMENT", "Slow down the details."],
+          ["03", "TAKE THE NEXT REP", "Bring a question to your coach."],
+        ].map(([n, title, text]) => (
+          <div key={n}>
+            <span>{n}</span>
+            <div>
+              <h2>{title}</h2>
+              <p>{text}</p>
+            </div>
+          </div>
+        ))}
+      </section>
+      <section className="lab-section lab-pathway-section">
         <div className="lab-section-heading">
           <div>
-            <p className="lab-kicker">CHOOSE YOUR ENVIRONMENT</p>
-            <h2>
-              Different games.
-              <br />
-              The same attention to detail.
-            </h2>
+            <p className="lab-kicker">
+              TWO PATHWAYS / ONE STANDARD OF ATTENTION
+            </p>
+            <h2>Your game has its own context.</h2>
           </div>
           <PathwaySwitch />
         </div>
-        <div className="lab-pathway-panel">
+        <div className="lab-pathway-editorial">
+          <span className="lab-big-index" aria-hidden="true">
+            {pathway === "tackle" ? "11" : "05"}
+          </span>
           <div>
-            <span className="lab-chip">{pathways[pathway].format}</span>
+            <p className="lab-kicker">{pathways[pathway].format}</p>
             <h3>{pathways[pathway].title}</h3>
             <p className="lab-pathway-focus">{pathways[pathway].focus}</p>
             <p className="lab-muted">{pathways[pathway].note}</p>
             <Link className="lab-text-link" href="/qb-lab/athlete">
-              Explore this pathway →
+              Set your learning context →
             </Link>
           </div>
-          <Field pathway={pathway} />
         </div>
       </section>
-      <section className="lab-section">
+      <section className="lab-section lab-directory">
         <div className="lab-section-heading">
           <div>
-            <p className="lab-kicker">A BETTER WAY TO PREPARE</p>
-            <h2>Make every rep more intentional.</h2>
+            <p className="lab-kicker">INSIDE THE NOTEBOOK</p>
+            <h2>One place. Different ways to learn.</h2>
           </div>
-          <span className="lab-muted">Explore the interactive preview</span>
         </div>
-        <div className="lab-feature-grid">
-          {[
-            [
-              "01",
-              "Read the field.",
-              "Observe the alignment. Question your first read. Watch the picture change.",
-              "/qb-lab/iq",
-              "FIELD STUDY",
-            ],
-            [
-              "02",
-              "See the details.",
-              "Explore illustrated film, timestamped feedback and a purposeful comparison view.",
-              "/qb-lab/film",
-              "FILM ROOM",
-            ],
-            [
-              "03",
-              "Grow together.",
-              "A family view designed around younger athletes, guidance and clear boundaries.",
-              "/qb-lab/family",
-              "FAMILY HUB",
-            ],
-          ].map(([n, title, text, href, label]) => (
-            <Link className="lab-feature-card" href={href} key={n}>
-              <span className="lab-card-number">{n}</span>
-              <div className="lab-mini-icon" aria-hidden="true">
-                {n === "01" ? "⌘" : n === "02" ? "▷" : "◎"}
-              </div>
-              <p className="lab-kicker">{label}</p>
-              <h3>{title}</h3>
-              <p>{text}</p>
-              <span className="lab-card-arrow" aria-hidden="true">
-                →
-              </span>
-            </Link>
-          ))}
-        </div>
+        {[
+          [
+            "01",
+            "Football IQ",
+            "An interactive classroom. Observe the alignment, follow the change and explain your read.",
+            "/qb-lab/iq",
+            "OBSERVE",
+          ],
+          [
+            "02",
+            "The Film Room",
+            "An illustrated review console. Scrub, tag a moment and connect it to a coaching note.",
+            "/qb-lab/film",
+            "REVIEW",
+          ],
+          [
+            "03",
+            "The Family Hub",
+            "A quieter view for guardians. Understand the next step and the boundaries around it.",
+            "/qb-lab/family",
+            "SUPPORT",
+          ],
+        ].map(([n, title, description, href, label]) => (
+          <Link className="lab-directory-row" key={n} href={href}>
+            <span className="lab-kicker">
+              {n} / {label}
+            </span>
+            <h3>{title}</h3>
+            <p>{description}</p>
+            <span aria-hidden="true">→</span>
+          </Link>
+        ))}
       </section>
       <aside className="lab-coach-strip">
-        <Image src="/CTLOGO.jpeg" alt="" width={62} height={62} />
+        <Image
+          src="/Tae_Training.jpeg"
+          width={180}
+          height={180}
+          alt="Coach Tae during quarterback training"
+        />
         <div>
-          <p className="lab-kicker">TAKE THE LEARNING TO THE FIELD</p>
-          <h2>Real coaching. Real conversations.</h2>
-          <p>Keep your on-field development connected to Coach Tae.</p>
+          <p className="lab-kicker">THE NOTEBOOK IS ONLY THE BEGINNING</p>
+          <h2>Take it to the field.</h2>
+          <p>Keep real coaching at the center of your development.</p>
         </div>
         <a
           className="lab-button primary"

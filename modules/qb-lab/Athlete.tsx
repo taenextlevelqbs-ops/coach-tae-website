@@ -20,11 +20,11 @@ export function Athlete() {
     <>
       <div className="lab-page-heading">
         <div>
-          <p className="lab-kicker">ATHLETE STUDIO / DEMO SESSION</p>
+          <p className="lab-kicker">COMMAND CENTER / YOUR WORKING SESSION</p>
           <h1>
-            Your next rep
+            One focus.
             <br />
-            starts <em>here.</em>
+            <em>A better next rep.</em>
           </h1>
           <p className="lab-lede">
             Choose a learning context, explore a field study and reflect on what
@@ -66,6 +66,42 @@ export function Athlete() {
           <small>Selections guide this preview, not a skill assessment.</small>
         </div>
       </section>
+      <section className="lab-session-ledger" aria-label="Session overview">
+        <div>
+          <p className="lab-kicker">CURRENT FOCUS</p>
+          <h2>Observe before you label.</h2>
+          <p>A starting picture is a clue, not a conclusion.</p>
+        </div>
+        <div>
+          <p className="lab-kicker">THIS TAB / CHECKLIST</p>
+          <strong>
+            {done.length}
+            <span> / 3</span>
+          </strong>
+          <progress
+            aria-label="Demo checklist completion"
+            value={done.length}
+            max={3}
+          />
+          <p>Demo tasks checked. Not an ability score.</p>
+        </div>
+        <div>
+          <p className="lab-kicker">NEXT STEP</p>
+          <h3>
+            {done.length === 3
+              ? "Bring your question."
+              : "Read the starting picture."}
+          </h3>
+          <Link
+            className="lab-text-link"
+            href={done.length === 3 ? "/qb-lab/film" : "/qb-lab/iq"}
+          >
+            {done.length === 3
+              ? "Continue to film review →"
+              : "Begin the field study →"}
+          </Link>
+        </div>
+      </section>
       <div className="lab-dashboard-grid">
         <section className="lab-study-card">
           <div className="lab-card-top">
@@ -86,7 +122,7 @@ export function Athlete() {
         </section>
         <aside className="lab-panel">
           <p className="lab-kicker">SMALL STEPS / CLEAR INTENT</p>
-          <h2>Your demo checklist</h2>
+          <h2>The session notebook.</h2>
           <p className="lab-muted">
             Record your interaction with this preview. This is not a training
             record.
@@ -132,6 +168,40 @@ export function Athlete() {
           )}
         </aside>
       </div>
+      <section
+        className="lab-session-agenda"
+        aria-label="Suggested session sequence"
+      >
+        <p className="lab-kicker">
+          SUGGESTED ORDER / NO SCHEDULED APPOINTMENTS
+        </p>
+        <ol>
+          <li>
+            <span>01</span>
+            <div>
+              <h3>Observe the alignment</h3>
+              <p>Start with the visible depth. Nothing to memorize yet.</p>
+            </div>
+            <Link href="/qb-lab/iq">Classroom →</Link>
+          </li>
+          <li>
+            <span>02</span>
+            <div>
+              <h3>Return to the moment</h3>
+              <p>Scrub the illustration. Tag a detail worth discussing.</p>
+            </div>
+            <Link href="/qb-lab/film">Film room →</Link>
+          </li>
+          <li>
+            <span>03</span>
+            <div>
+              <h3>Take one question to a coach</h3>
+              <p>Connect the observation to your own football context.</p>
+            </div>
+            <Link href="/#training">Training options →</Link>
+          </li>
+        </ol>
+      </section>
       <section className="lab-bottom-grid">
         <div className="lab-panel">
           <p className="lab-kicker">YOUR PATHWAY</p>

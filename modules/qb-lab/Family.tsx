@@ -55,9 +55,9 @@ export function Family() {
         <div>
           <p className="lab-kicker">FAMILY HUB / GROW TOGETHER</p>
           <h1>
-            In their corner.
+            Room to grow.
             <br />
-            At every <em>step.</em>
+            <em>Someone in their corner.</em>
           </h1>
           <p className="lab-lede">
             A thoughtful space for guardians to guide the experience, understand
@@ -96,12 +96,41 @@ export function Family() {
           </button>
         ))}
       </section>
-      <div className="lab-dashboard-grid">
+      <section className="lab-family-briefing" aria-label="Family briefing">
+        <div>
+          <p className="lab-kicker">THE GUARDIAN BRIEFING</p>
+          <h2>
+            Support the process.
+            <br />
+            Let them own the rep.
+          </h2>
+          <p>
+            For {athlete.name.toLowerCase()}, start with one simple
+            conversation: “What did you notice?” This is sample guidance, not a
+            coach assignment.
+          </p>
+        </div>
+        <dl>
+          <div>
+            <dt>Development records</dt>
+            <dd>No activity recorded</dd>
+          </div>
+          <div>
+            <dt>Upcoming sessions</dt>
+            <dd>No appointments connected</dd>
+          </div>
+          <div>
+            <dt>Coaching updates</dt>
+            <dd>No released feedback</dd>
+          </div>
+        </dl>
+      </section>
+      <div className="lab-dashboard-grid lab-family-grid">
         <section className="lab-panel">
           <p className="lab-kicker">
             {athlete.name.toUpperCase()} / LEARNING CONTEXT
           </p>
-          <h2>A clear view of what comes next.</h2>
+          <h2>The athlete’s next step.</h2>
           <div className="lab-family-summary">
             <div>
               <span>AGE GROUP</span>
@@ -131,7 +160,7 @@ export function Family() {
           </Link>
           <div className="lab-family-coaching">
             <span className="lab-empty-icon" aria-hidden="true">
-              ↳
+              →
             </span>
             <div>
               <h3>Keep the conversation open.</h3>
@@ -145,7 +174,7 @@ export function Family() {
         </section>
         <section className="lab-panel">
           <p className="lab-kicker">COMMUNICATION / LOCAL PREVIEW</p>
-          <h2>Stay connected, thoughtfully.</h2>
+          <h2>Your communication preferences.</h2>
           <p className="lab-muted">
             Explore separate settings for each synthetic profile. No emails or
             notifications are sent.

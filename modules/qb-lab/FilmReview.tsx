@@ -1,8 +1,12 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import { Field } from "./Field";
-import { filmComments } from "./demo";
+import { ReviewNotes } from "./ReviewNotes";
+import { ReviewSubmission } from "./ReviewSubmission";
 import { PathwaySwitch, useDemo } from "./LabShell";
+import { FilmTimeline } from "./FilmTimeline";
+import { ReadSequence } from "./ReadSequence";
+import { studyClips, type FilmMoment, type ReadFocus } from "./review-model";
 
 export function FilmReview() {
   const { pathway } = useDemo();
@@ -11,11 +15,19 @@ export function FilmReview() {
   const [speed, setSpeed] = useState(1);
   const [annotate, setAnnotate] = useState(true);
   const [compare, setCompare] = useState(false);
+  const [selectedClip, setSelectedClip] =
+    useState<(typeof studyClips)[number]["id"]>("alignment");
+  const [read, setRead] = useState<ReadFocus>("D1");
+  const [notebooks, setNotebooks] = useState<
+    Record<(typeof studyClips)[number]["id"], FilmMoment[]>
+  >({ alignment: [], rotation: [] });
+  const moments = notebooks[selectedClip];
+  function setMoments(next: FilmMoment[]) {
+    setNotebooks((previous) => ({ ...previous, [selectedClip]: next }));
+  }
   const [queued, setQueued] = useState<{ clip: string; focus: string } | null>(
     null,
   );
-  const [clip, setClip] = useState("Alignment study");
-  const [focus, setFocus] = useState("Describe the alignment");
   const dialog = useRef<HTMLDialogElement>(null);
   const active = playing && time < 10;
   useEffect(() => {
@@ -26,19 +38,21 @@ export function FilmReview() {
     );
     return () => clearInterval(timer);
   }, [active, speed]);
+  function seek(t: number) {
+    setPlaying(false);
+    setTime(t);
+  }
+  const study = studyClips.find((c) => c.id === selectedClip)!;
   return (
     <>
-      <div className="lab-page-heading">
+      <div className="lab-page-heading lab-film-heading">
         <div>
-          <p className="lab-kicker">FILM ROOM / THE DETAILS MATTER</p>
+          <p className="lab-kicker">REVIEW DESK / SYNTHETIC FILM LIBRARY</p>
           <h1>
-            Turn a moment
-            <br />
-            into a <em>conversation.</em>
+            The Film Room<span className="lab-heading-period">.</span>
           </h1>
           <p className="lab-lede">
-            Explore how focused feedback could connect what an athlete sees with
-            what they work on next.
+            Slow it down. Find the detail. Make the next conversation count.
           </p>
         </div>
         <button
@@ -49,7 +63,11 @@ export function FilmReview() {
         </button>
       </div>
       {queued && (
-        <div className="lab-queue-message" role="status">
+        <div
+          className="lab-queue-message"
+          role="status"
+          aria-label="Review submission status"
+        >
           <div>
             <strong>Demo review queued: {queued.clip}</strong>
             <p>
@@ -62,241 +80,168 @@ export function FilmReview() {
           </button>
         </div>
       )}
-      <div className="lab-film-toolbar">
-        <PathwaySwitch />
-        <div className="lab-actions">
-          <button
-            className="lab-button"
-            aria-pressed={annotate}
-            onClick={() => setAnnotate(!annotate)}
-          >
-            {annotate ? "Hide" : "Show"} annotation
-          </button>
-          <button
-            className="lab-button"
-            aria-pressed={compare}
-            onClick={() => setCompare(!compare)}
-          >
-            {compare ? "Single view" : "Compare moments"}
-          </button>
+      <div className="lab-film-console">
+        <div className="lab-film-console-bar">
+          <span>
+            QB LAB <b>/</b> REVIEW CONSOLE
+          </span>
+          <span>ILLUSTRATED FILM · NOT ATHLETE FOOTAGE</span>
         </div>
-      </div>
-      <div className="lab-film-grid">
-        <section className="lab-panel lab-film-player">
-          <div className="lab-card-top">
-            <span className="lab-chip">ILLUSTRATED FILM / SAMPLE 001</span>
-            <span className="lab-muted">
-              00:{String(Math.floor(time)).padStart(2, "0")} / 00:10
-            </span>
+        <div className="lab-clip-index" aria-label="Illustrated study library">
+          {studyClips.map((c, i) => (
+            <button
+              key={c.id}
+              aria-pressed={selectedClip === c.id}
+              aria-label={`Open ${c.title}`}
+              onClick={() => {
+                setSelectedClip(c.id);
+                seek(c.start);
+              }}
+            >
+              <span className="lab-clip-icon" aria-hidden="true">
+                {i === 0 ? "01" : "02"}
+              </span>
+              <span>
+                <strong>{c.title}</strong>
+                <small>
+                  {i === 0
+                    ? "STARTING PICTURE / 00:00"
+                    : "CHANGING DEPTH / 00:05"}
+                </small>
+              </span>
+              <span className="lab-clip-duration">10 SEC</span>
+            </button>
+          ))}
+        </div>
+        <div className="lab-film-toolbar">
+          <PathwaySwitch />
+          <div className="lab-actions">
+            <button
+              className="lab-button"
+              aria-pressed={annotate}
+              onClick={() => setAnnotate(!annotate)}
+            >
+              {annotate ? "Hide" : "Show"} annotation
+            </button>
+            <button
+              className="lab-button"
+              aria-pressed={compare}
+              onClick={() => setCompare(!compare)}
+            >
+              {compare ? "Single view" : "Compare moments"}
+            </button>
           </div>
-          <div className={compare ? "lab-compare-fields" : ""}>
-            <div>
-              {compare && <p className="lab-kicker">EARLIER MOMENT</p>}
-              <Field
-                pathway={pathway}
-                progress={time * 10}
-                annotate={annotate && time >= 4}
-              />
+        </div>
+        <div className="lab-film-grid">
+          <section
+            className="lab-film-player"
+            aria-label="Illustrated film player"
+          >
+            <div className="lab-card-top">
+              <span className="lab-kicker">
+                {study.title.toUpperCase()} /{" "}
+                {pathway === "flag" ? "5v5" : "11v11"}
+              </span>
+              <span className="lab-timecode">
+                00:{time.toFixed(1).padStart(4, "0")} <small>/ 00:10.0</small>
+              </span>
             </div>
-            {compare && (
+            <div className={compare ? "lab-compare-fields" : ""}>
               <div>
-                <p className="lab-kicker">LATER MOMENT / +2 SECONDS</p>
+                {compare && <p className="lab-kicker">EARLIER MOMENT</p>}
                 <Field
                   pathway={pathway}
-                  progress={Math.min(100, (time + 2) * 10)}
-                  annotate={annotate}
+                  progress={time * 10}
+                  annotate={annotate && time >= 4}
+                  focusTarget={annotate ? read : undefined}
                 />
               </div>
-            )}
-          </div>
-          <label className="lab-slider-label">
-            Review timeline <span>{time.toFixed(1)} seconds</span>
-            <input
-              type="range"
-              aria-label="Review timeline"
-              min="0"
-              max="10"
-              step="0.1"
-              value={time}
-              onChange={(e) => {
-                setPlaying(false);
-                setTime(Number(e.target.value));
-              }}
-            />
-          </label>
-          <div className="lab-player-controls">
-            <button
-              className="lab-button primary"
-              onClick={() => {
-                if (time >= 10) setTime(0);
-                setPlaying(!playing || time >= 10);
-              }}
-            >
-              {active ? "Pause illustration" : "Play illustration"}
-            </button>
-            <button
-              className="lab-button"
-              onClick={() => {
-                setPlaying(false);
-                setTime(Math.max(0, Math.round((time - 0.1) * 10) / 10));
-              }}
-            >
-              −0.1s
-            </button>
-            <button
-              className="lab-button"
-              onClick={() => {
-                setPlaying(false);
-                setTime(Math.min(10, Math.round((time + 0.1) * 10) / 10));
-              }}
-            >
-              +0.1s
-            </button>
-            <label>
-              Speed
-              <select
-                aria-label="Playback speed"
-                value={speed}
-                onChange={(e) => setSpeed(Number(e.target.value))}
-              >
-                <option value={0.5}>0.5×</option>
-                <option value={1}>1×</option>
-                <option value={1.5}>1.5×</option>
-              </select>
-            </label>
-          </div>
-          <p className="lab-fine">
-            A synthetic field animation, not athlete footage. The controls step
-            the authored timeline, not video frames. Comparison shows different
-            moments, not measured improvement.
-          </p>
-        </section>
-        <aside className="lab-panel lab-feedback-panel">
-          <p className="lab-kicker">COACHING CONVERSATION / SAMPLE</p>
-          <h2>A more useful second look.</h2>
-          <p className="lab-muted">
-            Fictional feedback for this illustration. These notes were not
-            submitted by Coach Tae.
-          </p>
-          <div className="lab-timestamp-list">
-            {filmComments.map((comment) => (
-              <button
-                key={comment.time}
-                aria-label={`Jump to ${comment.time} seconds: ${comment.title}`}
-                onClick={() => {
-                  setPlaying(false);
-                  setTime(comment.time);
-                }}
-                aria-pressed={time === comment.time}
-              >
-                <span>00:0{comment.time}</span>
+              {compare && (
                 <div>
-                  <strong>{comment.title}</strong>
-                  <p>{comment.text}</p>
+                  <p className="lab-kicker">LATER MOMENT / +2 SECONDS</p>
+                  <Field
+                    pathway={pathway}
+                    progress={Math.min(100, (time + 2) * 10)}
+                    annotate={annotate}
+                    focusTarget={annotate ? read : undefined}
+                  />
                 </div>
+              )}
+            </div>
+            <FilmTimeline time={time} onSeek={seek} moments={moments} />
+            <div className="lab-player-controls">
+              <button
+                className="lab-button primary"
+                onClick={() => {
+                  if (time >= 10) setTime(0);
+                  setPlaying(!playing || time >= 10);
+                }}
+              >
+                {active ? "Pause illustration" : "Play illustration"}
               </button>
-            ))}
-          </div>
-          <div className="lab-next-rep">
-            <p className="lab-kicker">THE NEXT CONVERSATION</p>
-            <h3>Describe. Then ask.</h3>
-            <p>
-              Use the field study to practice describing the picture. Bring
-              scheme-specific questions to a qualified coach.
+              <div className="lab-step-controls">
+                <button
+                  className="lab-button"
+                  onClick={() =>
+                    seek(Math.max(0, Math.round((time - 0.1) * 10) / 10))
+                  }
+                >
+                  −0.1s
+                </button>
+                <button
+                  className="lab-button"
+                  onClick={() =>
+                    seek(Math.min(10, Math.round((time + 0.1) * 10) / 10))
+                  }
+                >
+                  +0.1s
+                </button>
+              </div>
+              <label>
+                Playback speed
+                <select
+                  aria-label="Playback speed"
+                  value={speed}
+                  onChange={(e) => setSpeed(Number(e.target.value))}
+                >
+                  <option value={0.5}>0.5×</option>
+                  <option value={1}>1×</option>
+                  <option value={1.5}>1.5×</option>
+                </select>
+              </label>
+            </div>
+            <p className="lab-fine">
+              {study.description} Both studies use the same authored
+              illustration with different starting moments. Controls step time,
+              not video frames. Comparison shows moments, not improvement.
             </p>
-            <a className="lab-text-link" href="/qb-lab/iq">
-              Open the field study →
-            </a>
-          </div>
-        </aside>
+            <ReadSequence value={read} onChange={setRead} />
+          </section>
+          <ReviewNotes
+            key={selectedClip}
+            time={time}
+            moments={moments}
+            onMomentsChange={setMoments}
+            onSeek={seek}
+          />
+        </div>
       </div>
-      <section className="lab-bottom-grid">
-        <div className="lab-panel">
-          <p className="lab-kicker">COMPARE WITH PURPOSE</p>
+      <aside className="lab-callout">
+        <span aria-hidden="true">→</span>
+        <div>
           <h2>Context before conclusions.</h2>
           <p>
-            A future coach-led comparison would keep camera angle, task and
-            timing in view. This preview compares only two moments in the same
-            synthetic illustration.
+            Real film needs private access, verified consent and secure
+            retention. This review desk accepts no files. Practice describing
+            the illustration, then bring scheme-specific questions to a
+            qualified coach.
           </p>
-          <button className="lab-button" onClick={() => setCompare(!compare)}>
-            {compare ? "Return to single view" : "Open comparison layout"}
-          </button>
+          <a className="lab-text-link" href="/qb-lab/iq">
+            Continue in the classroom →
+          </a>
         </div>
-        <div className="lab-panel">
-          <p className="lab-kicker">BUILT AROUND TRUST</p>
-          <h2>Your film is personal.</h2>
-          <p>
-            Real uploads stay unavailable here. Private access, verified
-            guardian consent, retention and deletion controls must be
-            implemented and tested before any athlete film is accepted.
-          </p>
-          <span className="lab-chip">NO FILES COLLECTED</span>
-        </div>
-      </section>
-      <dialog
-        ref={dialog}
-        className="lab-dialog"
-        aria-labelledby="submission-title"
-      >
-        <div className="lab-card-top">
-          <span className="lab-kicker">SUBMISSION PREVIEW</span>
-          <button
-            className="lab-close"
-            aria-label="Close submission preview"
-            onClick={() => dialog.current?.close()}
-          >
-            ×
-          </button>
-        </div>
-        <h2 id="submission-title">Give the review a purpose.</h2>
-        <p>
-          Choose a synthetic clip to try the workflow. File selection, camera
-          access and uploads are unavailable.
-        </p>
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            setQueued({ clip, focus });
-            dialog.current?.close();
-          }}
-        >
-          <div className="lab-demo-dropzone">
-            <span aria-hidden="true">▷</span>
-            <strong>Illustrated clips only</strong>
-            <small>No personal footage or information is accepted.</small>
-          </div>
-          <label>
-            Demo clip
-            <select
-              aria-label="Demo clip"
-              value={clip}
-              onChange={(e) => setClip(e.target.value)}
-            >
-              <option>Alignment study</option>
-              <option>Rotation study</option>
-            </select>
-          </label>
-          <label>
-            Review focus
-            <select
-              aria-label="Review focus"
-              value={focus}
-              onChange={(e) => setFocus(e.target.value)}
-            >
-              <option>Describe the alignment</option>
-              <option>Observe defender movement</option>
-            </select>
-          </label>
-          <label className="lab-inline-check">
-            <input type="checkbox" required /> I understand this is a local
-            demonstration.
-          </label>
-          <button className="lab-button primary full" type="submit">
-            Queue synthetic review →
-          </button>
-        </form>
-      </dialog>
+      </aside>
+      <ReviewSubmission dialog={dialog} onQueue={setQueued} />
     </>
   );
 }

@@ -3,9 +3,12 @@ import { useEffect, useState } from "react";
 import { Field } from "./Field";
 import { PathwaySwitch, useDemo } from "./LabShell";
 import { questions } from "./demo";
+import { ReadSequence } from "./ReadSequence";
+import type { ReadFocus } from "./review-model";
 
 export function FootballIQ() {
   const { pathway } = useDemo();
+  const [read, setRead] = useState<ReadFocus>("D1");
   const [progress, setProgress] = useState(0);
   const [playing, setPlaying] = useState(false);
   const [question, setQuestion] = useState(0);
@@ -24,6 +27,7 @@ export function FootballIQ() {
   const finished = Object.keys(responses).length === questions.length;
   const current = questions[question];
   function reset() {
+    setRead("D1");
     setProgress(0);
     setPlaying(false);
     setQuestion(0);
@@ -37,9 +41,9 @@ export function FootballIQ() {
         <div>
           <p className="lab-kicker">FOOTBALL IQ / FIELD STUDY 001</p>
           <h1>
-            See the picture.
+            Eyes up.
             <br />
-            <em>Keep reading.</em>
+            <em>Read the change.</em>
           </h1>
           <p className="lab-lede">
             A guided observation exercise. Watch the defenders, describe the
@@ -58,7 +62,13 @@ export function FootballIQ() {
               {pathway === "flag" ? "5v5 illustration" : "11v11 illustration"}
             </span>
           </div>
-          <Field pathway={pathway} progress={progress} routes={false} />
+          <Field
+            pathway={pathway}
+            progress={progress}
+            routes={read === "routes"}
+            focusTarget={read}
+          />
+          <ReadSequence value={read} onChange={setRead} />
           <div className="lab-legend">
             <span>
               <i className="offense" /> Offense
@@ -192,7 +202,7 @@ export function FootballIQ() {
         </section>
       </div>
       <aside className="lab-callout">
-        <span aria-hidden="true">↳</span>
+        <span aria-hidden="true">→</span>
         <div>
           <h2>
             {pathway === "flag"

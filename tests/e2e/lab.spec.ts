@@ -150,9 +150,9 @@ test("film submission is synthetic, dialog is keyboard accessible and timestamp 
     .selectOption("Rotation study");
   await page.getByRole("checkbox", { name: /I understand/ }).check();
   await page.getByRole("button", { name: /Queue synthetic review/ }).click();
-  await expect(page.getByRole("status")).toContainText(
-    "Demo review queued: Rotation study",
-  );
+  await expect(
+    page.getByRole("status", { name: "Review submission status" }),
+  ).toContainText("Demo review queued: Rotation study");
   await expect(page.locator('input[type="file"]')).toHaveCount(0);
   await page.getByRole("button", { name: /Jump to 5 seconds/ }).click();
   await expect(
@@ -219,3 +219,78 @@ for (const route of ["", "/athlete", "/iq", "/film", "/family"]) {
     expect(results.violations).toEqual([]);
   });
 }
+
+test("review desk keyboard tagging, chapter seeking and study changes are local", async ({
+  page,
+}) => {
+  await page.goto("/qb-lab/film");
+  await page
+    .getByRole("button", { name: "Seek chapter 2 at 5 seconds" })
+    .click();
+  await page
+    .getByLabel("Observation tag", { exact: true })
+    .selectOption("Rotation");
+  const add = page.getByRole("button", { name: "Tag current moment" });
+  await add.focus();
+  await page.keyboard.press("Enter");
+  await expect(
+    page.getByRole("status", { name: "Moment tag status" }),
+  ).toContainText("Tagged 5.0 seconds: Rotation");
+  await add.click();
+  await expect(
+    page.getByRole("status", { name: "Moment tag status" }),
+  ).toContainText("already has that tag");
+  await page.getByRole("button", { name: "+0.1s", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Revisit tagged 5.0 seconds: Rotation" })
+    .click();
+  await expect(page.getByRole("slider")).toHaveValue("5");
+  await page.getByRole("button", { name: /Track D2/ }).click();
+  await expect(page.getByRole("button", { name: /Track D2/ })).toHaveAttribute(
+    "aria-pressed",
+    "true",
+  );
+  await page.getByRole("button", { name: /Inspect space/ }).click();
+  await expect(
+    page.getByText(/not a prescribed receiver progression/),
+  ).toBeVisible();
+  await page
+    .getByRole("button", { name: "Remove Rotation at 5.0 seconds" })
+    .click();
+  await expect(
+    page.getByRole("button", { name: /Revisit tagged/ }),
+  ).toHaveCount(0);
+  await page.getByRole("button", { name: "Open Rotation study" }).click();
+  await expect(page.getByRole("slider")).toHaveValue("5");
+  await page.getByRole("button", { name: "Open Alignment study" }).click();
+  await expect(page.getByRole("slider")).toHaveValue("0");
+  await expect(page.locator("input[type=file],textarea")).toHaveCount(0);
+  expect(await page.evaluate(() => localStorage.length)).toBe(0);
+});
+
+test("cover diagram is interactive and navigation provides a clear return path", async ({
+  page,
+}) => {
+  await page.goto("/qb-lab");
+  const slider = page.getByRole("slider", {
+    name: "Cover illustration timeline",
+  });
+  await slider.focus();
+  await page.keyboard.press("End");
+  await expect(slider).toHaveValue("100");
+  await expect(
+    page.getByText("02 / Watch the picture change.", { exact: true }),
+  ).toBeVisible();
+  await page.getByRole("link", { name: /Start your first session/ }).click();
+  await expect(page).toHaveURL(/\/athlete$/);
+  await expect(
+    page
+      .getByRole("navigation", { name: "QB LAB navigation" })
+      .getByRole("link", { name: /Command center/ }),
+  ).toHaveAttribute("aria-current", "page");
+  await page
+    .getByRole("navigation", { name: "QB LAB navigation" })
+    .getByRole("link", { name: /The Lab/ })
+    .click();
+  await expect(page).toHaveURL(/\/qb-lab$/);
+});

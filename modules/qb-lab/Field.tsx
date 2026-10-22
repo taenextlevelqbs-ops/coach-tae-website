@@ -1,15 +1,18 @@
 import type { Pathway } from "./demo";
+import type { ReadFocus } from "./review-model";
 
 export function Field({
   pathway = "tackle",
   progress = 0,
   routes = true,
   annotate = false,
+  focusTarget,
 }: {
   pathway?: Pathway;
   progress?: number;
   routes?: boolean;
   annotate?: boolean;
+  focusTarget?: ReadFocus;
 }) {
   const turn = Math.min(1, Math.max(0, (progress - 20) / 60));
   const offense =
@@ -64,28 +67,28 @@ export function Field({
         Blue circles represent defenders. This schematic is not to scale. The
         shaded deep area is a teaching aid, not a regulation field marking.
       </desc>
-      <rect width="800" height="500" rx="20" fill="#0b2022" />
-      {Array.from({ length: 10 }, (_, index) => (
+      <rect width="800" height="500" rx="0" fill="#102b35" />
+      {Array.from({ length: 11 }, (_, index) => (
         <g key={index}>
           <path
-            d={`M35 ${index * 50 + 25}H765`}
-            stroke="#84b8b1"
+            d={`M35 ${index * 45 + 25}H765`}
+            stroke="#bfd1d5"
             strokeOpacity=".18"
           />
           <text
             x="45"
-            y={index * 50 + 18}
-            fill="#84b8b1"
+            y={index * 45 + 18}
+            fill="#bfd1d5"
             opacity=".55"
             fontSize="12"
           >
-            {index < 5 ? (index + 1) * 10 : (10 - index) * 10}
+            {index <= 5 ? index * 10 : (10 - index) * 10}
           </text>
         </g>
       ))}
       <path
         d="M160 20V480M640 20V480"
-        stroke="#84b8b1"
+        stroke="#bfd1d5"
         strokeDasharray="3 12"
         strokeOpacity=".25"
       />
@@ -171,7 +174,7 @@ export function Field({
             cx={x + (i % 2 ? 1 : -1) * turn * 15}
             cy={y - turn * 12}
             r="12"
-            fill="#85dbe9"
+            fill="#74cef1"
           />
           <text
             x={x + (i % 2 ? 1 : -1) * turn * 15}
@@ -189,7 +192,7 @@ export function Field({
           cx={240 + turn * 160}
           cy={110 - turn * 15}
           r="15"
-          fill="#85dbe9"
+          fill="#74cef1"
         />
         <text
           x={240 + turn * 160}
@@ -205,7 +208,7 @@ export function Field({
           cx={560 - turn * 50}
           cy={110 + turn * 120}
           r="15"
-          fill="#85dbe9"
+          fill="#74cef1"
         />
         <text
           x={560 - turn * 50}
@@ -218,6 +221,31 @@ export function Field({
           D2
         </text>
       </g>
+      {focusTarget && (
+        <g fill="none" stroke="#f0c77a" strokeWidth="3">
+          {focusTarget === "D1" && (
+            <rect
+              x={215 + turn * 160}
+              y={85 - turn * 15}
+              width="50"
+              height="50"
+              rx="4"
+            />
+          )}
+          {focusTarget === "D2" && (
+            <rect
+              x={535 - turn * 50}
+              y={85 + turn * 120}
+              width="50"
+              height="50"
+              rx="4"
+            />
+          )}
+          {focusTarget === "routes" && (
+            <path d="M80 315V175L235 107M680 315V160" strokeDasharray="6 5" />
+          )}
+        </g>
+      )}
       {annotate && (
         <g>
           <ellipse
@@ -230,8 +258,8 @@ export function Field({
             strokeWidth="3"
           />
           <path d="M620 130L554 196" stroke="#f3d58b" strokeWidth="3" />
-          <text x="622" y="120" fill="#f3d58b" fontSize="15">
-            Notice the change in depth
+          <text x="545" y="160" fill="#f3d58b" fontSize="15">
+            Depth changes
           </text>
         </g>
       )}
