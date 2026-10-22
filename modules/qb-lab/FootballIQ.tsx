@@ -9,7 +9,7 @@ import { ReadSequence } from "./ReadSequence";
 import type { ReadFocus } from "./review-model";
 
 export function FootballIQ() {
-  const { pathway } = useDemo();
+  const { pathway, profile } = useDemo();
   const [read, setRead] = useState<ReadFocus>("D1");
   const [progress, setProgress] = useState(0);
   const [playing, setPlaying] = useState(false);
@@ -161,6 +161,8 @@ export function FootballIQ() {
                     recordActivity(
                       "lesson",
                       `observation-${pathway}${questions.some((q, i) => (i === question ? answer : responses[i]) !== q.correct) ? "-revisit" : ""}`,
+                      undefined,
+                      profile.id,
                     );
                   setSubmitted(true);
                   setResponses({ ...responses, [question]: answer });

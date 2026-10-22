@@ -2,10 +2,14 @@ import type { LocalState } from "./store";
 import { drills } from "./catalog";
 import type { Pathway } from "../demo";
 /** Suggestions use recorded interactions, never inferred athlete ability. */
-export function nextStep(state: LocalState, pathway: Pathway) {
+export function nextStep(
+  state: LocalState,
+  pathway: Pathway,
+  profile: "A" | "B" = "A",
+) {
   const assigned = state.assignments.find(
     (a) =>
-      a.profile === "A" &&
+      a.profile === profile &&
       a.status === "assigned" &&
       drills.some(
         (d) =>
@@ -15,11 +19,13 @@ export function nextStep(state: LocalState, pathway: Pathway) {
   if (assigned)
     return {
       title: drills.find((d) => d.id === assigned.drill)!.title,
-      href: `/qb-lab/workouts?activity=${assigned.drill}&profile=A`,
+      href: `/qb-lab/workouts?activity=${assigned.drill}&profile=${profile}`,
       label: "Your next assignment",
       why: "Assigned in the local coach workspace. Complete the guided steps to update your queue.",
     };
-  const activities = state.activities.filter((a) => (a.profile ?? "A") === "A");
+  const activities = state.activities.filter(
+    (a) => (a.profile ?? "A") === profile,
+  );
   const lesson = [...activities]
     .reverse()
     .find(
@@ -42,7 +48,7 @@ export function nextStep(state: LocalState, pathway: Pathway) {
   )
     return {
       title: "Walk the starting picture",
-      href: "/qb-lab/workouts?activity=observe&profile=A",
+      href: `/qb-lab/workouts?activity=observe&profile=${profile}`,
       label: "Build on your Football IQ study",
       why: "An observation needs another look. Use the guided walkthrough, then try the field study again.",
     };

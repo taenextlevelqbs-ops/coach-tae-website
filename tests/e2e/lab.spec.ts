@@ -268,30 +268,45 @@ test("review desk keyboard tagging, chapter seeking and study changes are local"
   expect(await page.evaluate(() => localStorage.length)).toBe(0);
 });
 
-test("personal home gives an honest next step and accessible navigation", async ({
+test("approved dashboard has the exact composition, six destinations and persistent navigation", async ({
   page,
 }) => {
   await page.goto("/qb-lab");
   await expect(
-    page.getByRole("heading", { name: "Good to have you back, QB." }),
+    page.getByRole("heading", { name: "Good afternoon, Jordan." }),
+  ).toBeVisible();
+  await expect(page.getByText("Your QB Lab", { exact: false })).toContainText(
+    "Flag football · Age 12",
+  );
+  await expect(
+    page.getByRole("heading", { name: "Let's work on reading Cover 2." }),
   ).toBeVisible();
   await expect(
-    page.getByText("No completed work yet.", { exact: false }),
+    page.getByRole("region", { name: "Your training" }).getByRole("link"),
+  ).toHaveCount(6);
+  await expect(
+    page.getByRole("heading", { name: "A note from Coach Tae" }),
   ).toBeVisible();
-  await page.getByRole("link", { name: "Let’s get started →" }).click();
+  const nav = page.getByRole("navigation", { name: "QB LAB navigation" });
+  for (const name of ["Home", "Train", "Plays", "Profile"])
+    await expect(nav.getByRole("link", { name, exact: true })).toBeVisible();
+  await page.getByRole("link", { name: "Start training" }).click();
+  await expect(page).toHaveURL(/\/session$/);
+  await expect(page.getByText(/does not confirm Cover 2/)).toBeVisible();
+  await page.getByRole("link", { name: "Open Football IQ →" }).click();
   await expect(page).toHaveURL(/\/iq$/);
-  const menu = page.getByRole("button", { name: "Explore QB LAB" });
-  if (await menu.isVisible()) {
-    await menu.click();
-    await expect(menu).toHaveAttribute("aria-expanded", "true");
-  }
-  await page
-    .getByRole("navigation", { name: "QB LAB navigation" })
-    .getByRole("link", { name: "The Lab", exact: true })
-    .click();
-  await expect(page).toHaveURL(/\/qb-lab$/);
-  if (await menu.isVisible())
-    await expect(menu).toHaveAttribute("aria-expanded", "false");
+  await nav.getByRole("link", { name: "Home", exact: true }).click();
+  await page.getByLabel("Demo athlete profile").selectOption("A");
+  await expect(
+    page.getByRole("heading", { name: "Good afternoon, Alex." }),
+  ).toBeVisible();
+  await page.reload();
+  await expect(
+    page.getByRole("heading", { name: "Good afternoon, Alex." }),
+  ).toBeVisible();
+  await nav.getByRole("link", { name: "Profile", exact: true }).click();
+  await expect(page).toHaveURL(/\/profile$/);
+  await expect(page.getByRole("link", { name: "Family Hub →" })).toBeVisible();
 });
 
 test("IQ feedback connects to the athlete home and a matching guided workout", async ({
@@ -313,10 +328,10 @@ test("IQ feedback connects to the athlete home and a matching guided workout", a
     page.getByRole("heading", { name: "Walk the starting picture" }),
   ).toBeVisible();
   await expect(
-    page.getByText("1 local interactions · 0 completed workouts"),
+    page.getByText(/An observation needs another look/),
   ).toBeVisible();
   await page.reload();
-  await page.getByRole("link", { name: "Let’s get started →" }).click();
+  await page.getByRole("link", { name: "Start training" }).click();
   await expect(page).toHaveURL(/activity=observe&profile=A/);
   await expect(
     page.getByRole("heading", {

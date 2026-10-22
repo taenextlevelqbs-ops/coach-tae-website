@@ -12,9 +12,7 @@ export function Coach() {
     (d) =>
       (d.pathway === "both" ||
         d.pathway === (profile === "A" ? "tackle" : "flag")) &&
-      (d.ages as readonly string[]).includes(
-        profile === "A" ? "11–13" : "8–10",
-      ),
+      (d.ages as readonly string[]).includes("11–13"),
   );
   const selectedDrill =
     allowedDrills.find((d) => d.id === drill)?.id ?? allowedDrills[0].id;
@@ -48,7 +46,7 @@ export function Coach() {
           <p>
             {profile === "A"
               ? "Tackle example, ages 11–13. Assignments and local events are tracked separately for each demo profile."
-              : "Flag example, ages 8–10, including girls flag. Only age- and pathway-matching local activities are offered."}
+              : "Flag example, ages 11–13, including girls flag. Only age- and pathway-matching local activities are offered."}
           </p>
           <label>
             Activity assignment

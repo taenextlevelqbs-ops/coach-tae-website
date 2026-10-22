@@ -15,7 +15,7 @@ const athletes = [
   {
     id: "B",
     name: "Demo athlete B",
-    age: "8–10",
+    age: "11–13",
     pathway: "flag" as const,
     initials: "B",
   },
@@ -29,7 +29,7 @@ export function Family() {
   const [selected, setSelected] = useState<"A" | "B">("A");
   const [preferences, setPreferences] = useState(defaults);
   const [message, setMessage] = useState("");
-  const { setPathway } = useDemo();
+  const { selectProfile } = useDemo();
   const localCount = localState.activities.filter(
     (a) => (a.profile ?? "A") === selected,
   ).length;
@@ -60,9 +60,7 @@ export function Family() {
       <div className="lab-page-heading">
         <div>
           <p className="lab-kicker">FAMILY HUB / GROW TOGETHER</p>
-          <h1>
-            Their development. Your support.
-          </h1>
+          <h1>Their development. Your support.</h1>
           <p className="lab-lede">
             A thoughtful space for guardians to guide the experience, understand
             the work and stay part of the conversation.
@@ -166,7 +164,7 @@ export function Family() {
           <Link
             className="lab-button primary"
             href="/qb-lab/athlete"
-            onClick={() => setPathway(athlete.pathway)}
+            onClick={() => selectProfile(selected)}
           >
             Explore the athlete studio →
           </Link>

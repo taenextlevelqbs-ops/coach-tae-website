@@ -60,7 +60,7 @@ PR #3/Vercel before sharing a deployment URL. Do not merge into main, promote
 to production or modify the separate Phase 0 branch/PR #2. See the redesign
 review for the current access blockers and verification record.
 
-The current athlete-first design, connected learning, security update and review evidence are documented in [Personal quarterback development](docs/QB-LAB-PERSONAL-EXPERIENCE.md). The [earlier redesign record](docs/QB-LAB-REDESIGN.md) is historical.
+The current dashboard replacement and visual verification are documented in [Approved athlete dashboard](docs/QB-LAB-DASHBOARD-REPLACEMENT.md). The [personal development review](docs/QB-LAB-PERSONAL-EXPERIENCE.md) records the preceding implementation. The [earlier redesign record](docs/QB-LAB-REDESIGN.md) is historical.
 
 ## Integrated QB LAB platform
 

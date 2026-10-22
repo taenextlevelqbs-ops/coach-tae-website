@@ -5,7 +5,7 @@ import { useLocalLab } from "./store";
 import { drills } from "./catalog";
 export function ActivityDesk({ profile = "A" }: { profile?: "A" | "B" }) {
   const { state, message } = useLocalLab();
-  const { setPathway } = useDemo();
+  const { setPathway, selectProfile } = useDemo();
   const assignments = state.assignments.filter((a) => a.profile === profile);
   return (
     <section
@@ -51,6 +51,7 @@ export function ActivityDesk({ profile = "A" }: { profile?: "A" | "B" }) {
                   className="lab-text-link"
                   href={`/qb-lab/workouts?activity=${a.drill}&profile=${profile}`}
                   onClick={() => {
+                    selectProfile(profile);
                     const d = drills.find((d) => d.id === a.drill);
                     setPathway(
                       d?.pathway === "flag"

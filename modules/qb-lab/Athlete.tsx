@@ -7,7 +7,7 @@ import { Field } from "./Field";
 import { ActivityDesk } from "./platform/ActivityDesk";
 
 export function Athlete() {
-  const { pathway } = useDemo();
+  const { pathway, profile } = useDemo();
   const [age, setAge] = useState<string>("11–13");
   const [experience, setExperience] = useState<string>("Getting started");
   const [done, setDone] = useState<string[]>([]);
@@ -30,7 +30,7 @@ export function Athlete() {
         </div>
         <PathwaySwitch />
       </div>
-      <ActivityDesk />
+      <ActivityDesk profile={profile.id} />
       <section className="lab-settings" aria-label="Learning context">
         <label>
           Age group

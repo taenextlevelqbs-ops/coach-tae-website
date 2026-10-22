@@ -48,6 +48,7 @@ export function Simulator() {
   );
 }
 function SimulationDesk({ format }: { format: Format }) {
+  const { profile } = useDemo();
   const { state, message: storageMessage } = useLocalLab();
   const available = scenarios.filter((s) => s.format === format);
   const [selected, setSelected] = useState(available[0].id);
@@ -101,7 +102,7 @@ function SimulationDesk({ format }: { format: Format }) {
     const result = evaluate(scenario, target, time, qb);
     setDecision(result);
     setPlaying(false);
-    recordActivity("simulation", scenario.id, result.points);
+    recordActivity("simulation", scenario.id, result.points, profile.id);
   }
   return (
     <>

@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 import { fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { LabShell } from "../../modules/qb-lab/LabShell";
-import { Landing } from "../../modules/qb-lab/Landing";
+import { HomeDashboard } from "../../modules/qb-lab/HomeDashboard";
 import { Athlete } from "../../modules/qb-lab/Athlete";
 import { FootballIQ } from "../../modules/qb-lab/FootballIQ";
 import { Family } from "../../modules/qb-lab/Family";
@@ -224,26 +224,51 @@ describe("QB LAB review desk", () => {
   });
 });
 
-describe("personal athlete home", () => {
-  it("offers a clear first action, honest feedback and a distinct flag context", async () => {
+describe("approved athlete dashboard", () => {
+  it("renders the exact demo dashboard and personalizes fixed profiles without creating records", async () => {
     const user = userEvent.setup();
     render(
       <LabShell>
-        <Landing />
+        <HomeDashboard />
       </LabShell>,
     );
+    await user.selectOptions(
+      screen.getByLabelText("Demo athlete profile"),
+      "B",
+    );
     expect(
-      screen.getByRole("heading", { name: "Good to have you back, QB." }),
+      screen.getByRole("heading", { name: "Good afternoon, Jordan." }),
+    ).toBeInTheDocument();
+    expect(screen.getByText(/Your QB Lab/)).toHaveTextContent(
+      "Your QB Lab · Flag football · Age 12",
+    );
+    expect(
+      screen.getByRole("heading", { name: "Let's work on reading Cover 2." }),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole("link", { name: "Let’s get started →" }),
-    ).toHaveAttribute("href", "/qb-lab/iq");
+      screen.getByRole("link", { name: "Start training" }),
+    ).toHaveAttribute("href", "/qb-lab/session");
     expect(
-      screen.getByText(/No personal coaching feedback yet/),
-    ).toBeInTheDocument();
-    await user.click(screen.getByRole("radio", { name: "Flag" }));
+      screen
+        .getByRole("region", { name: "Your training" })
+        .querySelectorAll("a"),
+    ).toHaveLength(6);
+    expect(screen.getByText("Sample coaching note")).toBeInTheDocument();
+    expect(screen.getByText(/not real athlete records/)).toBeInTheDocument();
+    await user.selectOptions(
+      screen.getByLabelText("Demo athlete profile"),
+      "A",
+    );
     expect(
-      screen.getByText(/Rush, contact, eligibility and clock rules depend/),
+      screen.getByRole("heading", { name: "Good afternoon, Alex." }),
     ).toBeInTheDocument();
+    expect(screen.getByText(/Your QB Lab/)).toHaveTextContent(
+      "Tackle football",
+    );
+    expect(
+      screen
+        .getByRole("navigation", { name: "QB LAB navigation" })
+        .querySelectorAll("a"),
+    ).toHaveLength(4);
   });
 });

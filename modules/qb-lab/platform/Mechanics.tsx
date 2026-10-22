@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import { useDemo } from "../LabShell";
 import { recordActivity } from "./store";
 const phases = [
   {
@@ -24,6 +25,7 @@ const phases = [
   },
 ];
 export function Mechanics() {
+  const { profile } = useDemo();
   const [phase, setPhase] = useState(0);
   const [playing, setPlaying] = useState(false);
   const [view, setView] = useState("side");
@@ -223,7 +225,7 @@ export function Mechanics() {
             className="lab-button"
             disabled={seen.length < 5 || message !== ""}
             onClick={() => {
-              recordActivity("mechanics", mode);
+              recordActivity("mechanics", mode, undefined, profile.id);
               setMessage(
                 "Illustration review recorded locally. No mechanics score was generated.",
               );

@@ -1,0 +1,785 @@
+/* Independent application shell and dashboard. No notebook/marketing components. */
+.qb-application {
+  color-scheme: light;
+  min-height: 100dvh;
+  background: #f5f6f8;
+  color: #202a3a;
+  font:
+    14px/1.5 Arial,
+    Helvetica,
+    sans-serif;
+}
+.qb-application *,
+.qb-application *::before,
+.qb-application *::after {
+  box-sizing: border-box;
+}
+.qb-application a {
+  color: inherit;
+  text-decoration: none;
+}
+.qb-application button,
+.qb-application select {
+  font: inherit;
+  color: inherit;
+}
+.qb-application :focus-visible {
+  outline: 3px solid #2663c5;
+  outline-offset: 4px;
+}
+.qb-application a,
+.qb-application button,
+.qb-application select {
+  touch-action: manipulation;
+}
+.qb-application h1,
+.qb-application h2,
+.qb-application p {
+  margin: 0;
+}
+.app-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.app-skip {
+  position: fixed;
+  top: -100px;
+  left: 12px;
+  z-index: 100;
+  padding: 12px 16px;
+  background: white;
+  border: 2px solid #2663c5;
+  border-radius: 8px;
+}
+.app-skip:focus {
+  top: 8px;
+}
+.app-header {
+  height: 70px;
+  background: white;
+  border-bottom: 1px solid #e5e8ed;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 0 max(24px, calc((100vw - 1080px) / 2));
+}
+.app-wordmark {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+  font-size: 17px;
+  line-height: 1.2;
+  font-weight: 800;
+  letter-spacing: -0.6px;
+}
+.app-mark {
+  display: grid;
+  place-items: center;
+  width: 35px;
+  height: 35px;
+  color: white;
+  background: #273953;
+  border-radius: 10px;
+  font-size: 13px;
+  letter-spacing: -1px;
+}
+.app-wordmark small {
+  display: block;
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: 1.1px;
+  color: #687180;
+  margin-top: 4px;
+}
+.app-navigation {
+  display: flex;
+  height: 100%;
+  align-items: center;
+  gap: 8px;
+}
+.app-navigation a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 42px;
+  padding: 9px 17px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 13px;
+  color: #5b6677;
+}
+.app-navigation a[aria-current="page"] {
+  color: #293c58;
+  background: #edf1f7;
+}
+.app-navigation a:hover {
+  background: #f0f3f7;
+}
+.app-navigation svg {
+  width: 18px;
+  height: 18px;
+}
+.app-profile-picker {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.app-profile-avatar {
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  background: #f0e8e0;
+  color: #71533c;
+  font-size: 12px;
+  font-weight: 700;
+}
+.app-profile-picker select {
+  border: 0;
+  background: transparent;
+  max-width: 126px;
+  min-height: 44px;
+  cursor: pointer;
+  font-size: 12px;
+}
+.app-main {
+  width: min(1080px, calc(100% - 48px));
+  margin: 0 auto;
+  padding: 32px 0;
+}
+.app-home-main {
+  max-width: 940px;
+  padding-block: 30px 20px;
+}
+.athlete-dashboard {
+  display: grid;
+  gap: 22px;
+}
+.dashboard-greeting {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.dashboard-greeting h1 {
+  font-size: 28px;
+  line-height: 1.25;
+  letter-spacing: -0.8px;
+  font-weight: 700;
+}
+.dashboard-greeting p {
+  margin-top: 7px;
+  color: #626e7e;
+  font-size: 13px;
+}
+.dashboard-greeting p span {
+  margin: 0 5px;
+}
+.dashboard-demo-label {
+  border: 1px solid #dce2e9;
+  border-radius: 20px;
+  font-size: 10px;
+  font-weight: 600;
+  color: #647082;
+  padding: 4px 9px;
+  white-space: nowrap;
+}
+.session-card {
+  background: white;
+  padding: 25px 28px;
+  border: 1px solid #e1e5eb;
+  border-radius: 15px;
+  box-shadow: 0 3px 12px #20314b05;
+}
+.session-heading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.session-indicator {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #d78841;
+}
+.session-heading p {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: #6e7786;
+}
+.session-demo {
+  margin-left: auto;
+  font-size: 10px;
+  color: #626e7e;
+}
+.session-card h2 {
+  font-size: 25px;
+  line-height: 1.25;
+  letter-spacing: -0.7px;
+  font-weight: 700;
+}
+.session-description {
+  margin-top: 9px !important;
+  max-width: 550px;
+  font-size: 14px;
+  color: #5b6677;
+}
+.session-action {
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.session-time {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #637083;
+}
+.session-time svg {
+  width: 17px;
+  height: 17px;
+}
+.app-primary-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  background: #2b4263;
+  color: white !important;
+  border: 1px solid #2b4263;
+  border-radius: 8px;
+  padding: 11px 17px;
+  min-height: 44px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.app-primary-button:hover {
+  background: #1c304e;
+}
+.app-primary-button svg {
+  width: 17px;
+  height: 17px;
+}
+.dashboard-training h2 {
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+  margin-bottom: 12px;
+}
+.training-destinations {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+.training-destination {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 19px 16px;
+  border-radius: 12px;
+  background: white;
+  border: 1px solid #e3e7ed;
+  box-shadow: 0 2px 5px #20314b03;
+  min-width: 0;
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s;
+}
+.training-destination:hover {
+  border-color: #bac7d8;
+  box-shadow: 0 3px 10px #20314b0a;
+}
+.destination-icon {
+  display: grid;
+  place-items: center;
+  width: 39px;
+  height: 39px;
+  flex-shrink: 0;
+  border-radius: 11px;
+}
+.destination-icon.blue {
+  background: #edf2fb;
+  color: #526e9a;
+}
+.destination-icon.orange {
+  background: #fbf0e7;
+  color: #b47a45;
+}
+.destination-icon.violet {
+  background: #f0eef9;
+  color: #7a6a9d;
+}
+.destination-icon.green {
+  background: #ebf4ef;
+  color: #56806a;
+}
+.training-destination strong {
+  display: block;
+  font-size: 14px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.training-destination small {
+  display: block;
+  margin-top: 3px;
+  font-size: 11px;
+  color: #626e7e;
+}
+.destination-arrow {
+  margin-left: auto;
+  color: #9aa4b1;
+}
+.destination-arrow svg {
+  width: 15px;
+  height: 15px;
+}
+.coach-note-card {
+  display: flex;
+  align-items: start;
+  gap: 15px;
+  padding: 20px 23px;
+  background: white;
+  border: 1px solid #e3e7ed;
+  border-radius: 12px;
+}
+.coach-note-avatar {
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: #eef1f5;
+  color: #5b6d84;
+  font-size: 11px;
+  font-weight: 700;
+}
+.coach-note-card > div {
+  flex: 1;
+}
+.coach-note-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 7px;
+}
+.coach-note-heading h2 {
+  font-size: 14px;
+  font-weight: 700;
+}
+.coach-note-heading span {
+  font-size: 10px;
+  color: #626e7e;
+}
+.coach-note-card blockquote {
+  margin: 0;
+  max-width: 720px;
+  font-size: 13px;
+  line-height: 1.6;
+  color: #647082;
+}
+.dashboard-disclosure {
+  font-size: 10px;
+  color: #626e7e;
+}
+.app-footer {
+  width: min(1080px, calc(100% - 48px));
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  color: #626e7e;
+  font-size: 10px;
+  padding: 12px 0 24px;
+}
+.app-footer > span {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.app-footer a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  white-space: nowrap;
+}
+.app-demo-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #8a96a7;
+  flex-shrink: 0;
+}
+/* Existing interactive workspaces live inside the new shell; their controls stay intact. */
+.app-tool-workspace.qb-lab {
+  min-height: auto;
+  background: transparent;
+  --lab-paper: #f5f6f8;
+  --lab-panel: white;
+  --lab-display: Arial, Helvetica, sans-serif;
+}
+.app-tool-workspace h1 {
+  font-size: clamp(26px, 3vw, 36px);
+  line-height: 1.2;
+  letter-spacing: -0.8px;
+}
+.app-tool-workspace h2 {
+  font-size: 23px;
+}
+.app-tool-workspace .lab-page-heading {
+  padding-top: 8px;
+}
+.app-tool-workspace .lab-panel,
+.app-tool-workspace .lab-settings {
+  border-radius: 12px;
+}
+.app-tool-workspace .lab-button {
+  border-radius: 8px;
+}
+.app-profile-page {
+  background: white;
+  border: 1px solid #e3e7ed;
+  border-radius: 14px;
+  padding: 25px;
+}
+.app-profile-page h1 {
+  font-size: 26px;
+  margin-bottom: 12px;
+}
+.app-profile-page p {
+  margin-bottom: 16px;
+  color: #647082;
+}
+.app-profile-links {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 20px;
+}
+.app-profile-links a {
+  padding: 16px;
+  background: #f6f8fa;
+  border-radius: 9px;
+  border: 1px solid #e4e9ef;
+}
+.app-session-steps {
+  display: grid;
+  gap: 12px;
+  margin: 22px 0;
+}
+.app-session-steps article {
+  border: 1px solid #e4e9ef;
+  padding: 18px;
+  border-radius: 10px;
+}
+.app-session-steps h2 {
+  font-size: 19px;
+  margin-bottom: 7px;
+}
+.app-session-steps p {
+  margin-bottom: 12px;
+}
+@media (max-width: 800px) {
+  .app-header {
+    padding: 0 20px;
+    gap: 16px;
+  }
+  .app-navigation {
+    gap: 2px;
+  }
+  .app-navigation a {
+    padding-inline: 12px;
+  }
+  .destination-arrow {
+    display: none;
+  }
+  .training-destination {
+    gap: 9px;
+    padding: 15px 12px;
+  }
+}
+@media (max-width: 600px) {
+  .qb-application {
+    padding-bottom: calc(64px + env(safe-area-inset-bottom));
+  }
+  .app-header {
+    height: 57px;
+    padding: 0 16px;
+    gap: 12px;
+  }
+  .app-wordmark {
+    gap: 8px;
+    font-size: 15px;
+  }
+  .app-mark {
+    width: 30px;
+    height: 30px;
+    font-size: 11px;
+    border-radius: 9px;
+  }
+  .app-wordmark small {
+    font-size: 7px;
+    margin-top: 3px;
+  }
+  .app-profile-avatar {
+    width: 27px;
+    height: 27px;
+  }
+  .app-profile-picker select {
+    font-size: 11px;
+    max-width: 109px;
+  }
+  .app-navigation {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: calc(62px + env(safe-area-inset-bottom));
+    padding: 4px 8px calc(4px + env(safe-area-inset-bottom));
+    background: #fffffff5;
+    border-top: 1px solid #e0e5ed;
+    z-index: 30;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    backdrop-filter: blur(10px);
+  }
+  .app-navigation a {
+    flex-direction: column;
+    gap: 3px;
+    padding: 6px;
+    min-height: 50px;
+    font-size: 10px;
+    border-radius: 8px;
+  }
+  .app-navigation svg {
+    width: 20px;
+    height: 20px;
+  }
+  .app-navigation a[aria-current="page"] {
+    background: transparent;
+    color: #243f69;
+  }
+  .app-navigation a[aria-current="page"] svg {
+    stroke-width: 2.2;
+  }
+  .app-main {
+    width: calc(100% - 32px);
+    padding: 20px 0;
+  }
+  .app-home-main {
+    padding: 18px 0 12px;
+  }
+  .athlete-dashboard {
+    gap: 16px;
+  }
+  .dashboard-greeting {
+    gap: 8px;
+    align-items: start;
+  }
+  .dashboard-greeting h1 {
+    font-size: 23px;
+    letter-spacing: -0.7px;
+  }
+  .dashboard-greeting p {
+    font-size: 11px;
+    margin-top: 5px;
+  }
+  .dashboard-greeting p span {
+    margin: 0 3px;
+  }
+  .dashboard-demo-label {
+    font-size: 8px;
+    padding: 3px 6px;
+    margin-top: 3px;
+  }
+  .session-card {
+    padding: 17px 18px;
+    border-radius: 13px;
+  }
+  .session-heading {
+    margin-bottom: 9px;
+    gap: 6px;
+  }
+  .session-heading p {
+    font-size: 9px;
+    letter-spacing: 0.7px;
+  }
+  .session-demo {
+    font-size: 9px;
+  }
+  .session-card h2 {
+    font-size: 23px;
+    max-width: none;
+    text-wrap: balance;
+  }
+  .session-description {
+    font-size: 12px;
+    line-height: 1.5;
+    margin-top: 7px !important;
+  }
+  .session-action {
+    margin-top: 14px;
+    gap: 12px;
+  }
+  .session-time {
+    font-size: 11px;
+    gap: 5px;
+  }
+  .app-primary-button {
+    min-height: 42px;
+    padding: 9px 12px;
+    font-size: 12px;
+    gap: 10px;
+  }
+  .dashboard-training h2 {
+    font-size: 16px;
+    margin-bottom: 10px;
+  }
+  .training-destinations {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+  .training-destination {
+    padding: 11px 10px;
+    gap: 9px;
+    border-radius: 10px;
+    min-height: 64px;
+  }
+  .destination-icon {
+    width: 29px;
+    height: 29px;
+    border-radius: 8px;
+  }
+  .destination-icon svg {
+    width: 18px;
+    height: 18px;
+  }
+  .training-destination strong {
+    font-size: 12px;
+  }
+  .training-destination small {
+    font-size: 10px;
+    margin-top: 2px;
+  }
+  .coach-note-card {
+    padding: 15px;
+    gap: 10px;
+    border-radius: 11px;
+  }
+  .coach-note-avatar {
+    width: 29px;
+    height: 29px;
+    font-size: 10px;
+  }
+  .coach-note-heading {
+    flex-wrap: wrap;
+    gap: 2px 8px;
+    margin-bottom: 5px;
+  }
+  .coach-note-heading h2 {
+    font-size: 12px;
+  }
+  .coach-note-heading span {
+    font-size: 8px;
+  }
+  .coach-note-card blockquote {
+    font-size: 11px;
+    line-height: 1.5;
+  }
+  .dashboard-disclosure {
+    font-size: 9px;
+    line-height: 1.5;
+  }
+  .app-footer {
+    width: calc(100% - 32px);
+    padding: 5px 0 16px;
+    font-size: 9px;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .app-footer > span {
+    display: block;
+  }
+  .app-demo-dot {
+    display: none;
+  }
+  .app-profile-page {
+    padding: 20px;
+  }
+  .app-profile-links {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 359px) {
+  .app-header {
+    padding-inline: 12px;
+  }
+  .app-main {
+    width: calc(100% - 24px);
+  }
+  .dashboard-greeting h1 {
+    font-size: 21px;
+  }
+  .app-home-main {
+    padding-top: 12px;
+  }
+  .athlete-dashboard {
+    gap: 10px;
+  }
+  .session-card {
+    padding: 13px 14px;
+  }
+  .session-card h2 {
+    font-size: 21px;
+  }
+  .session-action {
+    margin-top: 10px;
+  }
+  .training-destination {
+    min-height: 56px;
+  }
+  .coach-note-card {
+    padding: 12px;
+  }
+  .dashboard-demo-label {
+    display: none;
+  }
+  .training-destination {
+    gap: 6px;
+    padding: 10px 7px;
+  }
+  .training-destination strong {
+    font-size: 11px;
+  }
+  .training-destination small {
+    font-size: 10px;
+  }
+  .destination-icon {
+    width: 25px;
+    height: 27px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .qb-application * {
+    transition: none !important;
+    animation: none !important;
+    scroll-behavior: auto !important;
+  }
+}

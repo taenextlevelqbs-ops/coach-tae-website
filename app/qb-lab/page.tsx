@@ -1,4 +1,4 @@
-import { Landing } from "@/modules/qb-lab/Landing";
+import { HomeDashboard } from "@/modules/qb-lab/HomeDashboard";
 export default function Page() {
-  return <Landing />;
+  return <HomeDashboard />;
 }

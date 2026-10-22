@@ -7,17 +7,18 @@ import { ageGroups, experiences } from "../demo";
 import { PathwaySwitch, useDemo } from "../LabShell";
 export function Workouts({
   initialActivity = "observe",
-  profile = "A",
+  profile,
 }: {
   initialActivity?: string;
   profile?: "A" | "B";
 }) {
-  const { pathway } = useDemo();
+  const { pathway, profile: demoProfile } = useDemo();
+  const activeProfile = profile ?? demoProfile.id;
   return (
     <WorkoutsBody
-      key={pathway + profile}
+      key={pathway + activeProfile}
       initialActivity={initialActivity}
-      profile={profile}
+      profile={activeProfile}
     />
   );
 }
@@ -30,7 +31,7 @@ function WorkoutsBody({
 }) {
   const { pathway } = useDemo();
   const { state, message: storageMessage } = useLocalLab();
-  const [age, setAge] = useState<string>(profile === "B" ? "8–10" : "11–13");
+  const [age, setAge] = useState<string>("11–13");
   const [experience, setExperience] = useState("All");
   const [category, setCategory] = useState("All");
   const [selected, setSelected] = useState<string>(initialActivity);

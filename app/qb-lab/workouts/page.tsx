@@ -13,7 +13,9 @@ export default async function Page({
   return (
     <Workouts
       initialActivity={params.activity}
-      profile={params.profile === "B" ? "B" : "A"}
+      profile={
+        params.profile === "B" ? "B" : params.profile === "A" ? "A" : undefined
+      }
     />
   );
 }

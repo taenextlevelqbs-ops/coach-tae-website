@@ -1,4 +1,5 @@
 "use client";
+import { useDemo } from "../LabShell";
 import { useState } from "react";
 import { drills, goals } from "./catalog";
 import {
@@ -10,6 +11,11 @@ import {
 } from "./store";
 export function Progress() {
   const { state, message } = useLocalLab();
+  const { profile } = useDemo();
+  const activities = state.activities.filter(
+    (a) => (a.profile ?? "A") === profile.id,
+  );
+  const assignments = state.assignments.filter((a) => a.profile === profile.id);
   const [notice, setNotice] = useState("");
   const [confirm, setConfirm] = useState(false);
   return (
@@ -19,9 +25,9 @@ export function Progress() {
           <p className="lab-kicker">PROGRESS CENTER / ACTUAL LOCAL EVENTS</p>
           <h1>The work you recorded.</h1>
           <p className="lab-lede">
-            The most recent 200 events from this browser’s synthetic workspace. Self-reported
-            completions and toy simulation checks are not verified athlete
-            development metrics.
+            The most recent browser events for demo athlete {profile.name}.
+            Self-reported completions and toy simulation checks are not verified
+            athlete development metrics.
           </p>
         </div>
         <button className="lab-button" onClick={downloadLab}>
@@ -31,19 +37,19 @@ export function Progress() {
       <div className="lab-app-metrics">
         <div>
           <strong>
-            {state.activities.filter((a) => a.kind === "workout").length}
+            {activities.filter((a) => a.kind === "workout").length}
           </strong>
           <span>Activity completions</span>
         </div>
         <div>
           <strong>
-            {state.activities.filter((a) => a.kind === "simulation").length}
+            {activities.filter((a) => a.kind === "simulation").length}
           </strong>
           <span>Simulation decisions</span>
         </div>
         <div>
           <strong>
-            {state.assignments.filter((a) => a.status === "complete").length}
+            {assignments.filter((a) => a.status === "complete").length}
           </strong>
           <span>Completed local assignments</span>
         </div>
@@ -55,14 +61,14 @@ export function Progress() {
       <div className="lab-dashboard-grid">
         <section className="lab-panel">
           <h2>Session history</h2>
-          {state.activities.length === 0 ? (
+          {activities.length === 0 ? (
             <p>
               No activity recorded. Complete a workout or make a simulator
               decision to begin.
             </p>
           ) : (
             <ol className="lab-activity-list">
-              {[...state.activities].reverse().map((a) => (
+              {[...activities].reverse().map((a) => (
                 <li key={a.id}>
                   <span className="lab-kicker">
                     {a.kind} · demo {a.profile ?? "A"}

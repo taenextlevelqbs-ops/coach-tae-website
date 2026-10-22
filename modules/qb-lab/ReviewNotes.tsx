@@ -1,5 +1,6 @@
 "use client";
 import { useRef, useState } from "react";
+import { useDemo } from "./LabShell";
 import { filmComments } from "./demo";
 import { updateLab, useLocalLab } from "./platform/store";
 import { reviewTags, type FilmMoment, type ReviewTag } from "./review-model";
@@ -15,6 +16,7 @@ export function ReviewNotes({
   onSeek: (time: number) => void;
 }) {
   const { state } = useLocalLab();
+  const { profile } = useDemo();
   const [tag, setTag] = useState<ReviewTag>("Alignment");
   const [notice, setNotice] = useState("");
   const nextId = useRef(Math.max(0, ...moments.map((moment) => moment.id)) + 1);
@@ -49,7 +51,7 @@ export function ReviewNotes({
           if (
             !state.assignments.some(
               (a) =>
-                a.profile === "A" &&
+                a.profile === profile.id &&
                 a.drill === "observe" &&
                 a.status === "assigned",
             )
@@ -60,7 +62,7 @@ export function ReviewNotes({
                 ...s.assignments,
                 {
                   id: crypto.randomUUID(),
-                  profile: "A" as const,
+                  profile: profile.id,
                   drill: "observe",
                   status: "assigned" as const,
                 },
@@ -68,7 +70,7 @@ export function ReviewNotes({
             }));
           }
           setNotice(
-            "Observation correction assigned locally to demo A. No coach or athlete was notified.",
+            `Observation correction assigned locally to demo ${profile.id}. No coach or athlete was notified.`,
           );
         }}
       >

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { LabShell } from "@/modules/qb-lab/LabShell";
 import "./lab.css";
+import "./application.css";
 export const metadata: Metadata = {
   title: "QB LAB Preview",
   description:

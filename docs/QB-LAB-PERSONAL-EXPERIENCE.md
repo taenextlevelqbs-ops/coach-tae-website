@@ -1,5 +1,7 @@
 # Personal quarterback development experience
 
+The home dashboard and shell in this record are superseded by [Approved athlete dashboard replacement](QB-LAB-DASHBOARD-REPLACEMENT.md).
+
 This review supersedes the field-notebook visual direction in `QB-LAB-REDESIGN.md`. QB LAB is an athlete’s development space: Coach Tae is with you wherever you train. The public coaching website is preserved.
 
 ## Product changes
