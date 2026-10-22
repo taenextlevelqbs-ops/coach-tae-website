@@ -34,3 +34,26 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## QB LAB local front-end preview
+
+The independent `feat/qb-lab-experience` branch adds the `/qb-lab` landing page,
+athlete studio, observation exercise, synthetic film room and family hub. Read
+[the front-end review](docs/QB-LAB-FRONTEND-REVIEW.md) for the full changed-file
+manifest, interactions, source verification, security limits and backend work
+that is not implemented.
+
+Use Node 24.19.0/npm 11.9.0. Run `npm ci --cache /tmp/coach-tae-npm-cache`, then
+`npm run dev -- --hostname 127.0.0.1` for local development. Validation commands
+are `npm run lint`, `npm run typecheck`, `npm test` (component tests),
+`npm run build`, and `npm run test:browser` (build first and install Playwright's
+Chromium, or set `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium` in cloud).
+
+All athlete profiles, feedback and field animations are synthetic. No real
+authentication, file uploads, payments, notifications, athlete statistics or
+personal information storage exists in this preview. The full npm audit still
+reports the known development-only braces chain; it is not suppressed.
+
+Keep this branch local until Vercel's skip configuration is verified for its
+exact name. The Phase 0 branch exception does not establish that this branch
+will be skipped. Do not merge or deploy this preview.

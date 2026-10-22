@@ -1,0 +1,250 @@
+import type { Pathway } from "./demo";
+
+export function Field({
+  pathway = "tackle",
+  progress = 0,
+  routes = true,
+  annotate = false,
+}: {
+  pathway?: Pathway;
+  progress?: number;
+  routes?: boolean;
+  annotate?: boolean;
+}) {
+  const turn = Math.min(1, Math.max(0, (progress - 20) / 60));
+  const offense =
+    pathway === "tackle"
+      ? [
+          [320, 340],
+          [360, 340],
+          [400, 340],
+          [440, 340],
+          [480, 340],
+          [400, 410],
+          [100, 330],
+          [220, 330],
+          [580, 330],
+          [700, 330],
+          [420, 450],
+        ]
+      : [
+          [400, 410],
+          [400, 340],
+          [120, 330],
+          [560, 330],
+          [680, 330],
+        ];
+  const underneath =
+    pathway === "tackle"
+      ? [
+          [285, 290],
+          [340, 290],
+          [400, 290],
+          [460, 290],
+          [515, 290],
+          [120, 220],
+          [240, 220],
+          [560, 220],
+          [680, 220],
+        ]
+      : [
+          [235, 220],
+          [400, 260],
+          [565, 220],
+        ];
+  return (
+    <svg
+      className="lab-field"
+      viewBox="0 0 800 500"
+      role="img"
+      aria-label={`${pathway === "tackle" ? "Eleven" : "Five"} players per side. ${progress < 40 ? "Two deep defenders in the initial illustration" : "Illustrated defenders rotating from the initial two-high picture"}. Movement is illustrative, not a validated play outcome.`}
+    >
+      <desc>
+        Offense moves toward the top. White circles represent offensive players.
+        Blue circles represent defenders. This schematic is not to scale. The
+        shaded deep area is a teaching aid, not a regulation field marking.
+      </desc>
+      <rect width="800" height="500" rx="20" fill="#0b2022" />
+      {Array.from({ length: 10 }, (_, index) => (
+        <g key={index}>
+          <path
+            d={`M35 ${index * 50 + 25}H765`}
+            stroke="#84b8b1"
+            strokeOpacity=".18"
+          />
+          <text
+            x="45"
+            y={index * 50 + 18}
+            fill="#84b8b1"
+            opacity=".55"
+            fontSize="12"
+          >
+            {index < 5 ? (index + 1) * 10 : (10 - index) * 10}
+          </text>
+        </g>
+      ))}
+      <path
+        d="M160 20V480M640 20V480"
+        stroke="#84b8b1"
+        strokeDasharray="3 12"
+        strokeOpacity=".25"
+      />
+      <rect
+        x="75"
+        y="55"
+        width="650"
+        height="110"
+        rx="10"
+        fill="#91e2ec"
+        fillOpacity=".07"
+        stroke="#91e2ec"
+        strokeDasharray="5 7"
+        strokeOpacity=".35"
+      />
+      <text
+        x="400"
+        y="78"
+        textAnchor="middle"
+        fill="#a5e0e5"
+        fontSize="12"
+        letterSpacing="4"
+      >
+        DEEP AREA / OBSERVE FIRST
+      </text>
+      {routes && (
+        <g
+          fill="none"
+          stroke="#e3efdd"
+          strokeWidth="3"
+          opacity=".55"
+          strokeDasharray="7 6"
+        >
+          <path
+            d={
+              pathway === "tackle"
+                ? "M100 330V180L240 120"
+                : "M120 330V180L240 120"
+            }
+          />
+          <path
+            d={
+              pathway === "tackle"
+                ? "M220 330L340 220H490"
+                : "M400 340L340 220H490"
+            }
+          />
+          <path d={pathway === "tackle" ? "M700 330V160" : "M680 330V160"} />
+        </g>
+      )}
+      <path
+        d="M75 340H725"
+        stroke="#dfdaae"
+        strokeDasharray="6 6"
+        strokeOpacity=".55"
+      />
+      {offense.map(([x, y], i) => (
+        <g key={`o${i}`}>
+          <circle
+            cx={x}
+            cy={y - (i > 5 ? turn * 70 : 0)}
+            r="12"
+            fill="#ecf0e5"
+          />
+          <text
+            x={x}
+            y={y + 4 - (i > 5 ? turn * 70 : 0)}
+            textAnchor="middle"
+            fontSize="9"
+            fontWeight="bold"
+            fill="#0b2022"
+          >
+            {(pathway === "tackle" && i === 5) ||
+            (pathway === "flag" && i === 0)
+              ? "QB"
+              : "O"}
+          </text>
+        </g>
+      ))}
+      {underneath.map(([x, y], i) => (
+        <g key={`d${i}`}>
+          <circle
+            cx={x + (i % 2 ? 1 : -1) * turn * 15}
+            cy={y - turn * 12}
+            r="12"
+            fill="#85dbe9"
+          />
+          <text
+            x={x + (i % 2 ? 1 : -1) * turn * 15}
+            y={y + 4 - turn * 12}
+            textAnchor="middle"
+            fontSize="9"
+            fill="#0b2022"
+          >
+            D
+          </text>
+        </g>
+      ))}
+      <g>
+        <circle
+          cx={240 + turn * 160}
+          cy={110 - turn * 15}
+          r="15"
+          fill="#85dbe9"
+        />
+        <text
+          x={240 + turn * 160}
+          y={114 - turn * 15}
+          textAnchor="middle"
+          fill="#0b2022"
+          fontSize="10"
+          fontWeight="bold"
+        >
+          D1
+        </text>
+        <circle
+          cx={560 - turn * 50}
+          cy={110 + turn * 120}
+          r="15"
+          fill="#85dbe9"
+        />
+        <text
+          x={560 - turn * 50}
+          y={114 + turn * 120}
+          textAnchor="middle"
+          fill="#0b2022"
+          fontSize="10"
+          fontWeight="bold"
+        >
+          D2
+        </text>
+      </g>
+      {annotate && (
+        <g>
+          <ellipse
+            cx="510"
+            cy="230"
+            rx="65"
+            ry="45"
+            fill="none"
+            stroke="#f3d58b"
+            strokeWidth="3"
+          />
+          <path d="M620 130L554 196" stroke="#f3d58b" strokeWidth="3" />
+          <text x="622" y="120" fill="#f3d58b" fontSize="15">
+            Notice the change in depth
+          </text>
+        </g>
+      )}
+      <text
+        x="400"
+        y="484"
+        textAnchor="middle"
+        fill="#c7ddd6"
+        fontSize="11"
+        letterSpacing="3"
+      >
+        ILLUSTRATIVE MOVEMENT · NO OUTCOME PREDICTION
+      </text>
+    </svg>
+  );
+}

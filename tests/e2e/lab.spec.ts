@@ -1,0 +1,221 @@
+import { expect, test } from "@playwright/test";
+import AxeBuilder from "@axe-core/playwright";
+import { readFile } from "node:fs/promises";
+
+test.beforeEach(async ({ page }) => {
+  await page.route("**/*", (route) =>
+    new URL(route.request().url()).origin === "http://127.0.0.1:3150"
+      ? route.continue()
+      : route.abort("blockedbyclient"),
+  );
+});
+test("existing homepage, navigation, prices and booking links remain functional", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await expect(page).toHaveTitle("Coach Tae | QB Development");
+  await expect(page.locator('a[href*="calendly.com"]')).toHaveCount(9);
+  for (const link of await page.locator('a[href*="calendly.com"]').all()) {
+    expect([
+      "https://calendly.com/taenextlevelqbs/individual-training-clone",
+      "https://calendly.com/taenextlevelqbs/group-training",
+    ]).toContain(await link.getAttribute("href"));
+    await expect(link).toHaveAttribute("rel", /noopener noreferrer/);
+  }
+  for (const price of ["$60", "$85", "$240"])
+    await expect(
+      page.locator("#training").getByText(price, { exact: true }),
+    ).toBeVisible();
+  const toggle = page.getByRole("button", {
+    name: /^(Open|Close) site navigation$/,
+  });
+  for (const id of ["training", "about", "attack", "foundation", "apparel"]) {
+    if (await toggle.isVisible()) {
+      await toggle.click();
+      await expect(toggle).toHaveAttribute("aria-expanded", "true");
+      await page.locator(`#mobile-site-navigation a[href="#${id}"]`).click();
+      await expect(toggle).toHaveAttribute("aria-expanded", "false");
+    } else await page.locator(`.desktop-nav-links a[href="#${id}"]`).click();
+    await expect(page).toHaveURL(new RegExp(`#${id}$`));
+    await expect(page.locator(`#${id}`)).toBeInViewport();
+  }
+  if (await toggle.isVisible()) await toggle.click();
+  await page
+    .getByRole("link", { name: "QB LAB", exact: true })
+    .filter({ visible: true })
+    .click();
+  await expect(page).toHaveURL(/\/qb-lab$/);
+});
+for (const route of ["", "/athlete", "/iq", "/film", "/family"]) {
+  test(`${route || "/landing"} is reachable and reflows without runtime errors`, async ({
+    page,
+  }) => {
+    const errors: string[] = [];
+    page.on("pageerror", (e) => errors.push(e.message));
+    await page.goto(`/qb-lab${route}`);
+    await expect(page.getByRole("main")).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1 })).toHaveCount(1);
+    expect(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= innerWidth,
+      ),
+    ).toBe(true);
+    await expect(
+      page.getByText("INTERACTIVE DEMO", { exact: true }),
+    ).toBeVisible();
+    await expect(page.locator('meta[name="robots"]')).toHaveAttribute(
+      "content",
+      /noindex/,
+    );
+    expect(errors).toEqual([]);
+  });
+}
+test("athlete context and actual demo task state update and reset", async ({
+  page,
+}) => {
+  await page.goto("/qb-lab/athlete");
+  await page.getByRole("radio", { name: "Flag", exact: true }).check();
+  for (const age of ["8–10", "11–13", "14–15", "16–18", "College"]) {
+    await page.getByLabel("Age group", { exact: true }).selectOption(age);
+    await expect(
+      page.getByText(`Flag · ${age} · Getting started`, { exact: true }),
+    ).toBeVisible();
+  }
+  await page.getByLabel("Experience", { exact: true }).selectOption("Advanced");
+  await page
+    .getByRole("checkbox", { name: /Observe a starting alignment/ })
+    .check();
+  await expect(page.getByRole("status").first()).toHaveText(
+    "1 of 3 demo tasks checked",
+  );
+  await page.getByRole("button", { name: "Reset checklist" }).click();
+  await expect(
+    page.getByText("0 of 3 demo tasks checked", { exact: true }),
+  ).toBeVisible();
+  await page.reload();
+  await expect(
+    page.getByText("0 of 3 demo tasks checked", { exact: true }),
+  ).toBeVisible();
+});
+test("field study provides explanations and keyboard timeline controls, not skill predictions", async ({
+  page,
+}) => {
+  await page.goto("/qb-lab/iq");
+  await expect(
+    page.getByRole("button", { name: /Explain my answer/ }),
+  ).toBeDisabled();
+  const slider = page.getByRole("slider", { name: "Illustration timeline" });
+  await slider.focus();
+  await page.keyboard.press("End");
+  await expect(slider).toHaveValue("100");
+  await page.getByRole("button", { name: "Start over" }).click();
+  for (const answer of [
+    "Two deep defenders",
+    "No, confirm the assignments after the snap",
+    "The defenders’ movement and developing throwing windows",
+  ]) {
+    await page.getByRole("radio", { name: answer, exact: true }).check();
+    await page.getByRole("button", { name: /Explain my answer/ }).click();
+    await expect(
+      page.getByText("That matches this observation.", { exact: true }),
+    ).toBeVisible();
+    const next = page.getByRole("button", { name: /Next observation/ });
+    if (await next.count()) await next.click();
+  }
+  await expect(
+    page.getByText(/This is not a football IQ rating/),
+  ).toBeVisible();
+  await page.getByRole("button", { name: "Repeat field study" }).click();
+  await expect(
+    page.getByRole("button", { name: /Explain my answer/ }),
+  ).toBeDisabled();
+});
+test("film submission is synthetic, dialog is keyboard accessible and timestamp controls work", async ({
+  page,
+}) => {
+  const posts: string[] = [];
+  page.on("request", (r) => {
+    if (r.method() === "POST") posts.push(r.url());
+  });
+  await page.goto("/qb-lab/film");
+  const open = page.getByRole("button", { name: /Prepare a demo submission/ });
+  await open.click();
+  await expect(page.getByRole("dialog")).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(page.getByRole("dialog")).toBeHidden();
+  await expect(open).toBeFocused();
+  await open.click();
+  await page
+    .getByLabel("Demo clip", { exact: true })
+    .selectOption("Rotation study");
+  await page.getByRole("checkbox", { name: /I understand/ }).check();
+  await page.getByRole("button", { name: /Queue synthetic review/ }).click();
+  await expect(page.getByRole("status")).toContainText(
+    "Demo review queued: Rotation study",
+  );
+  await expect(page.locator('input[type="file"]')).toHaveCount(0);
+  await page.getByRole("button", { name: /Jump to 5 seconds/ }).click();
+  await expect(
+    page.getByRole("slider", { name: "Review timeline" }),
+  ).toHaveValue("5");
+  await page.getByRole("button", { name: "+0.1s", exact: true }).click();
+  await expect(
+    page.getByRole("slider", { name: "Review timeline" }),
+  ).toHaveValue("5.1");
+  await page
+    .getByRole("button", { name: "Compare moments", exact: true })
+    .click();
+  await expect(
+    page.getByText("LATER MOMENT / +2 SECONDS", { exact: true }),
+  ).toBeVisible();
+  await page
+    .getByRole("button", { name: "Hide annotation", exact: true })
+    .click();
+  await expect(
+    page.getByRole("button", { name: "Show annotation", exact: true }),
+  ).toHaveAttribute("aria-pressed", "false");
+  expect(posts).toEqual([]);
+});
+test("family preferences stay separate and exported data contains only fixed demo profiles", async ({
+  page,
+}) => {
+  await page.goto("/qb-lab/family");
+  await page.getByRole("button", { name: /Demo athlete B/ }).click();
+  await expect(
+    page.getByRole("checkbox", { name: /Session reminders/ }),
+  ).not.toBeChecked();
+  await page.getByRole("checkbox", { name: /Session reminders/ }).check();
+  await page.getByRole("button", { name: /Demo athlete A/ }).click();
+  await expect(
+    page.getByRole("checkbox", { name: /Session reminders/ }),
+  ).toBeChecked();
+  const downloadPromise = page.waitForEvent("download");
+  await page
+    .getByRole("button", { name: "Export demo settings →", exact: true })
+    .click();
+  const download = await downloadPromise;
+  const data = JSON.parse(await readFile((await download.path())!, "utf8"));
+  expect(data.demonstration).toBe(true);
+  expect(data.profiles.map((p: { id: string }) => p.id)).toEqual(["A", "B"]);
+  await page.getByRole("button", { name: "Reset preferences" }).click();
+  await page.getByRole("button", { name: /Demo athlete B/ }).click();
+  await expect(
+    page.getByRole("checkbox", { name: /Session reminders/ }),
+  ).not.toBeChecked();
+  expect(await page.evaluate(() => localStorage.length)).toBe(0);
+});
+for (const route of ["", "/athlete", "/iq", "/film", "/family"]) {
+  test(`${route || "/landing"} passes automated WCAG checks and has a keyboard skip link`, async ({
+    page,
+  }) => {
+    await page.goto(`/qb-lab${route}`);
+    await page.keyboard.press("Tab");
+    await expect(
+      page.getByRole("link", { name: "Skip to QB LAB content" }),
+    ).toBeFocused();
+    const results = await new AxeBuilder({ page })
+      .withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"])
+      .analyze();
+    expect(results.violations).toEqual([]);
+  });
+}

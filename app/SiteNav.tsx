@@ -61,12 +61,18 @@ export default function SiteNav() {
                   {link.label}
                 </a>
               ))}
+              <a href="/qb-lab">QB LAB</a>
               <a href={shopUrl} target="_blank" rel="noopener noreferrer">
                 Shop <span className="sr-only">(opens in a new tab)</span>
               </a>
             </div>
 
-            <a className="nav-booking-link" href={individualBookingUrl} target="_blank" rel="noopener noreferrer">
+            <a
+              className="nav-booking-link"
+              href={individualBookingUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               Book a session <span aria-hidden="true">↗</span>
               <span className="sr-only">(opens in a new tab)</span>
             </a>
@@ -75,12 +81,17 @@ export default function SiteNav() {
               ref={menuButtonRef}
               className="menu-toggle"
               type="button"
-              aria-label={isOpen ? "Close site navigation" : "Open site navigation"}
+              aria-label={
+                isOpen ? "Close site navigation" : "Open site navigation"
+              }
               aria-expanded={isOpen}
               aria-controls="mobile-site-navigation"
               onClick={() => setIsOpen((open) => !open)}
             >
-              <span aria-hidden="true" className={isOpen ? "menu-icon is-open" : "menu-icon"}>
+              <span
+                aria-hidden="true"
+                className={isOpen ? "menu-icon is-open" : "menu-icon"}
+              >
                 <span />
                 <span />
               </span>
@@ -97,13 +108,28 @@ export default function SiteNav() {
               <a key={link.href} href={link.href} onClick={closeMenu}>
                 <span className="mobile-nav-number">0{index + 1}</span>
                 {link.label}
-                <span className="mobile-nav-arrow" aria-hidden="true">↗</span>
+                <span className="mobile-nav-arrow" aria-hidden="true">
+                  ↗
+                </span>
               </a>
             ))}
-            <a href={shopUrl} target="_blank" rel="noopener noreferrer" onClick={closeMenu}>
+            <a href="/qb-lab" onClick={closeMenu}>
+              QB LAB{" "}
+              <span aria-hidden="true" className="mobile-nav-arrow">
+                ↗
+              </span>
+            </a>
+            <a
+              href={shopUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={closeMenu}
+            >
               <span className="mobile-nav-number">06</span>
               Shop DMV Attack
-              <span className="mobile-nav-arrow" aria-hidden="true">↗</span>
+              <span className="mobile-nav-arrow" aria-hidden="true">
+                ↗
+              </span>
               <span className="sr-only">(opens in a new tab)</span>
             </a>
           </div>
@@ -111,7 +137,11 @@ export default function SiteNav() {
       </header>
 
       <nav className="mobile-booking-bar" aria-label="Quick training booking">
-        <a href={individualBookingUrl} target="_blank" rel="noopener noreferrer">
+        <a
+          href={individualBookingUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           <span>PRIVATE</span>
           <strong>Book 1-on-1</strong>
           <span className="sr-only">(opens in a new tab)</span>
