@@ -1,5 +1,7 @@
 # QB LAB redesign — field notebook / film console
 
+Historical visual-redesign record. The [integrated platform review](QB-LAB-PLATFORM-REVIEW.md) supersedes this document for current navigation, persistence, features and verification.
+
 ## Design concept (recorded before implementation)
 
 The product is organized as a quarterback's working notebook. Warm off-white pages, ink-blue headings, narrow rules and a compact numbered masthead replace the old fixed sidebar and repeated dark rounded cards. Sky blue connects to the existing Coach Tae public site's accent. Amber denotes a teaching observation, never an ability score. No external font service is added: a locally hosted Barlow Condensed bold display face (Latin WOFF2, SIL Open Font License), readable sans body and monospaced time/sequence labels form the type system. The font and its license are copied from the pinned `@fontsource/barlow-condensed@5.3.0` distribution; it is a static asset, not an added package dependency.

@@ -1,0 +1,7 @@
+Build an integrated local QB LAB practice application with a playable 2D simulator, connected Playbook Studio, guided activities, animated mechanics, actual browser-local history and profile-specific assignment workflows. Replace numbered marketing navigation with application destinations while preserving the existing public website, prices, SEO and booking links.
+
+The private foundation is deliberately fail-closed: candidate PostgreSQL/RLS migrations and authorization policies are tested locally with synthetic data, while real accounts, guardian consent collection, uploads, storage and payments remain disabled. This is not a production-ready complete academy or a validated football/biomechanics assessment.
+
+Read `docs/QB-LAB-PLATFORM-REVIEW.md` for the complete feature matrix, architecture, validation results, limitations and provider prerequisites. `server/qb-lab/README.md` lists the external auth, storage, consent and payment gates. No production migration/deployment, main merge or PR #2 change is included. Keep this PR a draft.
+
+Validation: lint, TypeScript, component/domain tests, isolated PostgreSQL migration/isolation checks, production build, browser interaction/accessibility/regression tests and full/production dependency audits. The known five high development findings involving braces remain unsuppressed; production audit reports zero findings. Hosted CI/Preview readiness must be checked against the latest commit.

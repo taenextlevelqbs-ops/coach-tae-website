@@ -1,6 +1,8 @@
 # QB LAB front-end experience — review history
 
-**Current redesign:** [Field notebook / film console review](QB-LAB-REDESIGN.md). The original implementation and its validation are recorded below; use the redesign record for current visuals and test results.
+**Current platform:** [Integrated implementation and feature matrix](QB-LAB-PLATFORM-REVIEW.md).
+
+**Historical redesign:** [Field notebook / film console review](QB-LAB-REDESIGN.md). The original implementation and its validation are recorded below; use the redesign record for current visuals and test results.
 
 Branch: `feat/qb-lab-experience`. Base: latest fetched remote main, `b502819d9fa226421f793217cf325b9801cdf95c` on October 22, 2026. This branch was created directly from main; Phase 0 was not merged or cherry-picked. The Phase 0 branch remains at `2d7a2fac09331d5b72e5ee6049ef16f005235f8a`, and PR #2 is untouched.
 

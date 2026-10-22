@@ -61,3 +61,9 @@ to production or modify the separate Phase 0 branch/PR #2. See the redesign
 review for the current access blockers and verification record.
 
 The current QB LAB visual direction, review workflow and redesign verification are documented in [QB LAB redesign](docs/QB-LAB-REDESIGN.md).
+
+## Integrated QB LAB platform
+
+The current feature scope is documented in [the platform review and feature matrix](docs/QB-LAB-PLATFORM-REVIEW.md). Start at `/qb-lab`; use `/qb-lab/simulator`, `/qb-lab/playbook`, `/qb-lab/workouts`, `/qb-lab/mechanics`, `/qb-lab/progress` and `/qb-lab/coach` for connected local practice. Browser persistence contains synthetic prototype state, not authenticated athlete records. Real accounts/uploads/payments are disabled.
+
+Run the local PostgreSQL migration and isolation checks with `bash scripts/test-qb-lab-database.sh` (Docker required; ephemeral network-isolated container, pinned image, no published port). The auth schema in the test fixture is synthetic and is not a real session verifier. See `server/qb-lab/README.md` before any provider integration.
