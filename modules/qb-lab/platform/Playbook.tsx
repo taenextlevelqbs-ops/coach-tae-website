@@ -7,6 +7,7 @@ import {
   type Play,
   type Point,
 } from "../simulation/model";
+import { validateFormation } from "../football/content";
 import { SimField } from "../simulation/SimField";
 import {
   empty,
@@ -40,9 +41,9 @@ export function Playbook() {
     });
   }
   function route(points: Point[]) {
-    if (player.id === "QB") {
+    if (player.id === "QB" || player.eligible === false) {
       setMessage(
-        "QB movement is controlled in the simulator. Select another player to edit a route.",
+        "This player is not a receiving target. Select an eligible receiver; QB movement is controlled in the simulator.",
       );
       return;
     }
@@ -145,6 +146,7 @@ export function Playbook() {
             <option value="tackle">Tackle · 11v11</option>
             <option value="flag5">Flag · 5v5</option>
             <option value="flag7">Flag · 7v7</option>
+            <option value="flag8">Flag · 8v8</option>
           </select>
         </label>
         <button
@@ -174,6 +176,35 @@ export function Playbook() {
           Spread formation
         </button>
       </div>
+      <p className="lab-fine">
+        X/H/Y/Z are system-configurable labels. Roles and routes are separate.{" "}
+        {validateFormation(play).join(" ")} Structural checks do not certify
+        numbering, motion or league eligibility.
+      </p>
+      {play.format === "tackle" && (
+        <label>
+          Offensive personnel
+          <select
+            aria-label="Offensive personnel"
+            value={play.personnel ?? "11"}
+            onChange={(e) =>
+              edit({
+                ...formation(
+                  "tackle",
+                  true,
+                  e.target.value as "10" | "11" | "12",
+                ),
+                id: play.id,
+                name: play.name,
+              })
+            }
+          >
+            <option value="10">10 · 1 RB / 0 TE</option>
+            <option value="11">11 · 1 RB / 1 TE</option>
+            <option value="12">12 · 1 RB / 2 TE</option>
+          </select>
+        </label>
+      )}
       <div className="lab-simulator-grid">
         <section className="lab-simulator-stage">
           <SimField
@@ -290,6 +321,27 @@ export function Playbook() {
                 <option key={label}>{label}</option>
               ))}
             </select>
+          </label>
+          <label>
+            Custom system label
+            <input
+              aria-label="Custom system label"
+              maxLength={12}
+              value={player.label}
+              onChange={(e) =>
+                edit({
+                  ...play,
+                  players: play.players.map((p) =>
+                    p.id === player.id
+                      ? {
+                          ...p,
+                          label: e.target.value.replace(/[^A-Za-z0-9-]/g, ""),
+                        }
+                      : p,
+                  ),
+                })
+              }
+            />
           </label>
           <div className="lab-actions">
             <button

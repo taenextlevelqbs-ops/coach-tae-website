@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import { RecognitionLab } from "./football/RecognitionLab";
 import { Field } from "./Field";
 import { PathwaySwitch, useDemo } from "./LabShell";
 import { questions } from "./demo";
@@ -8,7 +9,11 @@ import Link from "next/link";
 import { ReadSequence } from "./ReadSequence";
 import type { ReadFocus } from "./review-model";
 
-export function FootballIQ() {
+export function FootballIQ({
+  initialRecognition,
+}: {
+  initialRecognition?: string;
+}) {
   const { pathway, profile } = useDemo();
   const [read, setRead] = useState<ReadFocus>("D1");
   const [progress, setProgress] = useState(0);
@@ -54,6 +59,11 @@ export function FootballIQ() {
         </div>
         <PathwaySwitch />
       </div>
+      <RecognitionLab
+        key={initialRecognition ?? "default"}
+        initialPreset={initialRecognition}
+      />
+      <h2>Foundations: visible observations</h2>
       <div className="lab-iq-grid">
         <section className="lab-panel lab-field-panel">
           <div className="lab-card-top">

@@ -49,7 +49,11 @@ export function ActivityDesk({ profile = "A" }: { profile?: "A" | "B" }) {
               {a.status === "assigned" && (
                 <Link
                   className="lab-text-link"
-                  href={`/qb-lab/workouts?activity=${a.drill}&profile=${profile}`}
+                  href={
+                    a.drill === "recognition"
+                      ? `/qb-lab/iq?lesson=${a.recognition ?? ""}#recognition`
+                      : `/qb-lab/workouts?activity=${a.drill}&profile=${profile}`
+                  }
                   onClick={() => {
                     selectProfile(profile);
                     const d = drills.find((d) => d.id === a.drill);

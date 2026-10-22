@@ -1,5 +1,24 @@
 export const drills = [
   {
+    id: "recognition",
+    title: "Read personnel, front and coverage",
+    category: "Football IQ",
+    ages: ["8–10", "11–13", "14–15", "16–18", "College"],
+    experience: "All",
+    pathway: "both",
+    minutes: 8,
+    equipment:
+      "Shared recognition workspace; current league rules and adult/coach guidance for youth.",
+    steps: [
+      "Open the shared recognition workspace in Football IQ or Simulator.",
+      "Choose a formation, defense and governing flag rules when applicable.",
+      "Identify personnel/front, predict a possible coverage, snap and make one decision.",
+      "Review revealed assignments and discuss a correction with your coach.",
+    ],
+    safety:
+      "Authored schematic, not a validated coverage or athlete assessment. Scheme-dependent terms require Coach Tae review.",
+  },
+  {
     id: "observe",
     title: "Walk the starting picture",
     category: "Football IQ",

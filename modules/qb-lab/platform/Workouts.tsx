@@ -67,6 +67,11 @@ function WorkoutsBody({
         </div>
         <PathwaySwitch />
       </div>
+      <div className="lab-actions">
+        <Link className="lab-button" href="/qb-lab/iq#recognition">
+          Open shared defensive recognition →
+        </Link>
+      </div>
       <div className="lab-app-toolbar">
         <label>
           Age group

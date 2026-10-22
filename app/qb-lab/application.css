@@ -783,3 +783,221 @@
     scroll-behavior: auto !important;
   }
 }
+/* Dark teaching workspaces keep the approved home dashboard untouched. */
+.recognition-lab {
+  color: #e3ebf3;
+  background: #142336;
+  border: 1px solid #33465d;
+  border-radius: 16px;
+  padding: 24px;
+  margin: 12px 0 32px;
+  color-scheme: dark;
+}
+.recognition-lab h2,
+.recognition-lab h3,
+.recognition-lab p {
+  color: inherit;
+}
+.recognition-lab .lab-kicker {
+  color: #9bc4e9;
+}
+.recognition-title {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+.recognition-title h2 {
+  font-size: 25px;
+  margin-bottom: 10px;
+}
+.recognition-title p,
+.recognition-lab p {
+  font-size: 13px;
+}
+.recognition-review {
+  color: #f4d099;
+  font-size: 11px;
+  white-space: nowrap;
+}
+.recognition-config {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin: 14px 0;
+}
+.recognition-lab label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+}
+.recognition-lab :is(select, input:not([type="checkbox"]):not([type="range"])) {
+  width: 100%;
+  min-height: 44px;
+  padding: 8px;
+  color: #f1f5fa;
+  background: #20344d;
+  border: 1px solid #647991;
+  border-radius: 7px;
+  margin-top: 6px;
+}
+.recognition-lab input[type="range"] {
+  width: 100%;
+}
+.recognition-lab input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+}
+.recognition-check {
+  display: flex !important;
+  gap: 10px;
+  align-items: center;
+  margin: 12px 0;
+}
+.recognition-rules {
+  padding: 16px;
+  border: 1px solid #4e627b;
+  border-radius: 9px;
+  margin: 16px 0;
+}
+.recognition-rules summary {
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 700;
+  min-height: 30px;
+}
+.recognition-rules p {
+  margin: 12px 0;
+}
+.recognition-workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1.7fr) minmax(230px, 1fr);
+  gap: 20px;
+  align-items: start;
+}
+.recognition-board {
+  min-width: 0;
+}
+.recognition-board-top {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  padding: 12px;
+  background: #223750;
+  border-radius: 8px 8px 0 0;
+}
+.recognition-lab .lab-button {
+  color: #ecf1f7;
+  background: #263f5e;
+  border-color: #7389a3;
+  font-size: 12px;
+}
+.recognition-lab .lab-button.primary {
+  color: #122436;
+  background: #afd8f7;
+  border-color: #afd8f7;
+}
+.recognition-lab .lab-button:disabled {
+  opacity: 0.55;
+}
+.recognition-lab .lab-touch-pad {
+  display: flex;
+  flex-wrap: wrap;
+}
+.recognition-read label {
+  margin-bottom: 14px;
+}
+.recognition-read h3 {
+  font-size: 18px;
+  margin-top: 14px;
+}
+.recognition-lab .lab-target-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.recognition-lab a {
+  color: #a6d4ff;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.recognition-feedback {
+  margin-top: 18px;
+  padding: 15px;
+  border-radius: 10px;
+  border: 1px solid #829fbd;
+  background: #263d58;
+}
+.recognition-hint {
+  border-left: 3px solid #a7c4e1;
+  padding-left: 12px;
+  margin-top: 18px !important;
+}
+.recognition-lab table {
+  width: 100%;
+  font-size: 13px;
+  text-align: left;
+  border-collapse: collapse;
+}
+.recognition-lab td,
+.recognition-lab th {
+  padding: 8px;
+  border-bottom: 1px solid #566b82;
+}
+.recognition-lab li {
+  font-size: 13px;
+  margin: 10px 0;
+}
+.recognition-lab :focus-visible {
+  outline-color: #f6cf80;
+}
+@media (max-width: 900px) {
+  .recognition-workspace {
+    grid-template-columns: 1fr;
+  }
+  .recognition-config {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 600px) {
+  .recognition-lab {
+    padding: 16px;
+  }
+  .recognition-title {
+    flex-direction: column;
+    gap: 5px;
+  }
+  .recognition-title h2 {
+    font-size: 23px;
+  }
+  .recognition-config {
+    grid-template-columns: 1fr;
+  }
+  .recognition-rules {
+    padding: 12px;
+  }
+}
+.recognition-field-scroll {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  border: 1px solid #415a73;
+}
+.recognition-field-scroll > div {
+  max-width: none;
+}
+.recognition-field-scroll .lab-sim-field {
+  max-width: none;
+}
+.recognition-magnify {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 12px 0;
+}
+.recognition-magnify span {
+  font-size: 11px;
+  color: #c5d5e7;
+  flex: 1;
+  min-width: 160px;
+}

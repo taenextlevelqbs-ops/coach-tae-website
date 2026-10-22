@@ -15,7 +15,14 @@ export function advance(time: number, delta: number, speed = 1) {
 export function position(player: Player, time: number): Point {
   const points = [player.start, ...player.route];
   if (points.length === 1) return player.start;
-  const scaled = clamp(time / duration, 0, 1) * (points.length - 1);
+  const scaled =
+    clamp(
+      (time - (player.delay ?? 0)) /
+        Math.max(0.1, duration - (player.delay ?? 0)),
+      0,
+      1,
+    ) *
+    (points.length - 1);
   const i = Math.min(points.length - 2, Math.floor(scaled));
   const blend = scaled - i;
   return {
@@ -33,7 +40,11 @@ export function evaluate(
   qb: Point,
 ): Decision {
   const receiver = scenario.play.players.find(
-    (p) => p.id === target && p.id !== "QB" && p.route.length > 0,
+    (p) =>
+      p.id === target &&
+      p.id !== "QB" &&
+      p.eligible !== false &&
+      p.route.length > 0,
   );
   if (!receiver || !Number.isFinite(time) || time < 1.5 || time >= duration)
     return {

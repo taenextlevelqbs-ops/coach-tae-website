@@ -1,3 +1,7 @@
+# Current extension
+
+The newer shared personnel/front/coverage models, rules-aware flag pathways and coach-review boundaries are documented in [Football models and lessons](QB-LAB-FOOTBALL-MODELS.md). The earlier observation review below remains historical.
+
 # QB LAB front-end: football content review
 
 Checked October 22, 2026. This is an introductory **observation demonstration**, not a reviewed academy curriculum, validated playbook, film assessment or quarterback ability test. All field movement and feedback are authored synthetic examples. No NFL or NFL FLAG endorsement is claimed.

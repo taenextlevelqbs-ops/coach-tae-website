@@ -67,3 +67,5 @@ The current dashboard replacement and visual verification are documented in [App
 The current feature scope is documented in [the platform review and feature matrix](docs/QB-LAB-PLATFORM-REVIEW.md). Start at `/qb-lab`; use `/qb-lab/simulator`, `/qb-lab/playbook`, `/qb-lab/workouts`, `/qb-lab/mechanics`, `/qb-lab/progress` and `/qb-lab/coach` for connected local practice. Browser persistence contains synthetic prototype state, not authenticated athlete records. Real accounts/uploads/payments are disabled.
 
 Run the local PostgreSQL migration and isolation checks with `bash scripts/test-qb-lab-database.sh` (Docker required; ephemeral network-isolated container, pinned image, no published port). The auth schema in the test fixture is synthetic and is not a real session verifier. See `server/qb-lab/README.md` before any provider integration.
+
+The shared terminology, defensive recognition, configurable flag formats/rules and coach-assigned lessons are documented in [Football models and lesson review](docs/QB-LAB-FOOTBALL-MODELS.md). Use `/qb-lab/simulator#recognition` or `/qb-lab/iq#recognition` for the new dark teaching workspace.

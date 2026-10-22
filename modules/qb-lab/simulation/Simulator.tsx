@@ -12,16 +12,17 @@ import {
   type Point,
   type Scenario,
 } from "./model";
+import { RecognitionLab } from "../football/RecognitionLab";
 import { SimField } from "./SimField";
 export function Simulator() {
   const { pathway } = useDemo();
-  const [flag, setFlag] = useState<"flag5" | "flag7">("flag5");
+  const [flag, setFlag] = useState<"flag5" | "flag7" | "flag8">("flag5");
   const format = pathway === "tackle" ? "tackle" : flag;
   return (
     <>
       <div className="lab-page-heading">
         <div>
-          <p className="lab-kicker">PLAYABLE 2D / AUTHORING ENGINE V1</p>
+          <p className="lab-kicker">QB SIMULATOR 2.0</p>
           <h1>Read. Move. Decide.</h1>
           <p className="lab-lede">
             Control the QB, follow the routes and test a specific spacing
@@ -30,6 +31,8 @@ export function Simulator() {
         </div>
         <PathwaySwitch />
       </div>
+      <RecognitionLab />
+      <h2>Open spacing practice</h2>
       {pathway === "flag" && (
         <label className="lab-format-label">
           Flag roster
@@ -40,6 +43,7 @@ export function Simulator() {
           >
             <option value="flag5">5v5 · league rules not configured</option>
             <option value="flag7">7v7 · league rules not configured</option>
+            <option value="flag8">8v8 · league rules not configured</option>
           </select>
         </label>
       )}
@@ -273,7 +277,10 @@ function SimulationDesk({ format }: { format: Format }) {
           </p>
           <div className="lab-target-grid">
             {scenario.play.players
-              .filter((p) => p.id !== "QB" && p.route.length > 0)
+              .filter(
+                (p) =>
+                  p.id !== "QB" && p.eligible !== false && p.route.length > 0,
+              )
               .map((p) => (
                 <button
                   className="lab-button"

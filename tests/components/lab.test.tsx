@@ -79,10 +79,15 @@ describe("QB LAB interactive components", () => {
     expect(
       screen.getByRole("slider", { name: "Illustration timeline" }),
     ).toHaveValue("25");
-    fireEvent.change(screen.getByRole("slider"), { target: { value: "100" } });
+    fireEvent.change(
+      screen.getByRole("slider", { name: "Illustration timeline" }),
+      { target: { value: "100" } },
+    );
     expect(screen.getByText("ILLUSTRATED ROTATION")).toBeInTheDocument();
     await user.click(screen.getByRole("button", { name: "Start over" }));
-    expect(screen.getByRole("slider")).toHaveValue("0");
+    expect(
+      screen.getByRole("slider", { name: "Illustration timeline" }),
+    ).toHaveValue("0");
   });
   it("jumps to feedback timestamps and compares moments without accepting files", async () => {
     const user = userEvent.setup();

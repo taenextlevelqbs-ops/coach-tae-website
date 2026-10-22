@@ -282,7 +282,7 @@ test("playbook markers move with keyboard and drag; field taps add editable rout
   page,
 }) => {
   await page.goto("/qb-lab/playbook");
-  const marker = page.getByRole("button", { name: "Select R5", exact: true });
+  const marker = page.getByRole("button", { name: "Select X", exact: true });
   await marker.focus();
   await marker.press("ArrowRight");
   await expect(page.getByLabel("Player X", { exact: true })).toHaveValue("12");

@@ -19,7 +19,10 @@ export function nextStep(
   if (assigned)
     return {
       title: drills.find((d) => d.id === assigned.drill)!.title,
-      href: `/qb-lab/workouts?activity=${assigned.drill}&profile=${profile}`,
+      href:
+        assigned.drill === "recognition"
+          ? `/qb-lab/iq?lesson=${assigned.recognition ?? ""}#recognition`
+          : `/qb-lab/workouts?activity=${assigned.drill}&profile=${profile}`,
       label: "Your next assignment",
       why: "Assigned in the local coach workspace. Complete the guided steps to update your queue.",
     };

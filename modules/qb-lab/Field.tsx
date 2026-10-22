@@ -1,3 +1,5 @@
+import { formation } from "./simulation/model";
+import { position } from "./simulation/engine";
 import type { Pathway } from "./demo";
 import type { ReadFocus } from "./review-model";
 
@@ -15,28 +17,11 @@ export function Field({
   focusTarget?: ReadFocus;
 }) {
   const turn = Math.min(1, Math.max(0, (progress - 20) / 60));
-  const offense =
-    pathway === "tackle"
-      ? [
-          [320, 340],
-          [360, 340],
-          [400, 340],
-          [440, 340],
-          [480, 340],
-          [400, 410],
-          [100, 330],
-          [220, 330],
-          [580, 330],
-          [700, 330],
-          [420, 450],
-        ]
-      : [
-          [400, 410],
-          [400, 340],
-          [120, 330],
-          [560, 330],
-          [680, 330],
-        ];
+  const play = formation(pathway === "tackle" ? "tackle" : "flag5");
+  const offense = play.players.map((p) => {
+    const at = position(p, turn * 6);
+    return [at.x * 8, at.y * 5];
+  });
   const underneath =
     pathway === "tackle"
       ? [
@@ -122,49 +107,37 @@ export function Field({
           opacity=".55"
           strokeDasharray="7 6"
         >
-          <path
-            d={
-              pathway === "tackle"
-                ? "M100 330V180L240 120"
-                : "M120 330V180L240 120"
-            }
-          />
-          <path
-            d={
-              pathway === "tackle"
-                ? "M220 330L340 220H490"
-                : "M400 340L340 220H490"
-            }
-          />
-          <path d={pathway === "tackle" ? "M700 330V160" : "M680 330V160"} />
+          {play.players
+            .filter((p) => p.eligible)
+            .map((p) => (
+              <polyline
+                key={p.id}
+                points={[p.start, ...p.route]
+                  .map((a) => `${a.x * 8},${a.y * 5}`)
+                  .join(" ")}
+              />
+            ))}
         </g>
       )}
+
       <path
-        d="M75 340H725"
+        d="M75 350H725"
         stroke="#dfdaae"
         strokeDasharray="6 6"
         strokeOpacity=".55"
       />
       {offense.map(([x, y], i) => (
         <g key={`o${i}`}>
-          <circle
-            cx={x}
-            cy={y - (i > 5 ? turn * 70 : 0)}
-            r="12"
-            fill="#ecf0e5"
-          />
+          <circle cx={x} cy={y} r="12" fill="#ecf0e5" />
           <text
             x={x}
-            y={y + 4 - (i > 5 ? turn * 70 : 0)}
+            y={y + 4}
             textAnchor="middle"
             fontSize="9"
             fontWeight="bold"
             fill="#0b2022"
           >
-            {(pathway === "tackle" && i === 5) ||
-            (pathway === "flag" && i === 0)
-              ? "QB"
-              : "O"}
+            {play.players[i].label}
           </text>
         </g>
       ))}

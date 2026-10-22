@@ -11,7 +11,13 @@ export function SimField({
   onSelect,
   onMove,
   onDraw,
+  rushYards,
+  showGaps,
+  ball,
 }: {
+  rushYards?: number;
+  showGaps?: boolean;
+  ball?: { from: Point; to: Point; progress: number };
   players: Player[];
   defenders?: Player[];
   time?: number;
@@ -103,6 +109,55 @@ export function SimField({
       <text x="50" y="27" fill="#d9e7e8" fontSize="13">
         DIRECTION OF PLAY ↑ · SCHEMATIC / NO LEGALITY CHECK
       </text>
+      {showGaps && (
+        <g
+          fill="#dce9f1"
+          fontSize="13"
+          textAnchor="middle"
+          pointerEvents="none"
+        >
+          {[
+            [47, "A"],
+            [53, "A"],
+            [41, "B"],
+            [59, "B"],
+            [35, "C"],
+            [65, "C"],
+          ].map(([x, label], i) => (
+            <text key={i} x={Number(x) * 10} y="527">
+              {label}
+            </text>
+          ))}
+        </g>
+      )}
+      {rushYards !== undefined && (
+        <g pointerEvents="none">
+          <path
+            d={`M35 ${(70 - 2 * rushYards) * 7}H965`}
+            stroke="#f0c77a"
+            strokeWidth="3"
+            strokeDasharray="10 6"
+          />
+          <text
+            x="45"
+            y={(70 - 2 * rushYards) * 7 - 8}
+            fill="#f0c77a"
+            fontSize="15"
+          >
+            {rushYards}-yard rush line · configured scale 2 units/yard
+          </text>
+        </g>
+      )}
+      <rect
+        x="300"
+        y="294"
+        width="400"
+        height="196"
+        fill="none"
+        stroke="#9ebbc7"
+        strokeDasharray="4 10"
+        pointerEvents="none"
+      />
       {players
         .filter((p) => p.route.length > 0)
         .map((p) => (
@@ -119,6 +174,22 @@ export function SimField({
             pointerEvents="none"
           />
         ))}
+      {ball && (
+        <g pointerEvents="none">
+          <path
+            d={`M${ball.from.x * 10} ${ball.from.y * 7}L${ball.to.x * 10} ${ball.to.y * 7}`}
+            stroke="#efc778"
+            strokeDasharray="4 6"
+          />
+          <ellipse
+            cx={(ball.from.x + (ball.to.x - ball.from.x) * ball.progress) * 10}
+            cy={(ball.from.y + (ball.to.y - ball.from.y) * ball.progress) * 7}
+            rx="9"
+            ry="6"
+            fill="#efc778"
+          />
+        </g>
+      )}
       {[...players, ...defenders].map((player) => {
         const defense = defenders.includes(player);
         const at = player.id === "QB" && qb ? qb : position(player, time);

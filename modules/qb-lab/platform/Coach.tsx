@@ -1,12 +1,20 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
+import { recognitionPresets } from "../football/presets";
 import { drills } from "./catalog";
 import { updateLab, useLocalLab } from "./store";
 export function Coach() {
   const { state } = useLocalLab();
   const [profile, setProfile] = useState<"A" | "B">("A");
   const [drill, setDrill] = useState("observe");
+  const [recognition, setRecognition] = useState("t43-c2");
+  const allowedRecognition = recognitionPresets.filter(
+    (p) => (p.format === "tackle") === (profile === "A"),
+  );
+  const selectedRecognition =
+    allowedRecognition.find((p) => p.id === recognition)?.id ??
+    allowedRecognition[0].id;
   const [notice, setNotice] = useState("");
   const allowedDrills = drills.filter(
     (d) =>
@@ -62,6 +70,22 @@ export function Coach() {
               ))}
             </select>
           </label>
+          {selectedDrill === "recognition" && (
+            <label>
+              Recognition scenario
+              <select
+                aria-label="Assigned recognition scenario"
+                value={selectedRecognition}
+                onChange={(e) => setRecognition(e.target.value)}
+              >
+                {allowedRecognition.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.title}
+                  </option>
+                ))}
+              </select>
+            </label>
+          )}
           <button
             className="lab-button primary"
             onClick={() => {
@@ -70,6 +94,8 @@ export function Coach() {
                   (a) =>
                     a.profile === profile &&
                     a.drill === selectedDrill &&
+                    (selectedDrill !== "recognition" ||
+                      a.recognition === selectedRecognition) &&
                     a.status === "assigned",
                 )
               ) {
@@ -85,6 +111,9 @@ export function Coach() {
                   {
                     id: crypto.randomUUID(),
                     drill: selectedDrill,
+                    ...(selectedDrill === "recognition"
+                      ? { recognition: selectedRecognition }
+                      : {}),
                     profile,
                     status: "assigned" as const,
                   },
@@ -137,6 +166,9 @@ export function Coach() {
           </p>
           <Link className="lab-button" href="/qb-lab/film">
             Open illustrated review desk →
+          </Link>
+          <Link className="lab-text-link" href="/qb-lab/iq#recognition">
+            Inspect shared personnel, front and coverage assignments →
           </Link>
           <h3>Curriculum review</h3>
           <p>

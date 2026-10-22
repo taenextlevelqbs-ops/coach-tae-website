@@ -1,5 +1,6 @@
 "use client";
 import { useSyncExternalStore } from "react";
+import { recognitionPreset } from "../football/presets";
 import { drills, goals } from "./catalog";
 import { rosterSize, type Play } from "../simulation/model";
 export type Activity = {
@@ -15,6 +16,7 @@ export type Assignment = {
   drill: string;
   profile: "A" | "B";
   status: "assigned" | "complete";
+  recognition?: string;
 };
 export type LocalState = {
   version: 1;
@@ -56,16 +58,33 @@ export function validPlay(value: unknown): value is Play {
   return (
     text(p.id) &&
     text(p.name, 50) &&
-    ["tackle", "flag5", "flag7"].includes(p.format) &&
+    ["tackle", "flag5", "flag7", "flag8"].includes(p.format) &&
     Array.isArray(p.players) &&
     p.players.length === rosterSize(p.format) &&
     new Set(p.players.map((a) => a?.id)).size === p.players.length &&
     p.players.filter((a) => a.id === "QB").length === 1 &&
+    (p.personnel === undefined || ["10", "11", "12"].includes(p.personnel)) &&
     p.players.every(
       (a) =>
         /^(QB|C|R[1-9])$/.test(a.id) &&
         text(a.id, 12) &&
         text(a.label, 12) &&
+        (a.role === undefined ||
+          [
+            "QB",
+            "C",
+            "OL",
+            "RB",
+            "WR",
+            "TE",
+            "DL",
+            "LB",
+            "DB",
+            "rusher",
+          ].includes(a.role)) &&
+        (a.eligible === undefined || typeof a.eligible === "boolean") &&
+        (a.delay === undefined ||
+          (Number.isFinite(a.delay) && a.delay >= 0 && a.delay <= 5)) &&
         point(a.start) &&
         Array.isArray(a.route) &&
         (a.id !== "QB" || a.route.length === 0) &&
@@ -114,7 +133,9 @@ export function parseState(raw: string): LocalState {
         text(a.id) &&
         drills.some((d) => d.id === a.drill) &&
         ["A", "B"].includes(a.profile) &&
-        ["assigned", "complete"].includes(a.status),
+        ["assigned", "complete"].includes(a.status) &&
+        (a.recognition === undefined ||
+          (a.drill === "recognition" && !!recognitionPreset(a.recognition))),
     )
   )
     throw new Error("Invalid synthetic assignments.");
@@ -131,9 +152,13 @@ export function parseState(raw: string): LocalState {
       id: p.id,
       name: p.name,
       format: p.format,
+      ...(p.personnel ? { personnel: p.personnel } : {}),
       players: p.players.map((a) => ({
         id: a.id,
         label: a.label,
+        ...(a.role ? { role: a.role } : {}),
+        ...(a.eligible !== undefined ? { eligible: a.eligible } : {}),
+        ...(a.delay !== undefined ? { delay: a.delay } : {}),
         start: { x: a.start.x, y: a.start.y },
         route: a.route.map((r) => ({ x: r.x, y: r.y })),
       })),
@@ -151,6 +176,7 @@ export function parseState(raw: string): LocalState {
       drill: a.drill,
       profile: a.profile,
       status: a.status,
+      ...(a.recognition ? { recognition: a.recognition } : {}),
     })),
     goals: [...new Set(input.goals)],
   };
