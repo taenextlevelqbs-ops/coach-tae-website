@@ -1,36 +1,40 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Coach Tae website
 
-## Getting Started
+Next.js App Router marketing website. Existing training prices, Calendly bookings, Shopify links and branding are preserved. QB LAB accounts, payments and video uploads are not implemented.
 
-First, run the development server:
+Read `AGENTS.md` and relevant bundled Next.js documentation before changing code. See the [QB LAB plan](docs/QB-LAB-IMPLEMENTATION-PLAN.md) and [security/configuration policy](docs/SECURITY-AND-CONFIGURATION.md).
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## Local development
+
+Use Node 24.19.0 (`nvm use` if available) and npm 11.9.0. The public site requires no application secrets.
+
+```sh
+npm ci --no-audit --no-fund
+npm run dev -- --hostname 127.0.0.1
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Use a loopback origin for local requests. Next.js development-origin protections remain enabled. Do not publish the development server. The Dockerfile is still a development recipe, not a production deployment target.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Validation
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```sh
+npm run lint
+npm run typecheck
+npm run build
+npx playwright install chromium
+npm test
+npm audit
+npm audit --omit=dev
+```
 
-## Learn More
+Playwright owns a loopback production server on port 3100; build first. It refuses to reuse a running server, blocks external browser requests, never follows booking links and never submits real bookings. Chromium projects cover desktop (1280), tablet (768), mobile (390) and compact mobile (320). Pixel emulation is not a real Android/iOS device test. Tests cover content/prices, existing navigation destinations, booking/commerce links, hydration, keyboard/Escape behavior, layout, hero/logo delivery, navigation accessibility and HTTP headers. Axe checks are scoped to navigation, not a full-site accessibility certification.
 
-To learn more about Next.js, take a look at the following resources:
+To exercise the same suite against development mode after stopping the production test run:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```sh
+npm run test:e2e:dev
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+If the cloud machine has system Chromium instead of Playwright's downloaded browser, set `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium` for the test command. CI installs the browser matching pinned Playwright. Use `npx playwright install --with-deps chromium` when OS libraries are missing. Never bypass download checksums or TLS verification. Failure traces/screenshots are ignored by Git; inspect reports with `npx playwright show-report`.
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+`npm run check` runs lint, TypeScript, build and browser tests. Audits are separate because the full audit currently reports an upstream development-tool vulnerability with no published patch. The CI audit job retains its failing status; see the [Phase 0 report](docs/PHASE-0-SECURITY-REPORT.md) for evidence and remaining decisions. No CI or npm script deploys the application.
