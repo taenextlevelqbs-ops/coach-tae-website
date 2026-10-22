@@ -57,3 +57,5 @@ reports the known development-only braces chain; it is not suppressed.
 Keep this branch local until Vercel's skip configuration is verified for its
 exact name. The Phase 0 branch exception does not establish that this branch
 will be skipped. Do not merge or deploy this preview.
+
+The current QB LAB visual direction, review workflow and redesign verification are documented in [QB LAB redesign](docs/QB-LAB-REDESIGN.md).

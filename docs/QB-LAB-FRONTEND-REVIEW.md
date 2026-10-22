@@ -1,4 +1,6 @@
-# QB LAB front-end experience — local review
+# QB LAB front-end experience — review history
+
+**Current redesign:** [Field notebook / film console review](QB-LAB-REDESIGN.md). The original implementation and its validation are recorded below; use the redesign record for current visuals and test results.
 
 Branch: `feat/qb-lab-experience`. Base: latest fetched remote main, `b502819d9fa226421f793217cf325b9801cdf95c` on October 22, 2026. This branch was created directly from main; Phase 0 was not merged or cherry-picked. The Phase 0 branch remains at `2d7a2fac09331d5b72e5ee6049ef16f005235f8a`, and PR #2 is untouched.
 
@@ -32,7 +34,7 @@ See [the football review record](QB-LAB-FOOTBALL-REVIEW.md) for actual source UR
 
 The exercise is a coverage-observation introduction, not a complete graded coverage-recognition academy. It does not invent a league-specific flag ruleset, validate a formation or guarantee a passing outcome. Full age-specific lessons, reviewed scheme-specific answer keys, true video playback/frame decoding, drawing authoring, voice feedback, real coach assignments, secure accounts, guardian verification, consent evidence, private access, media processing and deletion/retention are future integrations. None is presented as working backend functionality.
 
-## Verification
+## Initial implementation verification (`7af4b1e`)
 
 Use Node 24.19.0/npm 11.9.0 and the existing isolated checkout. No extra worktree or service credentials are required.
 
@@ -66,9 +68,9 @@ Initial browser failures identified ambiguous implicit select labels and a focus
 
 A later combined five-page accessibility run hit a 30-second aggregate test budget under variable machine load (27 passed/1 timed out). Route checks and accessibility scans were split into independent tests so each route has its own result and existing timeout. No assertion, axe rule or screen was removed, and no timeout was raised. The final 60-case run above passed after that test-structure correction. These are Chromium results; real Safari/iOS/Android, screen-reader and production performance certification remain unperformed. The HTML browser report and failure artifacts are generated/ignored, not committed.
 
-## Push/deployment guard
+## Delivery authorization history
 
-**Keep this branch local.** The confirmed Vercel Ignored Build Step exception applies to `chore/qb-lab-phase-0`, not this new branch. The Vercel dashboard request still fails with a proxy tunnel 403, and no connected Vercel management tool is available to verify a safe exception for `feat/qb-lab-experience`. No push or new PR is attempted; no deployment, merge or Phase 1 backend work is performed. An owner must verify a skip rule for this exact new branch before any future push. Existing Phase 0 commits and PR #2 remain unchanged.
+The initial implementation was kept local until the owner confirmed the new branch's Vercel skip configuration. It was then published; PR #3 was created by the owner. The owner subsequently authorized an empty preview-trigger commit (`d2e5e89`) and now explicitly authorizes pushing this redesign and triggering a **Preview**. That later authorization supersedes the initial local-only guard. Production deployment, main merges and PR #2 changes remain prohibited. GitHub API/Vercel access has been blocked in this environment; current verification and recovery steps belong in the redesign record.
 
 ## Changed-file manifest
 
