@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
+import type { Play } from "../simulation/model";
 import { useDemo } from "../LabShell";
 import { recordActivity, useLocalLab } from "../platform/store";
 import { fronts, personnelGroups, coverages } from "../football/content";
@@ -27,11 +28,18 @@ const names: Record<GameFormat, string> = {
 const subscribeReady = () => () => {};
 const clientReady = () => true;
 const serverReady = () => false;
-export function EngineLab() {
+export function EngineLab({ initialPlayId }: { initialPlayId?: string } = {}) {
   const { profile } = useDemo();
-  return <EngineDesk key={profile.id} />;
+  const { state } = useLocalLab();
+  const play = state.plays.find((p) => p.id === initialPlayId);
+  return (
+    <EngineDesk
+      key={`${profile.id}:${initialPlayId ?? ""}:${play?.id ?? "default"}`}
+      initialPlay={play}
+    />
+  );
 }
-function EngineDesk() {
+function EngineDesk({ initialPlay }: { initialPlay?: Play }) {
   const hydrated = useSyncExternalStore(
     subscribeReady,
     clientReady,
@@ -39,7 +47,16 @@ function EngineDesk() {
   );
   const { profile } = useDemo();
   const { state: local } = useLocalLab();
-  const [config, setConfig] = useState<EngineConfig>(() => defaultConfig());
+  const [config, setConfig] = useState<EngineConfig>(() =>
+    initialPlay
+      ? {
+          ...defaultConfig(
+            initialPlay.format === "tackle" ? "tackle11" : initialPlay.format,
+          ),
+          play: initialPlay,
+        }
+      : defaultConfig(),
+  );
   const [sim, setSim] = useState<EngineState | null>(null);
   const [running, setRunning] = useState(false);
   const [hypothesis, setHypothesis] = useState("");

@@ -71,3 +71,5 @@ Run the local PostgreSQL migration and isolation checks with `bash scripts/test-
 The shared terminology, defensive recognition, configurable flag formats/rules and coach-assigned lessons are documented in [Football models and lesson review](docs/QB-LAB-FOOTBALL-MODELS.md). Use `/qb-lab/simulator#recognition` or `/qb-lab/iq#recognition` for the new dark teaching workspace.
 
 The first live-pocket engine milestone is available at `/qb-lab/simulator/engine`: separate game environments, positional protection/rush, QB controls and actual local event summaries. See [engine scope and working demonstrations](docs/QB-LAB-LIVE-ENGINE.md) before interpreting its synthetic outcomes.
+
+Coach Workspace: `/qb-lab/coach` provides four dark-theme tabs for calendar/activity, roster depth planning, tagged scripts and synthetic film review. See [coach modules and backend routing](docs/QB-LAB-COACH-WORKSPACE.md). Real video/account operations remain disabled; the child-video pipeline is a reviewed-integration boundary, not a live upload service.

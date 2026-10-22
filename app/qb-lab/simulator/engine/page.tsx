@@ -4,6 +4,13 @@ export const metadata: Metadata = {
   title: "Live Pocket Engine | QB LAB",
   alternates: { canonical: "/qb-lab/simulator/engine" },
 };
-export default function Page() {
-  return <EngineLab />;
+export default async function Page({
+  searchParams,
+}: {
+  searchParams: Promise<{ play?: string | string[] }>;
+}) {
+  const { play } = await searchParams;
+  const initialPlayId =
+    typeof play === "string" && play.length <= 80 ? play : undefined;
+  return <EngineLab initialPlayId={initialPlayId} />;
 }

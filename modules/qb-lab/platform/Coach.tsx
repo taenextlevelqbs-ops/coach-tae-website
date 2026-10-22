@@ -4,7 +4,7 @@ import Link from "next/link";
 import { recognitionPresets } from "../football/presets";
 import { drills } from "./catalog";
 import { updateLab, useLocalLab } from "./store";
-export function Coach() {
+export function CoachAssignments() {
   const { state } = useLocalLab();
   const [profile, setProfile] = useState<"A" | "B">("A");
   const [drill, setDrill] = useState("observe");
@@ -26,16 +26,6 @@ export function Coach() {
     allowedDrills.find((d) => d.id === drill)?.id ?? allowedDrills[0].id;
   return (
     <>
-      <div className="lab-page-heading">
-        <div>
-          <p className="lab-kicker">COACH OPERATIONS / SYNTHETIC SANDBOX</p>
-          <h1>Connect the next rep.</h1>
-          <p className="lab-lede">
-            This is an openly accessible local demo, not a coach login. It has
-            no real athletes, privileged access, private reviews or messages.
-          </p>
-        </div>
-      </div>
       <div className="lab-dashboard-grid">
         <section className="lab-panel">
           <h2>Demo directory</h2>
