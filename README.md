@@ -54,8 +54,10 @@ authentication, file uploads, payments, notifications, athlete statistics or
 personal information storage exists in this preview. The full npm audit still
 reports the known development-only braces chain; it is not suppressed.
 
-Keep this branch local until Vercel's skip configuration is verified for its
-exact name. The Phase 0 branch exception does not establish that this branch
-will be skipped. Do not merge or deploy this preview.
+The owner has authorized normal pushes to `feat/qb-lab-experience` and Vercel
+Preview builds for review. Verify the latest commit and Preview environment in
+PR #3/Vercel before sharing a deployment URL. Do not merge into main, promote
+to production or modify the separate Phase 0 branch/PR #2. See the redesign
+review for the current access blockers and verification record.
 
 The current QB LAB visual direction, review workflow and redesign verification are documented in [QB LAB redesign](docs/QB-LAB-REDESIGN.md).
