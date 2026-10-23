@@ -15,6 +15,12 @@ This delivery executes bounded engine, training-workflow and readiness batches f
 - **Training integrity:** A generic recognition walkthrough cannot complete scenario-specific assignments. It links to the matching interactive recognition lesson, whose exact scenario completion remains authoritative within the local demo. Home/adjustment lessons now respect the selected pathway, changing pathway resets adjustment answers, and Train stays active on nested engine routes. Workout count and family persistence disclosures are corrected.
 - **Policy clarity:** Remove the unused competing legacy guardian-media helper. Canonical video authorization retains exact player/coach pairing and denies guardian/admin/foreign-coach playback. Real private/video services remain unavailable. Update cookie documentation; no auth/storage/billing integration or environment is activated.
 
+## Database runner correction
+
+The first published quality-pass head `0e14fac` had a hosted quality failure at the isolated PostgreSQL step (exit 2), despite the same local SQL suite passing. Full authenticated logs remain Forbidden. Independent reproduction with the pinned PostgreSQL image and a synthetic delayed-init script confirms a readiness defect: the image temporarily accepts Unix-socket connections during initialization, then stops that server before starting the final server. A SQL session admitted during that window was terminated with exit 2. This confirms the runner race; it does not prove the unavailable hosted log had that exact cause.
+
+The runner now waits for `127.0.0.1` TCP readiness and uses that same container-loopback transport for psql. The init server has TCP disabled, so it cannot satisfy this check. The image pin, `--network none`, absence of published ports, all migrations/assertions and cleanup remain unchanged. Fresh full SQL checks pass. A second delayed-init run observed Unix readiness at 3 seconds, refused TCP until the final server at 11 seconds, then passed all seven SQL files/three migrations. CI captures synthetic database output in the failure artifact with `pipefail`; no failure is masked. Final hosted status is checked on the follow-up exact commit.
+
 ## Football evidence and remaining realism limits
 
 The six seeded reference reps run from validated configuration through actual fixed-step inputs with no mid-rep state editing. Tests assert all four rushers engage before the clean-pocket completion, real RB engagement for six-threat protection, unaccounted pursuit/contact, route-window acquisitions/releases, vertical-match depth, actual ball catch geometry, feedback consistency and exact replay equality.
@@ -56,6 +62,7 @@ These items remain unfinished. Their absence must not be concealed behind deploy
 
 Compared with baseline `bd1ad5c` (includes the pre-change audit commit):
 
+- `.github/workflows/qb-lab-platform.yml`
 - `docs/QB-LAB-COACH-APPROVAL.md`
 - `docs/QB-LAB-GAMEPLAY-ACCEPTANCE.md`
 - `docs/QB-LAB-OWNER-INTEGRATION-CHECKLIST.md`
@@ -83,6 +90,7 @@ Compared with baseline `bd1ad5c` (includes the pre-change audit commit):
 - `modules/qb-lab/platform/Playbook.tsx`
 - `modules/qb-lab/platform/Workouts.tsx`
 - `modules/qb-lab/platform/store.ts`
+- `scripts/test-qb-lab-database.sh`
 - `server/qb-lab/README.md`
 - `server/qb-lab/authorization.ts`
 - `tests/components/product-integrity.test.tsx`

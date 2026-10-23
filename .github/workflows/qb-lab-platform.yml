@@ -27,15 +27,18 @@ jobs:
       - run: npm run typecheck
       - run: npm test
       - name: Isolated PostgreSQL migration and access checks
-        run: bash scripts/test-qb-lab-database.sh
+        run: |
+          set -o pipefail
+          bash scripts/test-qb-lab-database.sh 2>&1 | tee qb-lab-database.log
       - run: npm run build
       - run: npx playwright install --with-deps chromium
       - run: npm run test:browser
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         if: failure()
         with:
-          name: qb-lab-browser-failures
+          name: qb-lab-quality-failures
           path: |
+            qb-lab-database.log
             playwright-report/
             test-results/
           retention-days: 7

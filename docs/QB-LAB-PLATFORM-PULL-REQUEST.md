@@ -8,6 +8,8 @@ Playbook supports safe imports, editable structural validation, independent dupl
 
 Authentication/RLS, private-media policies, test-only billing and operations remain **disabled foundations**. The owner has no approved dedicated Supabase project or guardian-consent process. No provider was provisioned/reused, no real account/upload/payment enabled and no hosted migration applied. Private/video routes fail closed; public demo roles grant no authority. Remove the competing legacy media helper and preserve canonical exact player/coach pairing. Hosted identity/consent, rate limiting, processing/deletion, durable entitlement reconciliation, backups/restore and monitoring remain launch gates. No COPPA certification is claimed.
 
+Correct a reproducible PostgreSQL container-readiness race: wait for the final TCP listener instead of the temporary Unix-only initialization server. A delayed-init reproduction produced the same connection-loss exit 2; full SQL checks pass with loopback readiness. Preserve all assertions and upload synthetic database diagnostics on CI failures. The earlier hosted failure cannot be conclusively attributed without its blocked logs.
+
 Validation and blockers:
 
 - ESLint, TypeScript, production build and 142 component/domain tests pass on the quality-pass source. Gameplay tests assert events/geometry and distinguish full reps from controlled snapshots; they do not certify football realism.
