@@ -61,7 +61,7 @@ export default function SiteNav() {
                   {link.label}
                 </a>
               ))}
-              <a href="/qb-lab">QB LAB</a>
+              <a href="/qb-lab/welcome">QB LAB</a>
               <a href={shopUrl} target="_blank" rel="noopener noreferrer">
                 Shop <span className="sr-only">(opens in a new tab)</span>
               </a>
@@ -113,7 +113,7 @@ export default function SiteNav() {
                 </span>
               </a>
             ))}
-            <a href="/qb-lab" onClick={closeMenu}>
+            <a href="/qb-lab/welcome" onClick={closeMenu}>
               QB LAB{" "}
               <span aria-hidden="true" className="mobile-nav-arrow">
                 ↗

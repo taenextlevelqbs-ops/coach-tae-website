@@ -3,6 +3,8 @@ import { LabShell } from "@/modules/qb-lab/LabShell";
 import "./lab.css";
 import "./application.css";
 import "./athlete.css";
+import "./entry.css";
+export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "QB LAB Preview",
   manifest: "/qb-lab/manifest.webmanifest",

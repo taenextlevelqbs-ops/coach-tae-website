@@ -1,6 +1,8 @@
 "use client";
 import Link from "next/link";
 import { PwaSupport } from "./PwaInstall";
+import { isPublicLabPage } from "./entry/routes";
+import { PublicLabShell } from "./entry/PublicLabShell";
 import { usePathname } from "next/navigation";
 import { createContext, useContext, type ReactNode } from "react";
 import type { Pathway } from "./demo";
@@ -81,6 +83,11 @@ const navigation: {
   },
 ];
 export function LabShell({ children }: { children: ReactNode }) {
+  const current = usePathname();
+  if (isPublicLabPage(current)) return <PublicLabShell>{children}</PublicLabShell>;
+  return <PrivateLabShell>{children}</PrivateLabShell>;
+}
+function PrivateLabShell({ children }: { children: ReactNode }) {
   const current = usePathname();
   const home = current === "/qb-lab";
   const { profile, pathway, selectProfile, setPathway } = useDemoSelection("A");
