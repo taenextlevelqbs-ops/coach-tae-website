@@ -48,7 +48,7 @@ const destinations: {
   },
 ];
 export function HomeDashboard() {
-  const { profile } = useDemo();
+  const { profile, pathway } = useDemo();
   const { state } = useLocalLab();
   const activities = state.activities.filter(
     (a) => (a.profile ?? "A") === profile.id,
@@ -56,7 +56,7 @@ export function HomeDashboard() {
   const hasAssignedWork = state.assignments.some(
     (a) => a.profile === profile.id && a.status === "assigned",
   );
-  const next = nextStep(state, profile.pathway, profile.id);
+  const next = nextStep(state, pathway, profile.id);
   const started = activities.length > 0 || hasAssignedWork;
   return (
     <div className="athlete-dashboard">
@@ -65,7 +65,7 @@ export function HomeDashboard() {
           <h1>Good afternoon, {profile.name}.</h1>
           <p>
             Your QB Lab <span>·</span>{" "}
-            {profile.pathway === "flag" ? "Flag football" : "Tackle football"}{" "}
+            {pathway === "flag" ? "Flag football" : "Tackle football"}{" "}
             <span>·</span> Age {profile.age}
           </p>
         </div>

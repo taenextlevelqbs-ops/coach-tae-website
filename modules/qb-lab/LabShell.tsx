@@ -113,7 +113,13 @@ export function LabShell({ children }: { children: ReactNode }) {
                 key={item.href}
                 href={item.href}
                 aria-current={
-                  item.routes.includes(current) ? "page" : undefined
+                  item.routes.some(
+                    (route) =>
+                      current === route ||
+                      (route !== "/qb-lab" && current.startsWith(`${route}/`)),
+                  )
+                    ? "page"
+                    : undefined
                 }
               >
                 <AppIcon name={item.icon} />

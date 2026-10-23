@@ -113,15 +113,33 @@ export function validRules(r: Rules, format: Format) {
 export function validateFormation(play: Play): string[] {
   const issues: string[] = [];
   if (play.tactics && play.players.find(p=>p.role === "C")?.start.x !== 50) issues.push("A hash-tagged play requires the center at editor x=50 (the ball spot).");
+  if (new Set(play.players.map((p) => p.id)).size !== play.players.length)
+    issues.push("Player identifiers must be unique within the formation.");
   if (play.players.filter((p) => p.id === "QB").length !== 1)
     issues.push("Exactly one quarterback must be identified.");
+  if (play.players.some((p) =>
+    (p.id === "QB" && ((p.role !== undefined && p.role !== "QB") || p.eligible === true)) ||
+    (p.id !== "QB" && p.role === "QB")))
+    issues.push("Only the designated QB can have the quarterback role; this direct-pass fixture does not make the QB a receiving target.");
   if (play.players.filter((p) => p.role === "C").length !== 1)
     issues.push("Exactly one center must be identified.");
+  if (play.players.some((p) => p.role === "C" && Math.abs(p.start.y - 70) >= 0.5))
+    issues.push("The center must start on this fixture's line of scrimmage (editor y=70).");
+  if (play.players.some((p) => p.start.y < 69.5))
+    issues.push("Offensive players cannot start beyond the line of scrimmage in this stationary formation fixture.");
+  if (play.players.some((p) => p.role !== undefined && ["DL", "LB", "DB", "rusher"].includes(p.role)))
+    issues.push("Offensive formations cannot assign defensive player roles.");
   if (play.players.length !== rosterSize(play.format))
     issues.push("Roster count does not match the selected format.");
   if (new Set(play.players.map((p) => p.label)).size !== play.players.length)
     issues.push("Labels must be unique within the formation.");
   if (play.format === "tackle") {
+    if (play.players.filter((p) => p.id !== "QB" && p.eligible === true).length !== 5)
+      issues.push("This tackle fixture requires exactly five eligible non-QB players.");
+    if (play.personnel &&
+      (play.players.filter((p) => p.role === "RB").length !== Number(play.personnel[0]) ||
+       play.players.filter((p) => p.role === "TE").length !== Number(play.personnel[1])))
+      issues.push("Declared tackle personnel must match the RB and TE roles; receiver labels do not determine those roles.");
     const line = play.players.filter((p) => Math.abs(p.start.y - 70) < 0.5);
     if (line.length < 7)
       issues.push(

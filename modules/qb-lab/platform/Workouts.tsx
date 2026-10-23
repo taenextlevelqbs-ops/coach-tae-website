@@ -5,6 +5,7 @@ import { drills } from "./catalog";
 import { recordActivity, useLocalLab } from "./store";
 import { ageGroups, experiences } from "../demo";
 import { PathwaySwitch, useDemo } from "../LabShell";
+import { recognitionPreset } from "../football/presets";
 export function Workouts({
   initialActivity = "observe",
   profile,
@@ -29,7 +30,7 @@ function WorkoutsBody({
   initialActivity: string;
   profile: "A" | "B";
 }) {
-  const { pathway } = useDemo();
+  const { pathway, selectProfile, setPathway } = useDemo();
   const { state, message: storageMessage } = useLocalLab();
   const [age, setAge] = useState<string>("11–13");
   const [experience, setExperience] = useState("All");
@@ -48,6 +49,16 @@ function WorkoutsBody({
       (category === "All" || d.category === category),
   );
   const current = visible.find((d) => d.id === selected) ?? visible[0];
+  const assignedRecognition = state.assignments.find((a) => {
+    const preset = recognitionPreset(a.recognition);
+    return (
+      a.profile === profile &&
+      a.drill === "recognition" &&
+      a.status === "assigned" &&
+      preset &&
+      (preset.format === "tackle") === (pathway === "tackle")
+    );
+  });
   function change() {
     setStep(0);
     setComplete(false);
@@ -60,9 +71,9 @@ function WorkoutsBody({
           <p className="lab-kicker">WORKOUTS / GUIDED PREPARATION</p>
           <h1>Give the rep a purpose.</h1>
           <p className="lab-lede">
-            Five introductory activities with actual step tracking. Content is
-            pending qualified coaching review; this is not a complete exercise
-            program.
+            {drills.length} introductory activities with actual step tracking.
+            Content is pending qualified coaching review; this is not a complete
+            exercise program.
           </p>
         </div>
         <PathwaySwitch />
@@ -169,16 +180,39 @@ function WorkoutsBody({
               <strong>Equipment:</strong> {current.equipment}
             </p>
             <div className="lab-safety-note">{current.safety}</div>
-            <p className="lab-kicker">
-              STEP {step + 1} OF {current.steps.length}
+            <p className="lab-kicker">{current.id === "recognition"
+              ? "INTERACTIVE LESSON"
+              : `STEP ${step + 1} OF ${current.steps.length}`}
             </p>
             <h3>{current.steps[step]}</h3>
-            <progress
+            {current.id !== "recognition" && <progress
               aria-label="Activity step progress"
               value={complete ? current.steps.length : step}
               max={current.steps.length}
-            />
-            <div className="lab-actions">
+            />}
+            {current.id === "recognition" ? (
+              <div>
+                <p>
+                  Complete the interactive recognition rep to record this lesson.
+                  Reading these steps does not complete a coach assignment.
+                </p>
+                <Link
+                  className="lab-button primary"
+                  href={
+                    assignedRecognition
+                      ? `/qb-lab/iq?lesson=${assignedRecognition.recognition}#recognition`
+                      : "/qb-lab/iq#recognition"
+                  }
+                  onClick={() => {
+                    selectProfile(profile);
+                    setPathway(pathway);
+                  }}
+                >
+                  Start interactive recognition
+                </Link>
+              </div>
+            ) : (
+              <div className="lab-actions">
               <button
                 className="lab-button"
                 disabled={step === 0 || complete}
@@ -204,7 +238,8 @@ function WorkoutsBody({
                   ? "Complete activity"
                   : "Next step"}
               </button>
-            </div>
+              </div>
+            )}
             <p role="status">
               {message} {storageMessage}
             </p>

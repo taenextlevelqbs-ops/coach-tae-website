@@ -274,8 +274,9 @@ export function Family() {
           </h2>
           <p>
             Export the fixed sample profiles and current demo preferences, or
-            restore the defaults. Nothing is saved to a server or browser
-            storage.
+            restore the defaults. Communication preferences stay in this tab;
+            training activity and assignments use browser-local storage. Nothing
+            on this demo screen is synchronized to a server.
           </p>
           <div className="lab-actions">
             <button className="lab-button" onClick={exportDemo}>

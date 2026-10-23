@@ -86,6 +86,25 @@ export function Playbook() {
       );
     }
   }
+  async function duplicate() {
+    const copy: Play = {
+      ...play,
+      id: crypto.randomUUID(),
+      name: `${play.name.trim().slice(0, 43)} (copy)`,
+      players: play.players.map((p) => ({
+        ...p,
+        start: { ...p.start },
+        route: p.route.map((point) => ({ ...point })),
+      })),
+    };
+    try {
+      await localPlayRepository.save(copy);
+      edit(copy);
+      setMessage("Play duplicated in this browser. The source play is unchanged; edits now belong to the copy.");
+    } catch (error) {
+      setMessage(`Copy could not be durably saved: ${error instanceof Error ? error.message : "Unknown storage error"}. Check the saved playbook before retrying; an in-memory copy may exist.`);
+    }
+  }
   function importFile(file: File | undefined) {
     if (!file) return;
     if (file.size > 250000) {
@@ -504,6 +523,13 @@ export function Playbook() {
             onClick={save}
           >
             Save play locally
+          </button>
+          <button
+            className="lab-button"
+            disabled={!play.name.trim()}
+            onClick={duplicate}
+          >
+            Duplicate play
           </button>
           <button className="lab-button" onClick={exportPlay}>
             Export play JSON

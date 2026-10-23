@@ -71,6 +71,7 @@ export function validPlay(value: unknown): value is Play {
     ["tackle", "flag5", "flag7", "flag8"].includes(p.format) &&
     Array.isArray(p.players) &&
     p.players.length === rosterSize(p.format) &&
+    p.players.every((a) => !!a && typeof a === "object" && !Array.isArray(a)) &&
     new Set(p.players.map((a) => a?.id)).size === p.players.length &&
     p.players.filter((a) => a.id === "QB").length === 1 &&
     (p.personnel === undefined || ["10", "11", "12"].includes(p.personnel)) &&
@@ -288,7 +289,10 @@ export function recordActivity(
       },
     ].slice(-200),
     assignments: s.assignments.map((a) =>
-      kind === "workout" && a.profile === profile && a.drill === reference
+      kind === "workout" &&
+      reference !== "recognition" &&
+      a.profile === profile &&
+      a.drill === reference
         ? { ...a, status: "complete" as const }
         : a,
     ),
