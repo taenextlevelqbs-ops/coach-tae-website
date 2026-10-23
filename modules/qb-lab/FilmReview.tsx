@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
+import { ReviewCanvas } from "./ReviewCanvas";
 import { Field } from "./Field";
 import { ReviewNotes } from "./ReviewNotes";
 import { ReviewSubmission } from "./ReviewSubmission";
@@ -62,6 +63,16 @@ export function FilmReview() {
           Prepare a demo submission →
         </button>
       </div>
+      <aside className="lab-callout" aria-label="Private upload gate">
+        <div>
+          <h2>Real uploads are locked</h2>
+          <p>
+            Authentication, verified guardian consent and private media
+            processing are not connected. Do not submit personal videos. The
+            review below uses an illustration only.
+          </p>
+        </div>
+      </aside>
       {queued && (
         <div
           className="lab-queue-message"
@@ -146,28 +157,35 @@ export function FilmReview() {
                 00:{time.toFixed(1).padStart(4, "0")} <small>/ 00:10.0</small>
               </span>
             </div>
-            <div className={compare ? "lab-compare-fields" : ""}>
-              <div>
-                {compare && <p className="lab-kicker">EARLIER MOMENT</p>}
-                <Field
-                  pathway={pathway}
-                  progress={time * 10}
-                  annotate={annotate && time >= 4}
-                  focusTarget={annotate ? read : undefined}
-                />
-              </div>
-              {compare && (
+            <ReviewCanvas
+              key={selectedClip}
+              time={time}
+              onPause={() => setPlaying(false)}
+              onSeek={seek}
+            >
+              <div className={compare ? "lab-compare-fields" : ""}>
                 <div>
-                  <p className="lab-kicker">LATER MOMENT / +2 SECONDS</p>
+                  {compare && <p className="lab-kicker">EARLIER MOMENT</p>}
                   <Field
                     pathway={pathway}
-                    progress={Math.min(100, (time + 2) * 10)}
-                    annotate={annotate}
+                    progress={time * 10}
+                    annotate={annotate && time >= 4}
                     focusTarget={annotate ? read : undefined}
                   />
                 </div>
-              )}
-            </div>
+                {compare && (
+                  <div>
+                    <p className="lab-kicker">LATER MOMENT / +2 SECONDS</p>
+                    <Field
+                      pathway={pathway}
+                      progress={Math.min(100, (time + 2) * 10)}
+                      annotate={annotate}
+                      focusTarget={annotate ? read : undefined}
+                    />
+                  </div>
+                )}
+              </div>
+            </ReviewCanvas>
             <FilmTimeline time={time} onSeek={seek} moments={moments} />
             <div className="lab-player-controls">
               <button

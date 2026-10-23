@@ -1,4 +1,5 @@
 "use client";
+import { ReviewCanvas } from "../ReviewCanvas";
 import { useRef, useState } from "react";
 /** URL shape checks prevent accidental external sources; server authentication/authorization is still mandatory on every media request. */
 export function validMediaPaths(playback: string, captions: string) {
@@ -16,31 +17,46 @@ export function ProtectedVideoPlayer({
   captionsPath: string;
 }) {
   const video = useRef<HTMLVideoElement>(null);
+  const [time, setTime] = useState(0);
   const [error, setError] = useState(false);
   if (!validMediaPaths(playbackPath, captionsPath))
     return <p>No authorized media endpoint was provided.</p>;
   return (
     <section aria-label="Protected video player">
-      <video
-        ref={video}
-        controls
-        playsInline
-        preload="none"
-        controlsList="nodownload"
-        disablePictureInPicture
-        onError={() => setError(true)}
-        style={{ width: "100%", borderRadius: 12, background: "#080d14" }}
+      <ReviewCanvas
+        key={playbackPath}
+        time={time}
+        onPause={() => video.current?.pause()}
+        onSeek={(value) => {
+          if (video.current) {
+            video.current.pause();
+            video.current.currentTime = value;
+            setTime(value);
+          }
+        }}
       >
-        <source src={playbackPath} type="video/mp4" />
-        <track
-          kind="captions"
-          src={captionsPath}
-          srcLang="en"
-          label="English"
-          default
-        />
-        Your browser does not support video playback.
-      </video>
+        <video
+          ref={video}
+          controls
+          playsInline
+          preload="none"
+          controlsList="nodownload"
+          disablePictureInPicture
+          onError={() => setError(true)}
+          onTimeUpdate={() => setTime(video.current?.currentTime ?? 0)}
+          style={{ width: "100%", borderRadius: 12, background: "#080d14" }}
+        >
+          <source src={playbackPath} type="video/mp4" />
+          <track
+            kind="captions"
+            src={captionsPath}
+            srcLang="en"
+            label="English"
+            default
+          />
+          Your browser does not support video playback.
+        </video>
+      </ReviewCanvas>
       <label>
         Video playback speed
         <select

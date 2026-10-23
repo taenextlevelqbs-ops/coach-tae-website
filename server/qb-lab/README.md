@@ -1,3 +1,5 @@
+> Phase 2 update: a separately gated synthetic-staging account adapter now exists; no integration is configured or approved. All existing private/coach/video routes remain disabled. See [Phase 2 setup and limits](../../docs/QB-LAB-PHASE-2-FOUNDATION.md). The following describes the original disabled boundary and remaining real-data gates.
+
 # Private service boundary — disabled, not a live authentication implementation
 
 The public Preview does not instantiate an authentication/session verifier, database service client, signer or payment provider. `/api/qb-lab/private/*` rejects every supported method with 503/no-store and does not read request bodies. Setting an environment variable cannot silently enable it. The client-only prototype and coach sandbox are openly accessible synthetic tools; they are not authorization controls.

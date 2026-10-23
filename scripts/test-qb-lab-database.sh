@@ -10,6 +10,6 @@ for attempt in {1..30}; do
  if docker exec "$container_name" pg_isready -U postgres >/dev/null 2>&1; then break; fi
  sleep 1
 done
-for sql_file in tests/database/auth-fixture.sql db/migrations/001_qb_lab_candidate.sql tests/database/isolation.sql; do
+for sql_file in tests/database/auth-fixture.sql db/migrations/001_qb_lab_candidate.sql tests/database/isolation.sql db/migrations/002_qb_lab_persistence.sql tests/database/persistence.sql; do
  docker exec --interactive "$container_name" psql --username postgres --set ON_ERROR_STOP=1 < "$sql_file"
 done

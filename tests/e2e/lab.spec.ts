@@ -264,7 +264,8 @@ test("review desk keyboard tagging, chapter seeking and study changes are local"
   await expect(page.getByRole("slider")).toHaveValue("5");
   await page.getByRole("button", { name: "Open Alignment study" }).click();
   await expect(page.getByRole("slider")).toHaveValue("0");
-  await expect(page.locator("input[type=file],textarea")).toHaveCount(0);
+  await expect(page.locator("input[type=file]")).toHaveCount(0);
+  await expect(page.getByLabel("Timestamped coaching note")).toHaveAttribute("maxlength", "1000");
   expect(await page.evaluate(() => localStorage.length)).toBe(0);
 });
 

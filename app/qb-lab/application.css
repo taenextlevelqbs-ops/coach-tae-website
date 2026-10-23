@@ -1823,3 +1823,24 @@
   .qb-application:has(.simulator-orientation-shell) { padding-bottom:calc(140px + env(safe-area-inset-bottom)); }
   .simulator-orientation-shell .engine-targets.is-live { bottom:calc(62px + env(safe-area-inset-bottom)); }
 }
+
+/* Phase 2 account integration and illustrated canvas are scoped to QB LAB. */
+.lab-review-canvas :is(textarea, input, select),
+.lab-account-workspace :is(input, select) {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  margin: 8px 0 16px;
+  padding: 12px;
+  min-height: 44px;
+  border: 1px solid #63788e;
+  border-radius: 8px;
+  background: #15283a;
+  color: #f1f5f9;
+  font: inherit;
+}
+.lab-review-canvas textarea { min-height: 88px; resize: vertical; }
+.lab-review-canvas form, .lab-account-workspace form { margin: 16px 0; }
+.lab-review-canvas .lab-button { white-space: normal; overflow-wrap: anywhere; }
+.lab-review-canvas canvas { border-radius: 12px; }
+.lab-account-workspace label, .lab-review-canvas label { display: block; }
