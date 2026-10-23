@@ -7,10 +7,11 @@ export const metadata: Metadata = {
 export default async function Page({
   searchParams,
 }: {
-  searchParams: Promise<{ play?: string | string[] }>;
+  searchParams: Promise<{ play?: string | string[]; mode?: string | string[] }>;
 }) {
-  const { play } = await searchParams;
+  const { play, mode } = await searchParams;
   const initialPlayId =
     typeof play === "string" && play.length <= 80 ? play : undefined;
-  return <EngineLab initialPlayId={initialPlayId} />;
+  const initialMode = mode === "practice" || mode === "challenge" ? mode : "learn";
+  return <EngineLab initialPlayId={initialPlayId} initialMode={initialMode} />;
 }

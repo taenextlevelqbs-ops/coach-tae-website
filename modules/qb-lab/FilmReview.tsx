@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import { ReviewCanvas } from "./ReviewCanvas";
 import { Field } from "./Field";
 import { ReviewNotes } from "./ReviewNotes";
@@ -48,31 +49,35 @@ export function FilmReview() {
     <>
       <div className="lab-page-heading lab-film-heading">
         <div>
-          <p className="lab-kicker">REVIEW DESK / SYNTHETIC FILM LIBRARY</p>
-          <h1>
-            The Film Room<span className="lab-heading-period">.</span>
-          </h1>
-          <p className="lab-lede">
-            Slow it down. Find the detail. Make the next conversation count.
-          </p>
+          <h1>Film Room</h1>
+          <p className="lab-lede">Your reps. Your next conversation with Coach Tae.</p>
         </div>
-        <button
-          className="lab-button primary"
-          onClick={() => dialog.current?.showModal()}
-        >
-          Prepare a demo submission →
-        </button>
       </div>
+      <section className="lab-panel" aria-labelledby="film-task-title">
+        <p className="lab-kicker">SAMPLE FILM TASK</p>
+        <h2 id="film-task-title">A balanced reset</h2>
+        <p>Practice resetting your feet after a short shuffle. When private film is ready, your assigned task and feedback will appear here.</p>
+        <p>No video is due. This is a sample task, not an assignment sent by a coach.</p>
+        <h3>Your feedback</h3>
+        <p>No private film or coach feedback yet. The sample below shows how notes and drawings can help you review a rep.</p>
+        <Link className="lab-text-link" href="/qb-lab/workouts">Find a footwork drill →</Link>
+      </section>
       <aside className="lab-callout" aria-label="Private upload gate">
         <div>
           <h2>Real uploads are locked</h2>
-          <p>
-            Authentication, verified guardian consent and private media
-            processing are not connected. Do not submit personal videos. The
-            review below uses an illustration only.
-          </p>
+          <p>This preview accepts no personal videos. Explore sample feedback using an illustration below.</p>
+          <details>
+            <summary>Why uploads are unavailable</summary>
+            <p>Authentication, verified guardian consent, private media storage, coach access, retention and deletion are not connected or approved.</p>
+          </details>
         </div>
       </aside>
+      <details className="lab-panel secondary-details" onToggle={(e) => { if (!e.currentTarget.open) setPlaying(false); }}>
+        <summary>Explore sample feedback</summary>
+        <p>Illustration only · Practice reading timestamps and adding notes. Changes stay in this tab; no coach receives them.</p>
+        <button className="lab-button" onClick={() => dialog.current?.showModal()}>
+          Prepare a demo submission →
+        </button>
       {queued && (
         <div
           className="lab-queue-message"
@@ -259,6 +264,7 @@ export function FilmReview() {
           </a>
         </div>
       </aside>
+      </details>
       <ReviewSubmission dialog={dialog} onQueue={setQueued} />
     </>
   );

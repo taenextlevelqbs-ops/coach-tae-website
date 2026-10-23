@@ -34,7 +34,7 @@ const names: Record<GameFormat, string> = {
 const subscribeReady = () => () => {};
 const clientReady = () => true;
 const serverReady = () => false;
-export function EngineLab({ initialPlayId }: { initialPlayId?: string } = {}) {
+export function EngineLab({ initialPlayId, initialMode = "learn" }: { initialPlayId?: string; initialMode?: EngineConfig["mode"] } = {}) {
   const { profile } = useDemo();
   const { state } = useLocalLab();
   const play = state.plays.find((p) => p.id === initialPlayId);
@@ -52,12 +52,13 @@ export function EngineLab({ initialPlayId }: { initialPlayId?: string } = {}) {
     );
   return (
     <EngineDesk
-      key={`${profile.id}:${initialPlayId ?? ""}:${play ? JSON.stringify(play) : "default"}`}
+      key={`${profile.id}:${initialMode}:${initialPlayId ?? ""}:${play ? JSON.stringify(play) : "default"}`}
       initialPlay={play}
+      initialMode={initialMode}
     />
   );
 }
-function EngineDesk({ initialPlay }: { initialPlay?: Play }) {
+function EngineDesk({ initialPlay, initialMode }: { initialPlay?: Play; initialMode: EngineConfig["mode"] }) {
   const hydrated = useSyncExternalStore(
     subscribeReady,
     clientReady,
@@ -72,8 +73,9 @@ function EngineDesk({ initialPlay }: { initialPlay?: Play }) {
             initialPlay.format === "tackle" ? "tackle11" : initialPlay.format,
           ),
           play: initialPlay,
+          mode: initialMode,
         }
-      : defaultConfig(),
+      : { ...defaultConfig(), mode: initialMode },
   );
   const [rep, setRep] = useState<RecordedRep | null>(null);
   const sim = rep?.state ?? null;
@@ -90,6 +92,8 @@ function EngineDesk({ initialPlay }: { initialPlay?: Play }) {
   const example = acceptanceScenarios.find(e => e.id === exampleId);
   const [placement, setPlacement] = useState(0);
   const [zoom, setZoom] = useState(false);
+  const [advanced, setAdvanced] = useState(false);
+  const advancedSettings = useRef<HTMLDetailsElement>(null);
   const fieldViewport = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const el = fieldViewport.current;
@@ -183,19 +187,11 @@ function EngineDesk({ initialPlay }: { initialPlay?: Play }) {
   const recommendation = sim ? recommendedLesson(sim) : null;
   return (
     <>
-      <div className="lab-page-heading">
-        <div>
-          <p className="lab-kicker">LIVE POCKET · PLAYABLE BETA</p>
-          <h1>See the rush. Own your space.</h1>
-          <p className="lab-lede">
-            A playable, deterministic teaching model. Coach review required;
-            synthetic attributes do not measure athlete ability.
-          </p>
-        </div>
-        <Link href="/qb-lab/simulator" className="lab-text-link">
-          Recognition &amp; spacing tools →
-        </Link>
-      </div>
+      <header className="train-header">
+        <Link href="/qb-lab/simulator" className="train-back">← QB Simulator</Link>
+        <h1>{config.mode === "learn" ? "Learn" : config.mode === "practice" ? "Practice" : "Challenge preview"}</h1>
+        <p>Look at the defense. Move your feet. Choose your throw.</p>
+      </header>
       <section className="engine-lab" aria-label="Live pocket engine">
         {!hydrated && (
           <p role="status" aria-label="Engine readiness">
@@ -205,23 +201,37 @@ function EngineDesk({ initialPlay }: { initialPlay?: Play }) {
         )}
         <div className="engine-title">
           <div>
-            <h2>Build the rep</h2>
+            <h2>{config.mode === "learn" ? "One play at a time" : "Your next rep"}</h2>
             <p>
-              Personnel, alignment, coverage and pressure are separate
-              decisions.
+              {config.mode === "learn"
+                ? "Make an observation, snap the ball, then use Step to watch what happens. There's no rush to answer."
+                : config.mode === "practice"
+                  ? "Make an observation, then snap and play. Pause whenever you need to look again."
+                  : "Continuous practice preview. Scoring and a challenge curriculum are not implemented."}
             </p>
           </div>
           <span>Demo athlete {profile.name} · local only</span>
         </div>
-        <fieldset disabled={locked} className="engine-config">
-          <legend>Before the snap</legend>
-          <label>Authored practice setup
-            <select value={exampleId} onChange={e => {
+        <p className="train-demo-note">Guided starter for youth and beginners. Older or experienced quarterbacks can change coverage, protection and event rules in Advanced Settings. These are synthetic teaching examples awaiting Coach Tae’s review.</p>
+        {config.play && <p role="status">Current play: {config.play.name}. Its alignment and routes are loaded for this rep.</p>}
+        <fieldset disabled={locked} className="engine-config engine-starter">
+          <legend>Choose your practice</legend>
+          <label>Practice example
+            <select aria-label="Authored practice setup" value={exampleId} onChange={e => {
               const selected = acceptanceScenarios.find(item => item.id === e.target.value);
               setExampleId(e.target.value);
-              if (selected) { setConfig(structuredClone(selected.config)); setHypothesis(""); }
+              setConfig(selected
+                ? { ...structuredClone(selected.config), mode: config.mode }
+                : {
+                    ...defaultConfig(initialPlay
+                      ? initialPlay.format === "tackle" ? "tackle11" : initialPlay.format
+                      : "tackle11"),
+                    ...(initialPlay ? { play: initialPlay } : {}),
+                    mode: config.mode,
+                  });
+              setHypothesis("");
             }}>
-              <option value="">Build your own rep</option>
+              <option value="">{initialPlay ? "Your saved play" : "Starter rep · look, move and throw"}</option>
               {acceptanceScenarios.map(item => <option key={item.id} value={item.id}>{item.title}</option>)}
             </select>
           </label>
@@ -235,11 +245,31 @@ function EngineDesk({ initialPlay }: { initialPlay?: Play }) {
             }}>Inspect reference rep</button>
           </div>}
           <label>
+            Your possible coverage
+            <select
+              value={hypothesis}
+              onChange={(e) => setHypothesis(e.target.value)}
+            >
+              <option value="">Make an observation</option>
+              <option>Cannot confirm from alignment</option>
+              {coverages.map((c) => (
+                <option key={c}>{c}</option>
+              ))}
+            </select>
+          </label>
+          <p>What might the defense do? It is okay to choose “Cannot confirm from alignment.” Watch the play to find out.</p>
+        </fieldset>
+        <details ref={advancedSettings} className="engine-call engine-advanced" open={advanced} onToggle={e => setAdvanced(e.currentTarget.open)}>
+          <summary>Advanced Settings</summary>
+          <p>Optional coaching tools. Starter tackle rules are already set. Flag and passing 7v7 require separate event rules and confirmation before play.</p>
+        <fieldset disabled={locked} className="engine-config">
+          <legend>Before the snap</legend>
+          <label>
             Game environment
             <select
               value={config.rules.format}
               onChange={(e) => {
-                setConfig(defaultConfig(e.target.value as GameFormat));
+                setConfig(c => ({ ...defaultConfig(e.target.value as GameFormat), mode: c.mode }));
                 setExampleId("");
                 setHypothesis("");
               }}
@@ -540,19 +570,6 @@ function EngineDesk({ initialPlay }: { initialPlay?: Play }) {
               </select>
             </label>
           )}
-          <label>
-            Your possible coverage
-            <select
-              value={hypothesis}
-              onChange={(e) => setHypothesis(e.target.value)}
-            >
-              <option value="">Make an observation</option>
-              <option>Cannot confirm from alignment</option>
-              {coverages.map((c) => (
-                <option key={c}>{c}</option>
-              ))}
-            </select>
-          </label>
         </fieldset>
         {config.rules.format === "tackle11" && (
           <PocketCheck
@@ -769,12 +786,14 @@ function EngineDesk({ initialPlay }: { initialPlay?: Play }) {
             </p>
           </fieldset>
         )}
+        </details>
         {errors.length > 0 && (
           <div
             className="engine-notice"
             role="status"
             aria-label="Engine configuration issues"
           >
+            <button type="button" onClick={() => { setAdvanced(true); advancedSettings.current?.querySelector("summary")?.focus(); }}>Review Advanced Settings</button>
             <ul>
               {errors.map((e, i) => (
                 <li key={i}>{e}</li>

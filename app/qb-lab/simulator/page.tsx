@@ -1,4 +1,4 @@
 import type { Metadata } from "next";
-import { Simulator } from "@/modules/qb-lab/simulation/Simulator";
+import { SimulatorHome } from "@/modules/qb-lab/training/SimulatorHome";
 export const metadata: Metadata = { title: "Simulator | QB LAB", alternates: { canonical: "/qb-lab/simulator" } };
-export default function Page() {return <Simulator />;}
+export default function Page() {return <SimulatorHome />;}
