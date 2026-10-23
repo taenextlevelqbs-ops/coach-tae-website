@@ -103,3 +103,19 @@ test("Jordan's completed observation changes only Jordan's next session", async 
     page.getByText("GUIDED SESSION / LOCAL DEMO ATHLETE B", { exact: true }),
   ).toBeVisible();
 });
+
+test("the actual athlete home uses accessible dark surfaces on direct load and reload", async ({ page }) => {
+  await page.goto("/qb-lab");
+  for (const reload of [false, true]) {
+    if (reload) await page.reload();
+    await expect(page.locator(".qb-application")).toHaveCSS("background-color", "rgb(11, 18, 32)");
+    await expect(page.locator(".session-card")).toHaveCSS("background-color", "rgb(23, 35, 55)");
+    await expect(page.locator(".training-destination")).toHaveCount(6);
+    await expect(page.locator(".training-destination").first()).toHaveCSS("background-color", "rgb(23, 35, 55)");
+    await expect(page.getByRole("link", { name: "Start training" })).toHaveCSS("background-color", "rgb(74, 222, 128)");
+    await expect(page.getByRole("navigation", { name: "QB LAB navigation" })).toHaveCSS("background-color", "rgb(15, 23, 42)");
+  }
+  const result = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"]).analyze();
+  expect(result.violations).toEqual([]);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});

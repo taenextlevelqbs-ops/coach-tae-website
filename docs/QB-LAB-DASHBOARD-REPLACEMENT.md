@@ -1,5 +1,8 @@
 # Approved athlete dashboard replacement
 
+> Visual update: `QB-LAB-ATHLETE-DARK.md` supersedes the original light palette. The composition and connected demonstration behavior documented here remain available.
+
+
 ## What was actually replaced
 
 The old `/qb-lab` route rendered `Landing.tsx`, with an editorial introduction, illustrated next-step panel, coaching empty state, progress strip and tool directory. `LabShell.tsx` rendered the previous sidebar and mobile disclosure; a large appended CSS block overrode the notebook styles. That composition did not match the requested reference.

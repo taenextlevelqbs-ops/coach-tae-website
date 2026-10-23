@@ -177,27 +177,27 @@
 }
 .dashboard-greeting p {
   margin-top: 7px;
-  color: #626e7e;
+  color: #a8b7cc;
   font-size: 13px;
 }
 .dashboard-greeting p span {
   margin: 0 5px;
 }
 .dashboard-demo-label {
-  border: 1px solid #dce2e9;
+  border: 1px solid #334155;
   border-radius: 20px;
   font-size: 10px;
   font-weight: 600;
-  color: #647082;
+  color: #b7c4d6;
   padding: 4px 9px;
   white-space: nowrap;
 }
 .session-card {
-  background: white;
+  background: #172337;
   padding: 25px 28px;
-  border: 1px solid #e1e5eb;
+  border: 1px solid #365047;
   border-radius: 15px;
-  box-shadow: 0 3px 12px #20314b05;
+  box-shadow: 0 3px 12px #00000024;
 }
 .session-heading {
   display: flex;
@@ -209,18 +209,18 @@
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: #d78841;
+  background: #4ade80;
 }
 .session-heading p {
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 1px;
-  color: #6e7786;
+  color: #9df1b9;
 }
 .session-demo {
   margin-left: auto;
   font-size: 10px;
-  color: #626e7e;
+  color: #a8b7cc;
 }
 .session-card h2 {
   font-size: 25px;
@@ -232,7 +232,7 @@
   margin-top: 9px !important;
   max-width: 550px;
   font-size: 14px;
-  color: #5b6677;
+  color: #b7c4d6;
 }
 .session-action {
   margin-top: 20px;
@@ -247,7 +247,7 @@
   gap: 7px;
   font-size: 12px;
   font-weight: 600;
-  color: #637083;
+  color: #b7c4d6;
 }
 .session-time svg {
   width: 17px;
@@ -293,17 +293,17 @@
   gap: 12px;
   padding: 19px 16px;
   border-radius: 12px;
-  background: white;
-  border: 1px solid #e3e7ed;
-  box-shadow: 0 2px 5px #20314b03;
+  background: #172337;
+  border: 1px solid #2c3c52;
+  box-shadow: 0 2px 5px #00000018;
   min-width: 0;
   transition:
     border-color 0.15s,
     box-shadow 0.15s;
 }
 .training-destination:hover {
-  border-color: #bac7d8;
-  box-shadow: 0 3px 10px #20314b0a;
+  border-color: #5b8872;
+  box-shadow: 0 3px 10px #00000030;
 }
 .destination-icon {
   display: grid;
@@ -313,21 +313,9 @@
   flex-shrink: 0;
   border-radius: 11px;
 }
-.destination-icon.blue {
-  background: #edf2fb;
-  color: #526e9a;
-}
-.destination-icon.orange {
-  background: #fbf0e7;
-  color: #b47a45;
-}
-.destination-icon.violet {
-  background: #f0eef9;
-  color: #7a6a9d;
-}
-.destination-icon.green {
-  background: #ebf4ef;
-  color: #56806a;
+.destination-icon {
+  background: #223b36;
+  color: #9df1b9;
 }
 .training-destination strong {
   display: block;
@@ -339,11 +327,11 @@
   display: block;
   margin-top: 3px;
   font-size: 11px;
-  color: #626e7e;
+  color: #a8b7cc;
 }
 .destination-arrow {
   margin-left: auto;
-  color: #9aa4b1;
+  color: #9bb0c9;
 }
 .destination-arrow svg {
   width: 15px;
@@ -354,8 +342,8 @@
   align-items: start;
   gap: 15px;
   padding: 20px 23px;
-  background: white;
-  border: 1px solid #e3e7ed;
+  background: #172337;
+  border: 1px solid #2c3c52;
   border-radius: 12px;
 }
 .coach-note-avatar {
@@ -365,8 +353,8 @@
   place-items: center;
   flex-shrink: 0;
   border-radius: 50%;
-  background: #eef1f5;
-  color: #5b6d84;
+  background: #24423d;
+  color: #9df1b9;
   font-size: 11px;
   font-weight: 700;
 }
@@ -386,18 +374,18 @@
 }
 .coach-note-heading span {
   font-size: 10px;
-  color: #626e7e;
+  color: #a8b7cc;
 }
 .coach-note-card blockquote {
   margin: 0;
   max-width: 720px;
   font-size: 13px;
   line-height: 1.6;
-  color: #647082;
+  color: #b7c4d6;
 }
 .dashboard-disclosure {
   font-size: 10px;
-  color: #626e7e;
+  color: #a8b7cc;
 }
 .app-footer {
   width: min(1080px, calc(100% - 48px));
@@ -1751,19 +1739,37 @@
   min-width: 0;
 }
 
-/* Darken the shared frame only while the coach console is present. Athlete routes retain their approved light shell. */
-.qb-application:has(.coach-console) { color-scheme:dark; background:#0b1220; color:#f4f7fb; }
-.qb-application:has(.coach-console) .app-header,
-.qb-application:has(.coach-console) .app-navigation { background:#0f172a; border-color:#334155; }
-.qb-application:has(.coach-console) .app-navigation a { color:#bdc9da; }
-.qb-application:has(.coach-console) .app-navigation a:hover { background:#22334a; }
-.qb-application:has(.coach-console) .app-navigation a[aria-current="page"] { background:#142f2d; color:#9df1b9; }
-.qb-application:has(.coach-console) .app-wordmark small,
-.qb-application:has(.coach-console) .app-footer { color:#a8b7cc; border-color:#334155; }
-.qb-application:has(.coach-console) .app-footer a { color:#9df1b9; }
-.qb-application:has(.coach-console) .app-profile-avatar,
-.qb-application:has(.coach-console) .app-mark { color:#9df1b9; background:#24423d; }
-.qb-application:has(.coach-console) .app-profile-picker select,
-.qb-application:has(.coach-console) .app-profile-picker option { color:#f4f7fb; background:#0f172a; }
-.qb-application:has(.coach-console) .app-skip { color:#f4f7fb; background:#172337; border-color:#eab308; }
-.qb-application:has(.coach-console) :focus-visible { outline-color:#eab308; }
+/* Dark shared frame for the actual athlete home and coach console. Other tool styles stay scoped. */
+.qb-application:is(.app-athlete-home, :has(.coach-console)) { color-scheme:dark; background:#0b1220; color:#f4f7fb; }
+.qb-application:is(.app-athlete-home, :has(.coach-console)) .app-header,
+.qb-application:is(.app-athlete-home, :has(.coach-console)) .app-navigation { background:#0f172a; border-color:#334155; }
+.qb-application:is(.app-athlete-home, :has(.coach-console)) .app-navigation a { color:#bdc9da; }
+.qb-application:is(.app-athlete-home, :has(.coach-console)) .app-navigation a:hover { background:#22334a; }
+.qb-application:is(.app-athlete-home, :has(.coach-console)) .app-navigation a[aria-current="page"] { background:#142f2d; color:#9df1b9; }
+.qb-application:is(.app-athlete-home, :has(.coach-console)) .app-wordmark small,
+.qb-application:is(.app-athlete-home, :has(.coach-console)) .app-footer { color:#a8b7cc; border-color:#334155; }
+.qb-application:is(.app-athlete-home, :has(.coach-console)) .app-footer a { color:#9df1b9; }
+.qb-application:is(.app-athlete-home, :has(.coach-console)) .app-profile-avatar,
+.qb-application:is(.app-athlete-home, :has(.coach-console)) .app-mark { color:#9df1b9; background:#24423d; }
+.qb-application:is(.app-athlete-home, :has(.coach-console)) .app-profile-picker select,
+.qb-application:is(.app-athlete-home, :has(.coach-console)) .app-profile-picker option { color:#f4f7fb; background:#0f172a; }
+.qb-application:is(.app-athlete-home, :has(.coach-console)) .app-skip { color:#f4f7fb; background:#172337; border-color:#eab308; }
+.qb-application:is(.app-athlete-home, :has(.coach-console)) :focus-visible { outline-color:#eab308; }
+
+/* The homepage renders outside .app-tool-workspace: its theme belongs to the route shell. */
+.app-athlete-home .session-card { border-top: 2px solid #4ade80; }
+.app-athlete-home .session-card h2 { color: #ffffff; }
+.app-athlete-home .app-primary-button {
+  background: #4ade80;
+  border-color: #4ade80;
+  color: #082416 !important;
+  font-weight: 700;
+}
+.app-athlete-home .app-primary-button:hover { background: #86efac; }
+.app-athlete-home :focus-visible { outline-color: #86efac; }
+.app-athlete-home .app-skip { border-color: #86efac; }
+.app-athlete-home .training-destination:hover { background: #1c2d42; }
+@media (prefers-reduced-motion: reduce) {
+  .app-athlete-home .training-destination,
+  .app-athlete-home .app-primary-button { transition: none; }
+}

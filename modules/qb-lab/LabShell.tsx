@@ -89,7 +89,7 @@ export function LabShell({ children }: { children: ReactNode }) {
     <DemoContext.Provider
       value={{ pathway, setPathway, profile, selectProfile }}
     >
-      <div className="qb-application">
+      <div className={`qb-application${home ? " app-athlete-home" : ""}`}>
         <a className="app-skip" href="#lab-main">
           Skip to QB LAB content
         </a>

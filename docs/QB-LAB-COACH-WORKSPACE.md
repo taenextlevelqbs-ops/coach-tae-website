@@ -1,5 +1,8 @@
 # Coach command workspace: implementation and backend scaffold
 
+> Follow-up: the athlete home now shares the dark application frame. References below to the light athlete home describe the original coach-only delivery and are superseded by `QB-LAB-ATHLETE-DARK.md`.
+
+
 ## Delivered interface
 
 Open `/qb-lab/coach`. The athlete home, public coaching website and existing film/simulator/playbook tools are preserved. The new isolated coach console uses deep slate `#0f172a`, elevated navy cards, white/cool-gray text, green `#22c55e` actions and gold keyboard focus/annotation accents. Green buttons use dark text for contrast. Layouts reflow to phone widths; animation is restrained and respects reduced-motion preferences.

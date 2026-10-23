@@ -214,6 +214,6 @@ test("all four coach tabs reflow and pass automated accessibility checks", async
   await expect(page.locator(".coach-console")).toHaveCount(0);
   await expect(page.locator(".qb-application")).toHaveCSS(
     "background-color",
-    "rgb(245, 246, 248)",
+    "rgb(11, 18, 32)",
   );
 });

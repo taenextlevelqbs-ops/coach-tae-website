@@ -9,49 +9,42 @@ const destinations: {
   detail: string;
   href: string;
   icon: AppIconName;
-  color: string;
 }[] = [
   {
     title: "Football IQ",
     detail: "Read the defense",
     href: "iq",
     icon: "iq",
-    color: "blue",
   },
   {
     title: "Workouts",
     detail: "Train anywhere",
     href: "workouts",
     icon: "workout",
-    color: "orange",
   },
   {
     title: "Film Room",
     detail: "Review your reps",
     href: "film",
     icon: "film",
-    color: "violet",
   },
   {
     title: "Playbook",
     detail: "Learn your plays",
     href: "playbook",
     icon: "plays",
-    color: "green",
   },
   {
     title: "QB Simulator",
     detail: "Practice decisions",
     href: "simulator",
     icon: "simulator",
-    color: "blue",
   },
   {
     title: "Progress",
     detail: "See your growth",
     href: "progress",
     icon: "progress",
-    color: "orange",
   },
 ];
 export function HomeDashboard() {
@@ -114,7 +107,7 @@ export function HomeDashboard() {
               href={`/qb-lab/${item.href}${item.href === "workouts" ? `?profile=${profile.id}` : ""}`}
               className="training-destination"
             >
-              <span className={`destination-icon ${item.color}`}>
+              <span className="destination-icon">
                 <AppIcon name={item.icon} />
               </span>
               <span>
