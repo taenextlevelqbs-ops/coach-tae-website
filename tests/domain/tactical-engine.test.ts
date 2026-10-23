@@ -16,7 +16,6 @@ import {
   advanceTicks,
 } from "@/modules/qb-lab/live-engine/engine";
 import { formation } from "@/modules/qb-lab/simulation/model";
-import { updatePocket } from "@/modules/qb-lab/live-engine/tactical-pocket";
 import { parseState, empty, validPlay } from "@/modules/qb-lab/platform/store";
 it("uses exact HS yard dimensions and invertible hash/route transforms", () => {
   expect(HS_FIELD_WIDTH).toBeCloseTo(53 + 1 / 3, 12);
@@ -71,8 +70,8 @@ it("divides split coverages into exact disjoint half and quarter widths", () => 
     expect(zones.reduce((n, z) => n + z.maxX - z.minX, 0)).toBeCloseTo(
       HS_FIELD_WIDTH,
     );
-    expect(zones.filter((z) => z.match)).toHaveLength(2);
-    expect(zones.filter((z) => !z.match)).toHaveLength(1);
+    expect(zones.filter((z) => z.match)).toHaveLength(0);
+    expect(zones.filter((z) => Math.abs(z.maxX - z.minX - HS_FIELD_WIDTH / 4) < 1e-9)).toHaveLength(2);
     expect(
       zones.filter((z) =>
         zoneContains(z, { x: HS_FIELD_WIDTH / 2, y: 50 }, 30, HS_FIELD_WIDTH),
@@ -83,7 +82,7 @@ it("divides split coverages into exact disjoint half and quarter widths", () => 
 it("only matches an observed vertical in the actual quarter and carries it across a boundary", () => {
   const s = createEngine({
     ...defaultConfig(),
-    coverage: "Cover 4",
+    coverage: "Quarters match",
     matchDepth: 11,
   });
   const d = s.players.find((p) => p.zone?.match)!;
@@ -116,7 +115,7 @@ it("passing 7v7 has two deep halves, five underneath pockets, exchanges and no r
   expect(coverageTarget(under[0], s)).toEqual(under[0].landmark);
   expect(coverageTarget(under[1], s)).not.toEqual(under[1].landmark);
 });
-it("uses bounded teaching deadlines, physical outcomes, and at most one earned extension", () => {
+it("keeps the optional pocket target display-only, including after movement or target expiry", () => {
   for (const rushers of [4, 5, 6]) {
     const c = defaultConfig();
     c.pocketPreset = true;
@@ -130,18 +129,14 @@ it("uses bounded teaching deadlines, physical outcomes, and at most one earned e
   const c = defaultConfig();
   c.pocketPreset = true;
   let s = snap(createEngine(c));
-  const qb = s.players.find((p) => p.job === "qb")!;
-  s.tick = 45;
-  s.events.push({ tick: 40, kind: "shed", text: "synthetic" });
-  qb.pos.x += 3;
   const original = s.pocket!.deadline;
-  updatePocket(s, false);
+  const without = snap(createEngine({ ...c, pocketPreset: false }));
+  const input = { move: { x: 0.2, y: 0.1 } };
+  s = advanceTicks(s, 180, input);
+  const other = advanceTicks(without, 180, input);
   expect(s.pocket!.deadline).toBe(original);
-  updatePocket(s, true);
-  updatePocket(s, true);
-  expect(s.pocket!.deadline).toBe(original + 1);
-  s = advanceTicks(s, 1);
-  expect(s.tick).toBe(46);
+  expect({ ...s, config: undefined, pocket: undefined }).toEqual({ ...other, config: undefined, pocket: undefined });
+  expect(s.events.some((e) => ["pocket-reset", "pocket-break"].includes(e.kind))).toBe(false);
 });
 it("shows strong three/weak one in Over and weak three/strong one in Under", () => {
   const config = defaultConfig();

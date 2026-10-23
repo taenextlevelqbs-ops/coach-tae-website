@@ -1,7 +1,7 @@
 "use client";
 import { defaultTactics, type HashSpot, type Side } from "../football/geometry";
 import { sharedPlay } from "./roster";
-import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
 import type { Play } from "../simulation/model";
 import { useDemo } from "../LabShell";
@@ -9,17 +9,19 @@ import { recordActivity, useLocalLab } from "../platform/store";
 import { fronts, personnelGroups, coverages } from "../football/content";
 import { gameFormats, type GameFormat } from "./formats";
 import { defaultConfig } from "./defaults";
-import { advanceTicks, createEngine, snap, step } from "./engine";
+import { createEngine } from "./engine";
+import { advanceRep, beginRep, buildReplay, replayAt, type RecordedRep } from "./replay";
 import { validateConfig } from "./roster";
 import { coaching, recommendedLesson } from "./coaching";
 import { report } from "./report";
 import { pocketWindow, throwEstimate } from "./assessment";
 import { PocketCheck } from "./PocketCheck";
 import { EngineField } from "./EngineField";
+import { EngineReplay } from "./EngineReplay";
+import { acceptanceScenarios } from "./acceptance";
 import {
   rushMoves,
   type EngineConfig,
-  type EngineState,
   type Input,
 } from "./types";
 const names: Record<GameFormat, string> = {
@@ -73,10 +75,19 @@ function EngineDesk({ initialPlay }: { initialPlay?: Play }) {
         }
       : defaultConfig(),
   );
-  const [sim, setSim] = useState<EngineState | null>(null);
+  const [rep, setRep] = useState<RecordedRep | null>(null);
+  const sim = rep?.state ?? null;
+  const [reviewTick, setReviewTick] = useState<number | null>(null);
+  const [reviewPlaying, setReviewPlaying] = useState(false);
+  const [speed, setSpeed] = useState(1);
+  const replay = useMemo(() => rep?.state.phase === "done" ? buildReplay(rep) : null, [rep]);
+  const reviewed = useMemo(() => replay && reviewTick !== null ? replayAt(replay, reviewTick) : null, [replay, reviewTick]);
   const [running, setRunning] = useState(false);
   const [hypothesis, setHypothesis] = useState("");
   const [recorded, setRecorded] = useState(false);
+  const [exampleId, setExampleId] = useState("");
+  const [reference, setReference] = useState(false);
+  const example = acceptanceScenarios.find(e => e.id === exampleId);
   const [placement, setPlacement] = useState(0);
   const [zoom, setZoom] = useState(false);
   const fieldViewport = useRef<HTMLDivElement>(null);
@@ -92,21 +103,24 @@ function EngineDesk({ initialPlay }: { initialPlay?: Play }) {
     const pause = () => {
       held.current = { x: 0, y: 0 };
       setRunning(false);
+      setReviewPlaying(false);
     };
     window.addEventListener("qb-lab:pause-simulator", pause);
     return () => window.removeEventListener("qb-lab:pause-simulator", pause);
   }, []);
   const errors = validateConfig(config);
-  const staged = errors.length || sim ? null : createEngine(config);
-  const s = sim ?? staged;
+  const staged = useMemo(() => validateConfig(config).length ? null : createEngine(config), [config]);
+  const s = reviewed ?? sim ?? staged;
   const locked = !!sim || !hydrated;
   const phase = sim?.phase;
-  const canStep = !!sim && sim.phase !== "done" && sim.phase !== "ready";
+  const canStep = !!sim && sim.phase !== "done" && sim.phase !== "ready" && reviewTick === null;
   function change(p: Partial<EngineConfig>) {
+    setExampleId("");
     setConfig((c) => ({ ...c, ...p }));
     setRecorded(false);
   }
   function rule(p: Partial<EngineConfig["rules"]>) {
+    setExampleId("");
     setConfig((c) => ({
       ...c,
       rules: { ...c.rules, ...p, acknowledged: c.rules.format === "tackle11" },
@@ -116,11 +130,11 @@ function EngineDesk({ initialPlay }: { initialPlay?: Play }) {
     if (!running || !phase || phase === "done") return;
     // Every scheduled update advances exactly one tick. Slow scheduling slows play, never skips collisions.
     const timer = setInterval(
-      () => setSim((p) => (p ? step(p, { move: held.current }) : p)),
-      1000 / 30,
+      () => setRep((p) => (p ? advanceRep(p, 1, { move: held.current }) : p)),
+      1000 / (30 * speed),
     );
     return () => clearInterval(timer);
-  }, [running, phase]);
+  }, [running, phase, speed]);
   useEffect(() => {
     const clear = () => {
       held.current = { x: 0, y: 0 };
@@ -131,12 +145,16 @@ function EngineDesk({ initialPlay }: { initialPlay?: Play }) {
   function reset() {
     setRunning(false);
     held.current = { x: 0, y: 0 };
-    setSim(null);
+    setRep(null);
+    setReviewTick(null);
+    setReviewPlaying(false);
+    setReference(false);
     setRecorded(false);
   }
   function start() {
     if (staged && hydrated) {
-      setSim(snap(staged));
+      setRep(beginRep(config));
+      setReference(false);
       setRunning(config.mode !== "learn");
       setRecorded(false);
       if (
@@ -151,12 +169,17 @@ function EngineDesk({ initialPlay }: { initialPlay?: Play }) {
   }
   function nudge(x: number, y: number) {
     if (canStep)
-      setSim((p) => (p ? advanceTicks(p, 6, { move: { x, y } }) : p));
+      setRep((p) => (p ? advanceRep(p, 6, { move: { x, y } }) : p));
   }
   function decide(input: Input) {
-    if (canStep) setSim((p) => (p ? step(p, input) : p));
+    if (canStep) setRep((p) => (p ? advanceRep(p, 1, input) : p));
   }
-  const done = sim?.phase === "done";
+  useEffect(() => {
+    if (!reviewPlaying || !replay || reviewTick === null || reviewTick >= replay.rep.inputs.length) return;
+    const timer = setInterval(() => setReviewTick(t => t === null ? null : Math.min(replay.rep.inputs.length, t + 1)), 1000 / (30 * speed));
+    return () => clearInterval(timer);
+  }, [reviewPlaying, replay, reviewTick, speed]);
+  const done = s?.phase === "done";
   const recommendation = sim ? recommendedLesson(sim) : null;
   return (
     <>
@@ -192,12 +215,32 @@ function EngineDesk({ initialPlay }: { initialPlay?: Play }) {
         </div>
         <fieldset disabled={locked} className="engine-config">
           <legend>Before the snap</legend>
+          <label>Authored practice setup
+            <select value={exampleId} onChange={e => {
+              const selected = acceptanceScenarios.find(item => item.id === e.target.value);
+              setExampleId(e.target.value);
+              if (selected) { setConfig(structuredClone(selected.config)); setHypothesis(""); }
+            }}>
+              <option value="">Build your own rep</option>
+              {acceptanceScenarios.map(item => <option key={item.id} value={item.id}>{item.title}</option>)}
+            </select>
+          </label>
+          {example && <div><p>{example.intent}</p><p>Synthetic reference · Coach Tae review pending. Play it yourself or inspect the recorded inputs.</p>
+            <button type="button" onClick={() => {
+              let recordedRep = beginRep(example.config);
+              const inputs = new Map(example.inputs.map(event => [event.tick, event.input]));
+              for (let tick = 1; tick <= example.ticks && recordedRep.state.phase !== "done"; tick++) recordedRep = advanceRep(recordedRep, 1, inputs.get(tick) ?? {});
+              setRep(recordedRep); setRunning(false); setReference(true); setRecorded(false); setReviewTick(0); setReviewPlaying(false);
+              setHypothesis("Reference rep · no athlete prediction");
+            }}>Inspect reference rep</button>
+          </div>}
           <label>
             Game environment
             <select
               value={config.rules.format}
               onChange={(e) => {
                 setConfig(defaultConfig(e.target.value as GameFormat));
+                setExampleId("");
                 setHypothesis("");
               }}
             >
@@ -219,7 +262,7 @@ function EngineDesk({ initialPlay }: { initialPlay?: Play }) {
               <option value="learn">Learn · paused, step through</option>
               <option value="practice">Practice · continuous rep</option>
               <option value="challenge">
-                Challenge · clock &amp; live decision
+                Challenge preview · unscored live rep
               </option>
             </select>
           </label>
@@ -307,12 +350,12 @@ function EngineDesk({ initialPlay }: { initialPlay?: Play }) {
                   checked={!!config.pocketPreset}
                   onChange={(e) => change({ pocketPreset: e.target.checked })}
                 />
-                High-school pocket teaching preset
+                Show advisory protection target
               </label>
               <p>
-                Optional synthetic targets: standard rush ≈3s; five/six rush
-                ≈1.8–2.2s, adjusted by matchup. One reposition after a shed may
-                add 1s; movement never removes pursuers or guarantees safety.
+                Optional synthetic timing reference only. It never releases a
+                blocker, causes pressure or awards movement time. Engagements,
+                pursuit and actual QB position determine pocket safety.
                 Over: strong 3/weak 1; Under: weak 3/strong 1. An inside guard
                 shade is 2i. Match and Cover 8 terminology require Coach Tae
                 review.
@@ -538,7 +581,9 @@ function EngineDesk({ initialPlay }: { initialPlay?: Play }) {
           </label>
           <p>
             Man tracks observed receivers; zones gain their landmarks and react
-            to nearby routes/throws. The existing quarters-match branch remains
+            to observed routes and visible ball movement. Cover 4 and split-field
+            quarters use spot-drop here. Only the explicitly selected, incomplete
+            quarters-match branch carries vertical releases. That branch remains
             an introductory example, not a complete coverage system. Rotation is
             movement from the actual starting shell to the called assignments.
           </p>
@@ -742,12 +787,9 @@ function EngineDesk({ initialPlay }: { initialPlay?: Play }) {
             <div>
               {s.pocket && (
                 <p role="status" aria-label="Teaching pocket countdown">
-                  Teaching pocket:{" "}
-                  {Math.max(0, s.pocket.deadline - s.tick / 30).toFixed(2)}s ·{" "}
-                  {s.pocket.broken ? "arc challenged" : "working"} ·{" "}
-                  {s.config.rules.rushers >= 5
-                    ? "Identify the hot answer; coverage still matters."
-                    : "Read, set and throw."}
+                  Advisory protection target:{" "}
+                  {Math.max(0, s.pocket.deadline - s.tick / 30).toFixed(2)}s ·
+                  Display only. No blocker loss or movement bonus.
                 </p>
               )}
               <div className="engine-scoreboard">
@@ -757,7 +799,7 @@ function EngineDesk({ initialPlay }: { initialPlay?: Play }) {
                 </span>
                 <strong>{(s.tick / 30).toFixed(2)}s</strong>
                 <span>
-                  {s.phase} · {s.qbState}
+                  {reviewTick !== null ? "replay · " : ""}{s.phase} · {s.qbState}
                 </span>
               </div>
               <div
@@ -765,7 +807,7 @@ function EngineDesk({ initialPlay }: { initialPlay?: Play }) {
                 ref={fieldViewport}
                 tabIndex={0}
                 role="group"
-                aria-label="Live engine field controls. Arrow keys or W A S D to move; release to stop."
+                aria-label={reviewTick !== null ? "Live engine field replay. Read only; use the replay timeline to review movement." : "Live engine field controls. Arrow keys or W A S D to move; release to stop."}
                 onBlur={() => {
                   held.current = { x: 0, y: 0 };
                 }}
@@ -786,7 +828,7 @@ function EngineDesk({ initialPlay }: { initialPlay?: Play }) {
                   };
                   if (directions[e.key]) {
                     e.preventDefault();
-                    if (running) held.current = directions[e.key];
+                    if (running && canStep) held.current = directions[e.key];
                     else nudge(directions[e.key].x, directions[e.key].y);
                   }
                 }}
@@ -798,6 +840,25 @@ function EngineDesk({ initialPlay }: { initialPlay?: Play }) {
                   <EngineField state={s} />
                 </div>
               </div>
+              {replay && <EngineReplay
+                tick={reviewTick}
+                total={replay.rep.inputs.length}
+                playing={reviewPlaying}
+                reference={reference}
+                onSeek={tick => { setRunning(false); setReviewPlaying(false); setReviewTick(tick); }}
+                onToggle={() => {
+                  if (reviewTick === replay.rep.inputs.length) {
+                    setReviewTick(0);
+                    setReviewPlaying(true);
+                  } else setReviewPlaying(p => !p);
+                }}
+                onResult={() => { setReviewPlaying(false); setReviewTick(null); }}
+              />}
+              <label>Simulation playback speed
+                <select value={speed} onChange={e => setSpeed(Number(e.target.value))}>
+                  <option value={0.25}>0.25×</option><option value={0.5}>0.5×</option><option value={1}>1×</option>
+                </select>
+              </label>
               <div className="engine-actions">
                 <button onClick={() => setZoom(!zoom)} aria-pressed={zoom}>
                   {zoom ? "Field overview" : "Enlarge field"}
@@ -810,7 +871,7 @@ function EngineDesk({ initialPlay }: { initialPlay?: Play }) {
                 </button>
                 <button
                   disabled={!canStep}
-                  onClick={() => setSim((p) => (p ? advanceTicks(p, 6) : p))}
+                  onClick={() => setRep((p) => (p ? advanceRep(p, 6) : p))}
                 >
                   Step 0.2 seconds
                 </button>
@@ -852,7 +913,7 @@ function EngineDesk({ initialPlay }: { initialPlay?: Play }) {
                   </button>
                 ))}
               </div>
-              <output aria-label="Live QB position">
+              <output aria-label="Live QB position" aria-live="off">
                 QB {s.players.find((p) => p.job === "qb")!.pos.x.toFixed(1)},{" "}
                 {s.players.find((p) => p.job === "qb")!.pos.y.toFixed(1)} yards
                 · pressure {s.pressure.toFixed(2)}
@@ -949,11 +1010,9 @@ function EngineDesk({ initialPlay }: { initialPlay?: Play }) {
                     <p key={n}>{n}</p>
                   ))}
                   <p>
-                    Your pre-snap prediction: {hypothesis}. The actual call is
-                    revealed in the ledger; this observation is not graded as
-                    guaranteed coverage.
+                    {reference ? "Authored reference inputs; no athlete prediction or completion is graded." : `Your pre-snap prediction: ${hypothesis}. The actual call is revealed in the ledger; this observation is not graded as guaranteed coverage.`}
                   </p>
-                  <button
+                  {reference ? <p>Authored reference replay only. It is not recorded as your training activity.</p> : <button
                     disabled={recorded}
                     onClick={() => {
                       recordActivity(
@@ -969,7 +1028,7 @@ function EngineDesk({ initialPlay }: { initialPlay?: Play }) {
                     {recorded
                       ? "Rep saved locally"
                       : "Record this completed rep"}
-                  </button>
+                  </button>}
                   {recommendation && (
                     <Link href={recommendation.href}>
                       {recommendation.label} →
@@ -1028,7 +1087,9 @@ function EngineDesk({ initialPlay }: { initialPlay?: Play }) {
             </>
           )}
           <p>
-            Milestone 1 is a synthetic positional model: geometric engagement,
+            Learn offers pause/step and Practice offers continuous reps. Challenge
+            is an unscored preview, not a progressive challenge curriculum.
+            Behind-QB/3D views are not implemented. This is a synthetic positional model: geometric engagement,
             tunable ratings, bounded reactive coverage, simple
             catch/interception radii and a ball arc. No full run blocking,
             designed-run/RPO logic, contact biomechanics, complete match

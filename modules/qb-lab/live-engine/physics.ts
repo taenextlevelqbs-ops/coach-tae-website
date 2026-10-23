@@ -1,6 +1,6 @@
 import { throwEstimate } from "./assessment";
 import { tuning } from "./tuning";
-import type { Actor, EngineState, Input, Outcome } from "./types";
+import type { Actor, Ball, EngineState, Input, Outcome } from "./types";
 import type { Point } from "../simulation/model";
 import { bound, distance, seeded } from "./roster";
 export function finish(s: EngineState, outcome: Outcome, text: string) {
@@ -100,10 +100,56 @@ export function release(s: EngineState, input: Input) {
     actors: ["QB", target.id],
   });
 }
+/** Earliest contact in the tick: linear planar paths, parabolic height, bounded reach.
+ * Defender motion is interpolated from the current tick's velocity. This avoids
+ * fast balls skipping a defender between render/tick positions; it is not hand physics.
+ */
+function sweptContact(
+  b: Ball, p: Actor, start: number, end: number, dt: number,
+  radius: number, ceiling: number,
+): number | null {
+  const span = end - start;
+  if (span <= 0) return null;
+  const u0 = bound(start / b.flight, 0, 1);
+  const u1 = bound(end / b.flight, 0, 1);
+  const from = {
+    x: b.origin.x + (b.aim.x - b.origin.x) * u0 - p.pos.x + p.velocity.x * dt,
+    y: b.origin.y + (b.aim.y - b.origin.y) * u0 - p.pos.y + p.velocity.y * dt,
+  };
+  const delta = {
+    x: (b.aim.x - b.origin.x) * (u1 - u0) - p.velocity.x * span,
+    y: (b.aim.y - b.origin.y) * (u1 - u0) - p.velocity.y * span,
+  };
+  const aa = delta.x ** 2 + delta.y ** 2;
+  const bb = 2 * (from.x * delta.x + from.y * delta.y);
+  const cc = from.x ** 2 + from.y ** 2 - radius ** 2;
+  let low = 0, high = 1;
+  if (aa < 1e-12) {
+    if (cc > 0) return null;
+  } else {
+    const disc = bb ** 2 - 4 * aa * cc;
+    if (disc < 0) return null;
+    low = Math.max(0, (-bb - Math.sqrt(disc)) / (2 * aa));
+    high = Math.min(1, (-bb + Math.sqrt(disc)) / (2 * aa));
+    if (low > high) return null;
+  }
+  const first = Math.max(start + low * span, 0.12 + 1e-9);
+  const last = start + high * span;
+  if (first > last) return null;
+  const c = (ceiling - 1.8) / (4 * b.apex);
+  if (c >= 0.25 || b.apex <= 0) return first;
+  const root = Math.sqrt(Math.max(0, 1 - 4 * c));
+  const rising = (b.flight * (1 - root)) / 2;
+  const falling = (b.flight * (1 + root)) / 2;
+  if (first <= Math.min(last, rising)) return first;
+  const late = Math.max(first, falling);
+  return late <= last ? late : null;
+}
 export function advanceBall(s: EngineState, dt: number) {
   const b = s.ball;
   if (!b) return;
-  b.elapsed += dt;
+  const prior = b.elapsed;
+  b.elapsed = Math.min(b.flight, b.elapsed + dt);
   const u = bound(b.elapsed / b.flight, 0, 1);
   b.pos = {
     x: b.origin.x + (b.aim.x - b.origin.x) * u,
@@ -111,31 +157,29 @@ export function advanceBall(s: EngineState, dt: number) {
   };
   b.height = 1.8 + 4 * b.apex * u * (1 - u);
   const defense = s.players.filter((p) => p.team === "defense");
-  const interceptor = defense.find(
-    (p) =>
-      distance(p.pos, b.pos) < tuning.interceptionRadiusYards &&
-      b.height < 2.5 &&
-      b.elapsed > 0.12,
-  );
-  if (interceptor) {
+  const contacts = defense.flatMap<{ p: Actor; at: number; outcome: "interception" | "deflection" }>((p) => {
+    const control = sweptContact(b, p, prior, b.elapsed, dt, tuning.interceptionRadiusYards, 2.5);
+    // Control has priority when the same defender can secure this tick's low ball.
+    // Otherwise an earlier disruption ends the pass before a later defender arrives.
+    const disruption = control === null
+      ? sweptContact(b, p, prior, b.elapsed, dt, tuning.disruptionRadiusYards, 2.4)
+      : null;
+    return control !== null
+      ? [{ p, at: control, outcome: "interception" as const }]
+      : disruption !== null
+        ? [{ p, at: disruption, outcome: "deflection" as const }]
+        : [];
+  }).sort((a, c) => a.at - c.at || a.p.id.localeCompare(c.p.id));
+  const contact = contacts[0];
+  if (contact) {
+    b.elapsed = contact.at;
+    const hitU = bound(b.elapsed / b.flight, 0, 1);
+    b.pos = { x: b.origin.x + (b.aim.x - b.origin.x) * hitU, y: b.origin.y + (b.aim.y - b.origin.y) * hitU };
+    b.height = 1.8 + 4 * b.apex * hitU * (1 - hitU);
     finish(
       s,
-      "interception",
-      `${interceptor.label} reached the low ball within the 0.55-yard control radius.`,
-    );
-    return;
-  }
-  const tip = defense.find(
-    (p) =>
-      distance(p.pos, b.pos) < tuning.disruptionRadiusYards &&
-      b.height < 2.4 &&
-      b.elapsed > 0.12,
-  );
-  if (tip) {
-    finish(
-      s,
-      "deflection",
-      `${tip.label} reached the ball within the 0.95-yard disruption radius.`,
+      contact.outcome,
+      `${contact.p.label} ${contact.outcome === "interception" ? "controlled" : "disrupted"} the low ball along its swept flight segment (${contact.outcome === "interception" ? "0.55-yard control" : "0.95-yard disruption"} radius).`,
     );
     return;
   }

@@ -1,10 +1,10 @@
 import { spatialTarget } from "./spatial";
-import { updatePocket, makePocket } from "./tactical-pocket";
+import { makePocket } from "./tactical-pocket";
 import { tuning } from "./tuning";
 import type { Point } from "../simulation/model";
 import type { EngineConfig, EngineState, Actor, Input } from "./types";
 import { bound, distance, makeRoster, validateConfig } from "./roster";
-import { assignProtection, blockTarget, resolveBlocks } from "./blocking";
+import { assignProtection, blockTarget, resolveBlocks, scanProtection } from "./blocking";
 import { advanceBall, finish, moveToward, release } from "./physics";
 export const STEP = 1 / tuning.tickRate;
 export function createEngine(config: EngineConfig): EngineState {
@@ -182,15 +182,20 @@ export function step(state: EngineState, input: Input = {}): EngineState {
     s.qbState = s.ball && s.ball.elapsed < 0.25 ? "release" : "follow-through";
   for (const a of s.players.filter((p) => p.job === "route"))
     moveToward(a, routePoint(a, t), STEP);
+  if (r.blocking) scanProtection(s);
   for (const a of s.players.filter((p) => p.job === "block")) {
     const threat = s.players.find((p) => p.id === s.plan[a.id]);
-    if (threat && t >= a.recoveryUntil)
+    if (threat && t >= a.recoveryUntil) {
+      const target = blockTarget(a, threat, qb, r.los, r.format === "tackle11");
+      if (s.engagements.some((e) => e.blocker === a.id))
+        target.y = Math.min(target.y, a.pos.y);
       moveToward(
         a,
-        blockTarget(a, threat, qb, r.los, !!s.config.pocketPreset),
+        target,
         STEP,
         2.3 + a.ratings.footwork,
       );
+    }
   }
   for (const a of s.players.filter((p) => p.team === "defense")) {
     if (a.job === "rush") {
@@ -204,7 +209,6 @@ export function step(state: EngineState, input: Input = {}): EngineState {
     } else moveToward(a, coverageTarget(a, s), STEP);
   }
   if (r.blocking) resolveBlocks(s, STEP);
-  updatePocket(s, !!input.move && Math.hypot(input.move.x, input.move.y) > 0);
   const rush = s.players.filter((p) => p.job === "rush");
   const nearest = rush.length
     ? Math.min(...rush.map((p) => distance(p.pos, qb.pos)))

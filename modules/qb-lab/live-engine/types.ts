@@ -148,9 +148,6 @@ export type EngineState = {
   endedAt?: number;
   pocket?: {
     deadline: number;
-    escaped: boolean;
-    origin: Point;
-    broken: boolean;
   };
 };
 export type Input = {

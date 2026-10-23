@@ -20,7 +20,7 @@ test("live pocket is playable by step, keyboard and touch, preserves declaration
     .getByLabel("Your possible coverage")
     .selectOption("Cannot confirm from alignment");
   await lab.getByLabel("Assigned rush count").fill("6");
-  await lab.getByLabel("Protection help").selectOption("RB");
+  await lab.getByRole("combobox", { name: "Protection help", exact: true }).selectOption("RB");
   await lab.getByRole("button", { name: "Snap live rep" }).click();
   await expect(
     lab.getByText(/Snap: 11 offense, 11 defense, 6 assigned rushers/),

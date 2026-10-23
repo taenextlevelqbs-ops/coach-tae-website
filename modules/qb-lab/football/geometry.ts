@@ -72,13 +72,16 @@ export function deepZones(
   width: number,
   halfSide: Side,
 ): SpatialZone[] {
+  // Spot-drop quarters and a selected vertical-match exercise are different calls.
+  // Split-field examples deliberately use spot-drop quarters until an explicit
+  // reviewed match system (distribution, switches and checks) is authored.
   const quarter = (i: number): SpatialZone => ({
     minX: (width * i) / 4,
     maxX: (width * (i + 1)) / 4,
     minDepth: 11,
     maxDepth: 100,
-    match: true,
-    name: `Deep quarter ${i + 1} · authored vertical-match rule`,
+    match: coverage === "Quarters match",
+    name: `Deep quarter ${i + 1} · ${coverage === "Quarters match" ? "limited vertical-match branch" : "spot-drop example"}`,
   });
   const half = (side: Side): SpatialZone => ({
     minX: side === "left" ? 0 : width / 2,

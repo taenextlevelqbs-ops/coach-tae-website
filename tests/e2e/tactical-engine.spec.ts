@@ -1,6 +1,6 @@
 import { test, expect } from "./fixtures";
 import AxeBuilder from "@axe-core/playwright";
-test("saved hash geometry reaches the engine and exposes configurable split responsibilities and a real countdown", async ({
+test("saved hash geometry reaches the engine and exposes configurable split responsibilities and a display-only timing target", async ({
   page,
 }) => {
   await page.goto("/qb-lab/playbook");
@@ -31,7 +31,7 @@ test("saved hash geometry reaches the engine and exposes configurable split resp
     .click();
   await page.getByLabel("Defensive coverage call").selectOption("Cover 8");
   await page.getByLabel("Vertical match trigger").selectOption("12");
-  await page.getByLabel("High-school pocket teaching preset").check();
+  await page.getByLabel("Show advisory protection target").check();
   await page.getByLabel("Starting safety shell").selectOption("2");
   await page.getByLabel("Your possible coverage").selectOption("Cannot confirm from alignment");
   const results = await new AxeBuilder({ page })
@@ -51,5 +51,5 @@ test("saved hash geometry reaches the engine and exposes configurable split resp
     .click();
   await expect(
     page.getByRole("status", { name: "Teaching pocket countdown" }),
-  ).toContainText("Teaching pocket:");
+  ).toContainText("Advisory protection target:");
 });
