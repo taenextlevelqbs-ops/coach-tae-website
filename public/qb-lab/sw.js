@@ -1,5 +1,5 @@
 /* QB LAB public static assets only. Never cache API, RSC, athlete page HTML or media. */
-const CACHE = "qb-lab-public-v1";
+const CACHE = "qb-lab-public-v2";
 const OFFLINE = "/qb-lab/offline.html";
 const STATIC = [OFFLINE, "/qb-lab/offline.css", "/qb-lab/manifest.webmanifest", "/qb-lab/icon-192.png", "/qb-lab/icon-512.png"];
 self.addEventListener("install", event => {

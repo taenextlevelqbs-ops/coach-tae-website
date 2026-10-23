@@ -1740,41 +1740,6 @@
   min-width: 0;
 }
 
-/* Dark shared frame for the actual athlete home and coach console. Other tool styles stay scoped. */
-.qb-application:is(.app-athlete-home, :has(.coach-console)) { color-scheme:dark; background:#0b1220; color:#f4f7fb; }
-.qb-application:is(.app-athlete-home, :has(.coach-console)) .app-header,
-.qb-application:is(.app-athlete-home, :has(.coach-console)) .app-navigation { background:#0f172a; border-color:#334155; }
-.qb-application:is(.app-athlete-home, :has(.coach-console)) .app-navigation a { color:#bdc9da; }
-.qb-application:is(.app-athlete-home, :has(.coach-console)) .app-navigation a:hover { background:#22334a; }
-.qb-application:is(.app-athlete-home, :has(.coach-console)) .app-navigation a[aria-current="page"] { background:#142f2d; color:#9df1b9; }
-.qb-application:is(.app-athlete-home, :has(.coach-console)) .app-wordmark small,
-.qb-application:is(.app-athlete-home, :has(.coach-console)) .app-footer { color:#a8b7cc; border-color:#334155; }
-.qb-application:is(.app-athlete-home, :has(.coach-console)) .app-footer a { color:#9df1b9; }
-.qb-application:is(.app-athlete-home, :has(.coach-console)) .app-profile-avatar,
-.qb-application:is(.app-athlete-home, :has(.coach-console)) .app-mark { color:#9df1b9; background:#24423d; }
-.qb-application:is(.app-athlete-home, :has(.coach-console)) .app-profile-picker select,
-.qb-application:is(.app-athlete-home, :has(.coach-console)) .app-profile-picker option { color:#f4f7fb; background:#0f172a; }
-.qb-application:is(.app-athlete-home, :has(.coach-console)) .app-skip { color:#f4f7fb; background:#172337; border-color:#eab308; }
-.qb-application:is(.app-athlete-home, :has(.coach-console)) :focus-visible { outline-color:#eab308; }
-
-/* The homepage renders outside .app-tool-workspace: its theme belongs to the route shell. */
-.app-athlete-home .session-card { border-top: 2px solid #4ade80; }
-.app-athlete-home .session-card h2 { color: #ffffff; }
-.app-athlete-home .app-primary-button {
-  background: #4ade80;
-  border-color: #4ade80;
-  color: #082416 !important;
-  font-weight: 700;
-}
-.app-athlete-home .app-primary-button:hover { background: #86efac; }
-.app-athlete-home :focus-visible { outline-color: #86efac; }
-.app-athlete-home .app-skip { border-color: #86efac; }
-.app-athlete-home .training-destination:hover { background: #1c2d42; }
-@media (prefers-reduced-motion: reduce) {
-  .app-athlete-home .training-destination,
-  .app-athlete-home .app-primary-button { transition: none; }
-}
-
 /* Beta mechanics and install controls stay within QB LAB. */
 .lab-install { width:min(1080px,calc(100% - 32px)); margin:8px auto; font-size:12px; }
 .lab-install summary { cursor:pointer; min-height:44px; display:flex; align-items:center; }

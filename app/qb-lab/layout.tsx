@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { LabShell } from "@/modules/qb-lab/LabShell";
 import "./lab.css";
 import "./application.css";
+import "./athlete.css";
 export const metadata: Metadata = {
   title: "QB LAB Preview",
   manifest: "/qb-lab/manifest.webmanifest",

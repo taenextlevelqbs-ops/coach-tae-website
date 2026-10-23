@@ -1,6 +1,15 @@
 "use client";
 import { useEffect, useState } from "react";
 type InstallEvent = Event & { prompt: () => Promise<void>; userChoice: Promise<{ outcome: string }> };
+/** Keep public offline support active without putting installation controls on Home. */
+export function PwaSupport() {
+  useEffect(() => {
+    if ("serviceWorker" in navigator) navigator.serviceWorker.register("/qb-lab/sw.js", { scope: "/qb-lab", updateViaCache: "none" }).catch(() => {
+      // Offline support is optional. Profile's install controls retry and explain failures.
+    });
+  }, []);
+  return null;
+}
 export function PwaInstall() {
   const [prompt, setPrompt] = useState<InstallEvent | null>(null);
   const [message, setMessage] = useState("");

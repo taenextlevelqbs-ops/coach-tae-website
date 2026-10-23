@@ -10,7 +10,11 @@ export type AppIconName =
   | "simulator"
   | "progress"
   | "clock"
-  | "arrow";
+  | "arrow"
+  | "recovery"
+  | "bell"
+  | "check"
+  | "volume";
 const paths: Record<AppIconName, string> = {
   home: "m3 10 9-7 9 7M5 9v12h5v-7h4v7h5V9",
   train: "m4 17 4-10 4 10 4-10 4 10M3 21h18M8 7V3m8 4V3",
@@ -25,6 +29,10 @@ const paths: Record<AppIconName, string> = {
   progress: "M4 4v16h17M8 15l4-5 4 2 5-8m-4 0h4v4",
   clock: "M12 8v5l3 2M3 12a9 9 0 1 0 18 0 9 9 0 0 0-18 0",
   arrow: "M4 12h16m-6-6 6 6-6 6",
+  recovery: "M9 4a3 3 0 1 0 6 0 3 3 0 0 0-6 0M4 10l8 3 8-3M12 13v4m0 0-5 5m5-5 5 5",
+  bell: "M5 17h14l-2-3V9a5 5 0 0 0-10 0v5l-2 3m5 3h4",
+  check: "m5 12 4 4L19 6",
+  volume: "M4 9h4l5-4v14l-5-4H4V9m12-1a6 6 0 0 1 0 8m3-11a10 10 0 0 1 0 14",
 };
 export function AppIcon({
   name,

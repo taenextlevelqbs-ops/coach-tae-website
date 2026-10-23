@@ -1,6 +1,6 @@
 "use client";
-import { PwaInstall } from "./PwaInstall";
 import Link from "next/link";
+import { PwaSupport } from "./PwaInstall";
 import { usePathname } from "next/navigation";
 import { createContext, useContext, type ReactNode } from "react";
 import type { Pathway } from "./demo";
@@ -49,23 +49,23 @@ const navigation: {
 }[] = [
   { href: "/qb-lab", label: "Home", icon: "home", routes: ["/qb-lab"] },
   {
-    href: "/qb-lab/athlete",
+    href: "/qb-lab/workouts",
     label: "Train",
     icon: "train",
     routes: [
       "/qb-lab/athlete",
-      "/qb-lab/iq",
       "/qb-lab/workouts",
       "/qb-lab/mechanics",
       "/qb-lab/film",
-      "/qb-lab/simulator",
+      "/qb-lab/recovery",
+      "/qb-lab/session",
     ],
   },
   {
-    href: "/qb-lab/playbook",
-    label: "Plays",
-    icon: "plays",
-    routes: ["/qb-lab/playbook"],
+    href: "/qb-lab/simulator",
+    label: "Simulator",
+    icon: "simulator",
+    routes: ["/qb-lab/simulator", "/qb-lab/iq", "/qb-lab/playbook"],
   },
   {
     href: "/qb-lab/profile",
@@ -83,13 +83,12 @@ const navigation: {
 export function LabShell({ children }: { children: ReactNode }) {
   const current = usePathname();
   const home = current === "/qb-lab";
-  const { profile, pathway, selectProfile, setPathway } = useDemoSelection(
-    home ? "B" : "A",
-  );
+  const { profile, pathway, selectProfile, setPathway } = useDemoSelection("A");
   return (
     <DemoContext.Provider
       value={{ pathway, setPathway, profile, selectProfile }}
     >
+      <PwaSupport />
       <div className={`qb-application${home ? " app-athlete-home" : ""}`}>
         <a className="app-skip" href="#lab-main">
           Skip to QB LAB content
@@ -100,12 +99,8 @@ export function LabShell({ children }: { children: ReactNode }) {
             className="app-wordmark"
             aria-label="QB LAB home"
           >
-            <span className="app-mark" aria-hidden="true">
-              QB
-            </span>
-            <span>
-              QB LAB<small>WITH COACH TAE</small>
-            </span>
+            <span className="app-brand-coach">COACH TAE</span>
+            <span className="app-brand-lab">QB LAB</span>
           </Link>
           <nav className="app-navigation" aria-label="QB LAB navigation">
             {navigation.map((item) => (
@@ -127,6 +122,15 @@ export function LabShell({ children }: { children: ReactNode }) {
               </Link>
             ))}
           </nav>
+          <div className="app-account-actions">
+          <details className="app-notifications">
+            <summary aria-label="Training notifications"><AppIcon name="bell" /></summary>
+            <div className="app-notification-panel">
+              <strong>Your training, in one place.</strong>
+              <p>This is a demo. There are no live coaching messages or account notifications.</p>
+              <Link href="/qb-lab/session">See your sample session →</Link>
+            </div>
+          </details>
           <label className="app-profile-picker">
             <span className="app-profile-avatar" aria-hidden="true">
               {profile.name[0]}
@@ -144,6 +148,7 @@ export function LabShell({ children }: { children: ReactNode }) {
               ))}
             </select>
           </label>
+          </div>
         </header>
         <main
           id="lab-main"
@@ -156,12 +161,10 @@ export function LabShell({ children }: { children: ReactNode }) {
             <div className="qb-lab app-tool-workspace">{children}</div>
           )}
         </main>
-        <PwaInstall />
         <footer className="app-footer">
           <span>
-            <span className="app-demo-dot" aria-hidden="true" />{" "}
-            <span>INTERACTIVE DEMO</span> · Synthetic profiles and sample
-            coaching. No real accounts or private uploads.
+            Demo experience · Synthetic profiles and draft training.
+            No real accounts or private uploads.
           </span>
           <Link href="/">Coach Tae website</Link>
         </footer>

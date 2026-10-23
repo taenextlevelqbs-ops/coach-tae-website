@@ -2,7 +2,7 @@
   "id": "/qb-lab", "name": "Coach Tae QB LAB", "short_name": "QB LAB",
   "description": "Your personal quarterback training space. Synthetic beta.",
   "start_url": "/qb-lab", "scope": "/qb-lab", "display": "standalone",
-  "background_color": "#0b1220", "theme_color": "#0f172a",
+  "background_color": "#0c0c0d", "theme_color": "#111112",
   "icons": [
     {"src": "/qb-lab/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable"},
     {"src": "/qb-lab/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable"}

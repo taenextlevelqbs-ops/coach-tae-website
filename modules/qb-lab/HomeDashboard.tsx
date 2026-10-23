@@ -3,147 +3,55 @@ import Link from "next/link";
 import { useDemo } from "./LabShell";
 import { AppIcon, type AppIconName } from "./AppIcon";
 import { useLocalLab } from "./platform/store";
-import { nextStep } from "./platform/next-step";
-const destinations: {
-  title: string;
-  detail: string;
-  href: string;
-  icon: AppIconName;
-}[] = [
-  {
-    title: "Football IQ",
-    detail: "Read the defense",
-    href: "iq",
-    icon: "iq",
-  },
-  {
-    title: "Workouts",
-    detail: "Train anywhere",
-    href: "workouts",
-    icon: "workout",
-  },
-  {
-    title: "Film Room",
-    detail: "Review your reps",
-    href: "film",
-    icon: "film",
-  },
-  {
-    title: "Playbook",
-    detail: "Learn your plays",
-    href: "playbook",
-    icon: "plays",
-  },
-  {
-    title: "QB Simulator",
-    detail: "Practice decisions",
-    href: "simulator",
-    icon: "simulator",
-  },
-  {
-    title: "Progress",
-    detail: "See your growth",
-    href: "progress",
-    icon: "progress",
-  },
+import { dailySession, nextDailyStep, pendingTrainingAssignment } from "./training/daily";
+import { statusFor } from "./training/progress";
+import { TrainingProgress } from "./training/AthleteUI";
+
+const destinations: { title: string; detail: string; href: string; icon: AppIconName }[] = [
+  { title: "Workouts", detail: "Backyard QB drills", href: "workouts", icon: "workout" },
+  { title: "Recovery", detail: "Stretch & reset", href: "recovery", icon: "recovery" },
+  { title: "QB Simulator", detail: "Train your football IQ", href: "simulator", icon: "simulator" },
+  { title: "Film Room", detail: "Coach feedback", href: "film", icon: "film" },
 ];
 export function HomeDashboard() {
   const { profile, pathway } = useDemo();
   const { state } = useLocalLab();
-  const activities = state.activities.filter(
-    (a) => (a.profile ?? "A") === profile.id,
-  );
-  const hasAssignedWork = state.assignments.some(
-    (a) => a.profile === profile.id && a.status === "assigned",
-  );
-  const next = nextStep(state, pathway, profile.id);
-  const started = activities.length > 0 || hasAssignedWork;
-  return (
-    <div className="athlete-dashboard">
-      <section className="dashboard-greeting" aria-label="Your athlete home">
-        <div>
-          <h1>Good afternoon, {profile.name}.</h1>
-          <p>
-            Your QB Lab <span>·</span>{" "}
-            {pathway === "flag" ? "Flag football" : "Tackle football"}{" "}
-            <span>·</span> Age {profile.age}
-          </p>
-        </div>
-        <span className="dashboard-demo-label">Demo athlete</span>
-      </section>
-      <section className="session-card" aria-labelledby="next-session-title">
-        <div className="session-heading">
-          <span className="session-indicator" aria-hidden="true" />
-          <p>YOUR NEXT SESSION</p>
-          <span className="session-demo">Sample assignment</span>
-        </div>
-        <h2 id="next-session-title">
-          {started ? next.title : "Let's work on reading Cover 2."}
-        </h2>
-        <p className="session-description">
-          {started
-            ? next.why
-            : "Coach Tae assigned a 10-minute lesson and a short footwork drill for today."}
-        </p>
-        <div className="session-action">
-          <span className="session-time">
-            <AppIcon name="clock" />
-            {started ? "Go at your pace" : "10 minutes"}
-          </span>
-          <Link
-            className="app-primary-button"
-            href={started ? next.href : "/qb-lab/session"}
-          >
-            Start training <AppIcon name="arrow" />
-          </Link>
-        </div>
-      </section>
-      <section className="dashboard-training" aria-labelledby="your-training">
-        <h2 id="your-training">Your training</h2>
-        <div className="training-destinations">
-          {destinations.map((item) => (
-            <Link
-              key={item.href}
-              href={`/qb-lab/${item.href}${item.href === "workouts" ? `?profile=${profile.id}` : ""}`}
-              className="training-destination"
-            >
-              <span className="destination-icon">
-                <AppIcon name={item.icon} />
-              </span>
-              <span>
-                <strong>{item.title}</strong>
-                <small>{item.detail}</small>
-              </span>
-              <span className="destination-arrow">
-                <AppIcon name="arrow" />
-              </span>
-            </Link>
-          ))}
-        </div>
-      </section>
-      <section className="coach-note-card" aria-labelledby="coach-note-title">
-        <span className="coach-note-avatar" aria-hidden="true">
-          CT
-        </span>
-        <div>
-          <div className="coach-note-heading">
-            <h2 id="coach-note-title">A note from Coach Tae</h2>
-            <span>Sample coaching note</span>
-          </div>
-          <blockquote>
-            “
-            {profile.id === "B"
-              ? "Great work last session. This week, focus on keeping your base balanced and identifying the safeties before the snap."
-              : "Take your time with each rep. Notice the defensive picture, then talk through your next decision with your coach."}
-            ”
-          </blockquote>
-        </div>
-      </section>
-      <p className="dashboard-disclosure">
-        {profile.name}, the assignment and coaching note are synthetic
-        demonstration data, not real athlete records. Your local activity is
-        available in Progress.
-      </p>
-    </div>
-  );
+  const session = dailySession(pathway);
+  const completed = session.filter(step => statusFor(state.activities, profile.id, step.reference) === "completed").length;
+  const assigned = pendingTrainingAssignment(state, pathway, profile.id);
+  const next = assigned ?? nextDailyStep(state.activities, profile.id, pathway);
+  const started = session.some(step => statusFor(state.activities, profile.id, step.reference) !== "not-started");
+  const trainingStatus = assigned ? "Not Started" : completed === session.length ? "Completed" : started ? "In Progress" : "Not Started";
+  return <div className="athlete-dashboard">
+    <section className="dashboard-greeting" aria-label="Your athlete home">
+      <h1>What&apos;s up, {profile.name}!</h1>
+      <p>Let&apos;s get some work in today.</p>
+      <span className="dashboard-demo-label">{profile.name} · demo athlete · {pathway === "flag" ? "Flag" : "Tackle"} football</span>
+    </section>
+    <section className="session-card" aria-labelledby="today-title">
+      <div className="session-heading"><h2 id="today-title">Today&apos;s Training</h2><span className="session-status">{trainingStatus}</span></div>
+      <h3>{next?.title ?? "Your sample session is complete."}</h3>
+      <p className="session-description">{assigned ? assigned.detail : next?.id === "daily-footwork" ? "Work on a balanced drop, then reset your feet. Start slowly with your coach's guidance." : next ? next.detail : "You recorded all three activities in this browser. Revisit a drill or see what you completed."}</p>
+      <div className="session-action">
+        <span className="session-time"><AppIcon name="clock" />{assigned ? "Go at your pace" : next?.id === "daily-footwork" ? "5 min · draft estimate" : "At your pace"}</span>
+        <Link className="app-primary-button" href={next?.href ?? "/qb-lab/session"}>{next ? "Start Training" : "Review Training"}<AppIcon name="arrow" /></Link>
+      </div>
+      <TrainingProgress complete={assigned ? 0 : completed} total={assigned ? 1 : session.length} label={assigned ? "Local assignment progress" : "Sample session progress"} />
+      <p className="session-demo">{assigned ? "Coach demo assignment · this browser only" : "Fixed sample session · coaching review pending · saved on this device"}</p>
+    </section>
+    <section className="training-destinations" aria-label="Your training">
+      {destinations.map(item => <Link href={`/qb-lab/${item.href}`} key={item.href} className="training-destination">
+        <span className="destination-icon"><AppIcon name={item.icon} /></span>
+        <span><strong>{item.title}</strong><small>{item.detail}</small></span>
+        <span className="destination-arrow"><AppIcon name="arrow" /></span>
+      </Link>)}
+    </section>
+    <section className="coach-note-card" aria-labelledby="coach-note-title">
+      <span className="coach-note-avatar" aria-hidden="true">CT</span>
+      <div><div className="coach-note-heading"><h2 id="coach-note-title">A Note From Coach Tae</h2><span>Sample coaching note</span></div>
+        <blockquote>“Take your time with each rep. Stay curious, talk through what you see and ask your coach when you need a hand.”</blockquote>
+      </div>
+    </section>
+    <p className="dashboard-disclosure">{profile.name} and this coaching note are synthetic examples. Training content is draft, not an approved personal prescription. Local practice history is available in your <Link href="/qb-lab/progress">Progress</Link>.</p>
+  </div>;
 }
