@@ -8,11 +8,11 @@ export async function accountClient(
   const jar = await cookies();
   return createServerClient(config.provider, config.key, {
     cookieOptions: {
-      name: "qb-stage-auth",
+      name: "qb-stage-auth-v2",
       httpOnly: true,
       secure: true,
       sameSite: "strict",
-      path: "/api/qb-lab/account",
+      path: "/api/qb-lab",
     },
     cookies: {
       getAll: () => jar.getAll(),
@@ -23,7 +23,7 @@ export async function accountClient(
             httpOnly: true,
             secure: true,
             sameSite: "strict",
-            path: "/api/qb-lab/account",
+            path: "/api/qb-lab",
           });
       },
     },

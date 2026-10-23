@@ -1,3 +1,4 @@
+import { billingConfig, monthlyCheckout } from "@/server/qb-lab/billing/stripe";
 import { accountConfig } from "@/server/qb-lab/accounts/config";
 import {
   accountClient,
@@ -72,6 +73,33 @@ async function handle(
       if (error) throw new AccountError(503, "DATABASE_UNAVAILABLE");
       return accountResponse({ athletes: data });
     }
+    if (request.method === "POST" && operation === "checkout") {
+      const billing = billingConfig();
+      if (!billing) return accountResponse({ code: "BILLING_DISABLED" }, 503);
+      if (!["adult", "guardian"].includes(account.role))
+        throw new AccountError(403, "PAYER_REQUIRED");
+      const input = await boundedJson(request);
+      fields(input, ["athlete", "attempt"]);
+      const athleteId = uuid(input.athlete);
+      const { data, error } = await client
+        .from("qb_athletes")
+        .select("id")
+        .eq("id", athleteId)
+        .single();
+      if (error || !data)
+        throw new AccountError(403, "ATHLETE_ACCESS_REQUIRED");
+      return accountResponse(
+        await monthlyCheckout(
+          {
+            account: account.id,
+            athlete: athleteId,
+            attempt: uuid(input.attempt),
+            origin: config.origin,
+          },
+          billing,
+        ),
+      );
+    }
     const athlete = uuid(new URL(request.url).searchParams.get("athlete"));
     if (
       request.method === "GET" &&
@@ -103,19 +131,17 @@ async function handle(
         Number(input.durationSeconds) > 3600
       )
         throw new AccountError(422, "INVALID_ACTIVITY");
-      const { error } = await client
-        .from("qb_learning_events")
-        .upsert(
-          {
-            id: uuid(input.id),
-            athlete_id: athlete,
-            recorded_by: account.id,
-            kind: input.kind,
-            content_key: text(input.contentKey, 120),
-            duration_seconds: input.durationSeconds,
-          },
-          { onConflict: "id", ignoreDuplicates: true },
-        );
+      const { error } = await client.from("qb_learning_events").upsert(
+        {
+          id: uuid(input.id),
+          athlete_id: athlete,
+          recorded_by: account.id,
+          kind: input.kind,
+          content_key: text(input.contentKey, 120),
+          duration_seconds: input.durationSeconds,
+        },
+        { onConflict: "id", ignoreDuplicates: true },
+      );
       if (error) throw new AccountError(403, "WRITE_DENIED");
       return accountResponse({ saved: true, source: "self_reported" });
     }

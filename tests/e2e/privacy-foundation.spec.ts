@@ -15,6 +15,8 @@ test("unconfigured account and video services stay disabled without accepting pr
     "account/login",
     "account/progress",
     "account/signup",
+    "account/checkout",
+    "billing/webhook",
     "video/intents",
   ]) {
     const response = await request.post(`/api/qb-lab/${path}`, {

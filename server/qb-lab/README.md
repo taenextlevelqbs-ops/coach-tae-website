@@ -1,3 +1,5 @@
+> Phase 3: [readiness and launch blockers](../../docs/QB-LAB-PHASE-3-READINESS.md) documents explicit coach API guards, test-only billing foundations, cookie v2, private inbox migration and inactive operations setup. Real integrations remain disabled; no production readiness is claimed.
+
 > Phase 2 update: a separately gated synthetic-staging account adapter now exists; no integration is configured or approved. All existing private/coach/video routes remain disabled. See [Phase 2 setup and limits](../../docs/QB-LAB-PHASE-2-FOUNDATION.md). The following describes the original disabled boundary and remaining real-data gates.
 
 # Private service boundary — disabled, not a live authentication implementation
