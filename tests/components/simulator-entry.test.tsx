@@ -59,3 +59,23 @@ it("returning from an example restores the exact saved formation or starter inst
     } finally { view.unmount(); resetLab(); }
   }
 });
+
+it("hydrates the actual instructional field without changing SVG title text", async () => {
+  const { renderToString } = await import("react-dom/server");
+  const { hydrateRoot } = await import("react-dom/client");
+  const { act } = await import("react");
+  const { EngineField } = await import("@/modules/qb-lab/live-engine/EngineField");
+  const { createEngine } = await import("@/modules/qb-lab/live-engine/engine");
+  const { defaultConfig } = await import("@/modules/qb-lab/live-engine/defaults");
+  const state = createEngine(defaultConfig());
+  const container = document.createElement("div");
+  container.innerHTML = renderToString(<EngineField state={state} />);
+  document.body.append(container);
+  const errors: unknown[] = [];
+  let root: ReturnType<typeof hydrateRoot> | undefined;
+  try {
+    await act(async () => { root = hydrateRoot(container, <EngineField state={state} />, { onRecoverableError: error => errors.push(error) }); });
+    expect(errors).toEqual([]);
+    expect([...container.querySelectorAll("title")].some(title => title.textContent?.startsWith("Mike:"))).toBe(true);
+  } finally { await act(async () => root?.unmount()); container.remove(); }
+});

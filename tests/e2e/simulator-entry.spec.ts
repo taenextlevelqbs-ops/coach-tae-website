@@ -41,3 +41,16 @@ test("mode links carry the choice and advanced settings are accessible by keyboa
   await expect(page.getByRole("heading", { level: 1, name: "Challenge preview", exact: true })).toBeVisible();
   await expect(page.getByText("Continuous practice preview. Scoring and a challenge curriculum are not implemented.")).toBeVisible();
 });
+
+test("direct engine loading hydrates its instructional SVG without client recovery errors", async ({ page }) => {
+  const errors: string[] = [];
+  page.on("pageerror", error => errors.push(error.message));
+  await page.goto("/qb-lab/simulator/engine?mode=learn");
+  await expect(page.getByRole("combobox", { name: "Your possible coverage", exact: true })).toBeEnabled();
+  await expect(page.getByRole("img", { name: /Live engine field/ })).toBeVisible();
+  await page.getByRole("combobox", { name: "Your possible coverage", exact: true }).selectOption("Cannot confirm from alignment");
+  await page.getByRole("button", { name: "Snap live rep", exact: true }).click();
+  await page.getByRole("button", { name: "Step 0.2 seconds", exact: true }).click();
+  await expect(page.getByText("0.20s", { exact: true })).toBeVisible();
+  expect(errors).toEqual([]);
+});

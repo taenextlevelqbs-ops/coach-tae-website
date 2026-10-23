@@ -37,9 +37,9 @@ Required additional evidence includes complete workout/recovery structural conte
 | Evidence | Final result |
 | --- | --- |
 | ESLint / TypeScript / production build | Passed |
-| Component and domain tests | 167 passed across 35 files; automated tests do not establish coaching approval |
+| Component and domain tests | 168 passed across 35 files; automated tests do not establish coaching approval |
 | Isolated PostgreSQL migration/policy checks | Passed in an ephemeral network-isolated PostgreSQL container with synthetic fixtures; no hosted migration applied |
-| Complete browser matrix and accessibility | Full four-viewport run: 316 passed, 12 failed. The failures were three issues repeated across four projects: offline registration after relocating install UI, legacy activity-ledger background, and family-label contrast. Fixed all three; all 12 affected cases passed on rerun. No assertions disabled, retries or skips. Final hosted full-suite status is reported separately. |
+| Complete browser matrix and accessibility | Full four-viewport run: 316 passed, 12 failed. The failures were three issues repeated across four projects: offline registration after relocating install UI, legacy activity-ledger background, and family-label contrast. Fixed all three; all 12 affected cases passed on rerun. All 28 simulator-entry/live-engine cases and all 44 secondary-page/coach-workspace cases also passed after final rendering/theme fixes. No assertions disabled, retries or skips. Final hosted full-suite status is reported separately. |
 | Desktop/mobile actual Home, workout, recovery, simulator and film screenshots | Final captures are delivered outside tracked source at `/workspace/artifacts/qb-lab-athlete-redesign/`; `evidence.json` records the exact commit and route/viewports. Desktop/mobile implementation captures were inspected; final captures must be inspected before delivery. |
 | Exact feature-branch SHA / clean tree / remote tracking / draft PR #3 head | Normal feature-branch publication only; exact SHA, remote and PR head verification are recorded with delivery. No main/Phase 0 branch updates. |
 | Exact new Vercel Preview URL/status | Verify the new feature commit through provider/GitHub deployment metadata, then record its immutable URL in delivery. An older Ready Preview is not evidence for this redesign; direct Preview HTTP access may be restricted by the environment. |
@@ -54,6 +54,10 @@ Dedicated QB LAB staging project/authentication, guardian verification and verif
 Earlier full audits accurately reported five high development findings through `eslint-config-next → @next/eslint-plugin-next → fast-glob → micromatch → braces`. On 2026-10-23, [GHSA-vfj7-8cjw-p6xm](https://github.com/advisories/GHSA-vfj7-8cjw-p6xm) was **withdrawn upstream**; GitHub states it was withdrawn “because it's not a practically exploitable vulnerability.” Current full and production audits return zero findings, corroborated by an independent full audit against the official npm registry. `braces` remains 3.0.3 and the dependency chain/package lock are unchanged: this is an advisory-status change, not a dependency patch or an audit bypass. Keep the full check enforced and verify hosted CI separately. A dependency audit does not establish that account, privacy, application or infrastructure security is complete. Evidence and exact commands are in [current security status](QB-LAB-ATHLETE-SECURITY-STATUS.md).
 
 Final delivery includes visual/functional evidence and clearly reports any publishing or hosted-CI blocker. Even after a verified Preview, the product remains an explicitly synthetic coach/engineering review experience, not a real athlete beta, public launch or certified child-privacy service. Keep PR #3 draft; do not merge or deploy production.
+
+## Final rendering repair
+
+Final direct-load visual checks exposed a pre-existing SVG title hydration mismatch in the actual engine field. Multiple text children inside SVG `title` elements were serialized differently during server rendering. Two title expressions now use single text strings. This is a renderer repair, not a physics or rules change. A server-render/hydrate regression failed before the repair and passes afterward; a new direct-load browser regression also checks for page errors while snapping and stepping the actual engine. All 28 simulator-entry/live-engine cases passed across the four viewports after this repair. The browser matrix now contains 332 cases (the prior 328 plus this regression across four viewports).
 
 ## Specific remaining limitations
 
@@ -93,6 +97,7 @@ The following paths changed from `68cb63e`; public coaching page sources, depend
 - `modules/qb-lab/HomeDashboard.tsx`
 - `modules/qb-lab/LabShell.tsx`
 - `modules/qb-lab/PwaInstall.tsx`
+- `modules/qb-lab/live-engine/EngineField.tsx`
 - `modules/qb-lab/live-engine/EngineLab.tsx`
 - `modules/qb-lab/platform/Progress.tsx`
 - `modules/qb-lab/training/AthleteUI.tsx`

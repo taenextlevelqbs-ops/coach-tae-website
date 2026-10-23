@@ -318,3 +318,14 @@
 /* Retained family and activity-desk surfaces use the same accessible palette. */
 .qb-application.qb-application .lab-session-ledger { background: #19191c; color: #f4f4f7; border-color: #3c3c43; }
 .qb-application.qb-application .lab-family-briefing dt { color: #b5b5bd; }
+/* Preserve the coach workspace while aligning its remaining branded chrome. */
+.qb-application.qb-application .coach-console { --coach-bg: #18181c; --coach-card: #222228; --coach-muted: #b5b5c2; }
+.qb-application.qb-application :is(.coach-header,.coach-tabs) { background: #1d1d22; background-image: none; border-color: #4c4c56; }
+.qb-application.qb-application .coach-eyebrow { color: #c5c5d0 !important; }
+.qb-application.qb-application .coach-tabs button > span { color: #dddde8; }
+.qb-application.qb-application :is(.coach-pill,.coach-private) { background: #303038; color: #e0e0eb; border-color: #626270; }
+.qb-application.qb-application .coach-chart-track { background: #3a3a44; }
+.qb-application.qb-application .coach-chart-track > span { background: #dedee8; }
+.qb-application.qb-application :is(.coach-empty > span,.coach-date-dot) { color: #dedee8; }
+.qb-application.qb-application .coach-date-dot { background: #dedee8; }
+.qb-application.qb-application .lab-callout { padding: 22px; }

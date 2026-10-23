@@ -130,9 +130,7 @@ export function EngineField({ state: s }: { state: EngineState }) {
                   strokeOpacity=".3"
                   strokeDasharray="4 7"
                 >
-                  <title>
-                    {p.label}: {z.name}
-                  </title>
+                  <title>{`${p.label}: ${z.name}`}</title>
                 </rect>
               ) : null;
             })}
@@ -170,9 +168,7 @@ export function EngineField({ state: s }: { state: EngineState }) {
         .filter((p) => p.job !== "qb")
         .map((p) => (
           <g key={p.id}>
-            <title>
-              {p.label}: {p.responsibility}
-            </title>
+            <title>{`${p.label}: ${p.responsibility}`}</title>
             <circle
               cx={sx(p.pos.x)}
               cy={sy(p.pos.y)}
