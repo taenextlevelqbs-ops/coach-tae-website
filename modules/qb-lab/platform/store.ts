@@ -15,6 +15,7 @@ export type Activity = {
   at: string;
   points?: number;
   engine?: EngineReport;
+  review?: { correct: number; total: 3 };
   profile?: "A" | "B";
 };
 export type Assignment = {
@@ -126,6 +127,7 @@ export function parseState(raw: string): LocalState {
         text(a.at) &&
         !Number.isNaN(Date.parse(a.at)) &&
         (a.points === undefined || [0, 1, 2].includes(a.points)) &&
+        (a.review === undefined || (a.kind === "lesson" && ["pre-snap-adjustments:flag", "pre-snap-adjustments:tackle"].includes(a.reference) && a.points === undefined && a.review !== null && a.review.total === 3 && Number.isInteger(a.review.correct) && a.review.correct >= 0 && a.review.correct <= 3)) &&
         (a.engine === undefined ||
           (a.kind === "simulation" &&
             a.points === undefined &&
@@ -181,6 +183,7 @@ export function parseState(raw: string): LocalState {
       at: a.at,
       ...(a.points !== undefined ? { points: a.points } : {}),
       ...(a.engine ? { engine: cleanReport(a.engine) } : {}),
+      ...(a.review ? { review: { correct: a.review.correct, total: 3 as const } } : {}),
     })),
     assignments: input.assignments.map((a) => ({
       id: a.id,
@@ -240,6 +243,7 @@ export function recordActivity(
   points?: number,
   profile: "A" | "B" = "A",
   engine?: EngineReport,
+  review?: Activity["review"],
 ) {
   updateLab((s) => ({
     ...s,
@@ -253,6 +257,7 @@ export function recordActivity(
         at: new Date().toISOString(),
         ...(points !== undefined ? { points } : {}),
         ...(engine ? { engine: cleanReport(engine) } : {}),
+        ...(review ? { review: { correct: review.correct, total: 3 as const } } : {}),
       },
     ].slice(-200),
     assignments: s.assignments.map((a) =>

@@ -65,6 +65,11 @@ function SimulationDesk({ format }: { format: Format }) {
   const [time, setTime] = useState(0);
   const [started, setStarted] = useState(false);
   const [playing, setPlaying] = useState(false);
+  useEffect(() => {
+    const pause = () => setPlaying(false);
+    window.addEventListener("qb-lab:pause-simulator", pause);
+    return () => window.removeEventListener("qb-lab:pause-simulator", pause);
+  }, []);
   const [speed, setSpeed] = useState(1);
   const [qb, setQB] = useState<Point>({ x: 50, y: 85 });
   const [decision, setDecision] = useState<Decision | null>(null);

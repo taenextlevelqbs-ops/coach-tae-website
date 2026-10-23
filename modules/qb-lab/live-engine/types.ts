@@ -70,6 +70,8 @@ export type Actor = {
 export type EngineConfig = {
   rules: Rules;
   seed: number;
+  matchup?: "balanced" | "offense-edge" | "defense-edge";
+  blitzTempo?: number;
   personnel: Personnel;
   front: Front;
   coverage: Coverage;

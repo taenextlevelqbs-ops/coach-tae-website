@@ -1,3 +1,4 @@
+import { throwEstimate } from "./assessment";
 import { tuning } from "./tuning";
 import type { Actor, EngineState, Input, Outcome } from "./types";
 import type { Point } from "../simulation/model";
@@ -60,7 +61,8 @@ export function release(s: EngineState, input: Input) {
   const speed = tuning.throwSpeedYardsPerSecond; // tunable synthetic throw velocity in yards/second
   const lead = distance(qb.pos, target.pos) / speed;
   const moving = Math.hypot(qb.velocity.x, qb.velocity.y);
-  const error = 0.2 + s.pressure * 1.0 + moving * 0.1;
+  const estimate = throwEstimate(s, target);
+  const error = 0.2 + (1 - estimate.probability) * 4;
   const offset = input.placement ?? { x: 0, y: 0 };
   if (!Number.isFinite(offset.x) || !Number.isFinite(offset.y))
     throw new Error("Throw placement must be finite.");
@@ -94,7 +96,7 @@ export function release(s: EngineState, input: Input) {
   s.events.push({
     tick: s.tick,
     kind: "throw",
-    text: `Released toward ${target.label} at ${(s.tick / 30).toFixed(2)}s; pressure ${s.pressure.toFixed(2)}, moving ${moving.toFixed(1)} yd/s.`,
+    text: `Released toward ${target.label} at ${(s.tick / 30).toFixed(2)}s; pressure ${s.pressure.toFixed(2)}, moving ${moving.toFixed(1)} yd/s; synthetic completion estimate ${Math.round(estimate.probability * 100)}% (not measured athlete performance).`,
     actors: ["QB", target.id],
   });
 }

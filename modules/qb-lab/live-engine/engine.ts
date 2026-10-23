@@ -81,7 +81,7 @@ function rushTarget(a: Actor, qb: Actor, los: number): Point {
     y: qb.pos.y + qb.velocity.y * 0.12,
   };
 }
-function coverageTarget(a: Actor, s: EngineState): Point {
+export function coverageTarget(a: Actor, s: EngineState): Point {
   const receiver = s.players.find(
     (p) => p.id === a.receiver && p.team === "offense",
   );
@@ -104,10 +104,13 @@ function coverageTarget(a: Actor, s: EngineState): Point {
   const qb = s.players.find((p) => p.job === "qb")!;
   if (s.phase === "live" && qb.pos.y > los) return qb.pos;
   const close = s.players
-    .filter((p) => p.job === "route" && distance(p.pos, a.landmark) < 4)
+    .filter((p) => p.job === "route" && Math.abs(p.pos.x - a.landmark.x) < (a.landmark.y > los + 12 ? 10 : 6) && Math.abs(p.pos.y - a.landmark.y) < 9)
     .sort((p, q) => distance(p.pos, a.pos) - distance(q.pos, a.pos))[0];
   if (close)
-    return { x: close.pos.x, y: Math.max(a.landmark.y - 3, close.pos.y + 1) };
+    return {
+      x: bound(close.pos.x, a.landmark.x - 5, a.landmark.x + 5),
+      y: bound(close.pos.y + 1, a.landmark.y - 3, a.landmark.y + 4),
+    };
   return a.landmark;
 }
 /** One fixed tick; wall-clock scheduling cannot change the result of the same input sequence. */
@@ -182,7 +185,7 @@ export function step(state: EngineState, input: Input = {}): EngineState {
   for (const a of s.players.filter((p) => p.team === "defense")) {
     if (a.job === "rush") {
       if (t < a.delay) continue;
-      moveToward(a, rushTarget(a, qb, r.los), STEP, 4.2 + a.ratings.speed * 2);
+      moveToward(a, rushTarget(a, qb, r.los), STEP, 4.2 + a.ratings.speed * 2 + (s.config.blitzTempo ?? 0) * 2);
     } else moveToward(a, coverageTarget(a, s), STEP);
   }
   if (r.blocking) resolveBlocks(s, STEP);

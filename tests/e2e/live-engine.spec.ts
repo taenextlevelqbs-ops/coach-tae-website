@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { test, expect } from "./fixtures";
 import AxeBuilder from "@axe-core/playwright";
 test.beforeEach(async ({ page }) => {
   await page.route("**/*", (r) =>
@@ -136,7 +136,7 @@ test("flag rules stay separate and the live workspace reflows accessibly", async
 test("server-rendered controls stay disabled until the interactive engine is ready", async ({
   browser,
 }) => {
-  const context = await browser.newContext({ javaScriptEnabled: false });
+  const context = await browser.newContext({ javaScriptEnabled: false, viewport: { width: 1280, height: 900 } });
   const page = await context.newPage();
   await page.route("**/*", (r) =>
     new URL(r.request().url()).origin === "http://127.0.0.1:3150"

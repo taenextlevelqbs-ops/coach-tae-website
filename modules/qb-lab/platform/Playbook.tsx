@@ -446,6 +446,7 @@ export function Playbook() {
                 >
                   {p.name} · {p.format}
                 </button>
+                <Link className="lab-button" href={`/qb-lab/simulator/engine?play=${encodeURIComponent(p.id)}`} aria-label={`Run ${p.name} in live engine`}>Run live rep →</Link>
                 <button
                   className="lab-button"
                   aria-label={`Delete saved play ${p.name}`}

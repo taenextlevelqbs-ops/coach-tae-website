@@ -76,6 +76,8 @@ export function sharedPlay(c: EngineConfig): Play {
 }
 export function validateConfig(c: EngineConfig): string[] {
   const issues = validateRules(c.rules);
+  if (c.matchup !== undefined && !["balanced", "offense-edge", "defense-edge"].includes(c.matchup)) issues.push("Invalid synthetic matchup.");
+  if (c.blitzTempo !== undefined && (!Number.isFinite(c.blitzTempo) || c.blitzTempo < 0 || c.blitzTempo > 0.25)) issues.push("Blitz tempo must be from 0 to 0.25.");
   if (
     !Object.keys(personnelGroups).includes(c.personnel) ||
     !fronts.includes(c.front) ||
@@ -306,6 +308,11 @@ export function makeRoster(c: EngineConfig): Actor[] {
           : `${high ? "Deep" : "Underneath"} instructional responsibility; event review required.`;
       return a;
     });
+  }
+  const edge = c.matchup === "offense-edge" ? 0.15 : c.matchup === "defense-edge" ? -0.15 : 0;
+  for (const a of offense.filter(p => p.job === "block")) {
+    a.ratings.passBlock = bound(a.ratings.passBlock + edge, 0, 1);
+    a.ratings.anchor = bound(a.ratings.anchor + edge, 0, 1);
   }
   return [...offense, ...defense];
 }

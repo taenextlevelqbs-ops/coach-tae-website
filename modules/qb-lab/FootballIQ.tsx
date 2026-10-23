@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import { AdjustmentLesson } from "./football/AdjustmentLesson";
 import { RecognitionLab } from "./football/RecognitionLab";
 import { Field } from "./Field";
 import { PathwaySwitch, useDemo } from "./LabShell";
@@ -59,6 +60,7 @@ export function FootballIQ({
         </div>
         <PathwaySwitch />
       </div>
+      <AdjustmentLesson key={`${profile.id}:${profile.pathway}`} />
       <RecognitionLab
         key={initialRecognition ?? "default"}
         initialPreset={initialRecognition}

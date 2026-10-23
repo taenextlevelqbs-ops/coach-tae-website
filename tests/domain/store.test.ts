@@ -111,3 +111,11 @@ describe("validated local engine evidence", () => {
     ).toThrow(/activity/);
   });
 });
+
+it("retains bounded pre-snap review counts without treating them as geometry points", () => {
+  const activity = {id:"review-1",kind:"lesson",profile:"B",reference:"pre-snap-adjustments:flag",at:new Date().toISOString(),review:{correct:3,total:3,ignored:"not-retained"}};
+  const result = parseState(JSON.stringify({...empty,activities:[activity]}));
+  expect(result.activities[0].review).toEqual({correct:3,total:3});
+  expect(result.activities[0].points).toBeUndefined();
+  for (const review of [{correct:4,total:3},{correct:2,total:4},null]) expect(() => parseState(JSON.stringify({...empty,activities:[{...activity,review}]}))).toThrow(/activity/);
+});

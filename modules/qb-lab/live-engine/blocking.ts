@@ -97,7 +97,7 @@ export function resolveBlocks(s: EngineState, dt: number) {
       const defense =
         b.ratings.passBlock + b.ratings.anchor + (double ? 0.5 : 0);
       const control = bound(
-        (previous?.control ?? 0.5) + (defense - attack - 0.14) * dt * 0.45,
+        (previous?.control ?? 0.5) + (defense - attack - 0.14 - (s.config.blitzTempo ?? 0)) * dt * 0.45,
         0,
         1,
       );

@@ -11,6 +11,8 @@ import { advanceTicks, createEngine, snap, step } from "./engine";
 import { validateConfig } from "./roster";
 import { coaching, recommendedLesson } from "./coaching";
 import { report } from "./report";
+import { pocketWindow, throwEstimate } from "./assessment";
+import { PocketCheck } from "./PocketCheck";
 import { EngineField } from "./EngineField";
 import {
   rushMoves,
@@ -32,9 +34,11 @@ export function EngineLab({ initialPlayId }: { initialPlayId?: string } = {}) {
   const { profile } = useDemo();
   const { state } = useLocalLab();
   const play = state.plays.find((p) => p.id === initialPlayId);
+  const ready = useSyncExternalStore(subscribeReady, clientReady, serverReady);
+  if (initialPlayId && ready && !play) return <section role="alert"><h1>Saved play unavailable</h1><p>This play is not saved on this device. No substitute formation was launched.</p><Link href="/qb-lab/playbook">Open Playbook Studio</Link></section>;
   return (
     <EngineDesk
-      key={`${profile.id}:${initialPlayId ?? ""}:${play?.id ?? "default"}`}
+      key={`${profile.id}:${initialPlayId ?? ""}:${play ? JSON.stringify(play) : "default"}`}
       initialPlay={play}
     />
   );
@@ -72,6 +76,11 @@ function EngineDesk({ initialPlay }: { initialPlay?: Play }) {
     }
   }, [zoom]);
   const held = useRef<Input["move"]>({ x: 0, y: 0 });
+  useEffect(() => {
+    const pause = () => { held.current = { x: 0, y: 0 }; setRunning(false); };
+    window.addEventListener("qb-lab:pause-simulator", pause);
+    return () => window.removeEventListener("qb-lab:pause-simulator", pause);
+  }, []);
   const errors = validateConfig(config);
   const staged = errors.length || sim ? null : createEngine(config);
   const s = sim ?? staged;
@@ -115,6 +124,9 @@ function EngineDesk({ initialPlay }: { initialPlay?: Play }) {
       setSim(snap(staged));
       setRunning(config.mode !== "learn");
       setRecorded(false);
+      if (window.matchMedia?.("(max-height: 500px) and (orientation: landscape)")?.matches) {
+        fieldViewport.current?.previousElementSibling?.scrollIntoView({ block: "start" });
+      }
     }
   }
   function nudge(x: number, y: number) {
@@ -130,7 +142,7 @@ function EngineDesk({ initialPlay }: { initialPlay?: Play }) {
     <>
       <div className="lab-page-heading">
         <div>
-          <p className="lab-kicker">LIVE POCKET · ENGINE MILESTONE 1</p>
+          <p className="lab-kicker">LIVE POCKET · PLAYABLE BETA</p>
           <h1>See the rush. Own your space.</h1>
           <p className="lab-lede">
             A playable, deterministic teaching model. Coach review required;
@@ -191,6 +203,14 @@ function EngineDesk({ initialPlay }: { initialPlay?: Play }) {
               </option>
             </select>
           </label>
+          {config.rules.format === "tackle11" && <>
+            <label>Synthetic line matchup<select value={config.matchup ?? "balanced"} onChange={e => change({ matchup: e.target.value as EngineConfig["matchup"] })}>
+              <option value="balanced">Balanced ratings</option><option value="offense-edge">Blocking advantage</option><option value="defense-edge">Rush advantage</option>
+            </select></label>
+            <label>Blitz tempo modifier<select value={config.blitzTempo ?? 0} onChange={e => change({ blitzTempo: Number(e.target.value) })}>
+              <option value="0">Standard</option><option value="0.12">Accelerated pressure</option><option value="0.25">Aggressive pressure</option>
+            </select></label>
+          </>}
           <label>
             Repeatable scenario seed
             <input
@@ -355,6 +375,7 @@ function EngineDesk({ initialPlay }: { initialPlay?: Play }) {
             </select>
           </label>
         </fieldset>
+        {config.rules.format === "tackle11" && <PocketCheck key={`${config.rules.rushers}:${config.matchup}:${config.blitzTempo}:${config.help}`} config={config} />}
         <details className="engine-call">
           <summary>Teaching setup: actual post-snap responsibilities</summary>
           <label>
@@ -589,7 +610,7 @@ function EngineDesk({ initialPlay }: { initialPlay?: Play }) {
                 </span>
               </div>
               <div
-                className="engine-viewport"
+                className={`engine-viewport${zoom ? " is-zoomed" : ""}`}
                 ref={fieldViewport}
                 tabIndex={0}
                 role="group"
@@ -684,9 +705,11 @@ function EngineDesk({ initialPlay }: { initialPlay?: Play }) {
                 QB {s.players.find((p) => p.job === "qb")!.pos.x.toFixed(1)},{" "}
                 {s.players.find((p) => p.job === "qb")!.pos.y.toFixed(1)} yards
                 · pressure {s.pressure.toFixed(2)}
+                {pocketWindow(s) !== null && <> · estimated pocket remaining {pocketWindow(s)!.toFixed(1)}s (advisory, not a sack clock)</>}
               </output>
             </div>
             <aside>
+              {s.phase === "live" && <details className="engine-estimates"><summary>Synthetic throw estimates</summary><p>Teaching estimates, not athlete statistics. Balance, release timing, pressure, range and observed separation affect dispersion. Live ball geometry still decides the outcome.</p><ul>{s.players.filter(p => p.job === "route" && p.eligible).map(p => <li key={p.id}>{p.label}: {Math.round(throwEstimate(s, p).probability * 100)}% model completion estimate</li>)}</ul></details>}
               <h3>{done ? "What happened" : "Your pocket decision"}</h3>
               <p>
                 {s.config.rules.format === "passing7"
@@ -707,7 +730,7 @@ function EngineDesk({ initialPlay }: { initialPlay?: Play }) {
                   <option value="2">Two yards right</option>
                 </select>
               </label>
-              <div className="engine-targets">
+              <div className={`engine-targets${s.phase === "live" || s.phase === "flight" ? " is-live" : ""}`}>
                 {s.players
                   .filter((p) => p.job === "route" && p.eligible)
                   .map((p) => (

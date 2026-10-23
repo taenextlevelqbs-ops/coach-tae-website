@@ -91,6 +91,7 @@ export function Progress() {
                       rating.
                     </span>
                   )}
+                  {a.review && <span>{a.review.correct}/{a.review.total} correct in pre-snap review · actual local lesson answers</span>}
                   {a.points !== undefined && (
                     <span>{a.points}/2 geometry checks · not a QB rating</span>
                   )}

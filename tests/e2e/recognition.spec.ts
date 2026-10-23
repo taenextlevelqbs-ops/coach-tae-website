@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "./fixtures";
 import AxeBuilder from "@axe-core/playwright";
 test.beforeEach(async ({ page }) => {
   await page.route("**/*", (r) =>

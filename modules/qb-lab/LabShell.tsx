@@ -1,4 +1,5 @@
 "use client";
+import { PwaInstall } from "./PwaInstall";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { createContext, useContext, type ReactNode } from "react";
@@ -149,6 +150,7 @@ export function LabShell({ children }: { children: ReactNode }) {
             <div className="qb-lab app-tool-workspace">{children}</div>
           )}
         </main>
+        <PwaInstall />
         <footer className="app-footer">
           <span>
             <span className="app-demo-dot" aria-hidden="true" />{" "}

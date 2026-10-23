@@ -4,6 +4,8 @@ import "./lab.css";
 import "./application.css";
 export const metadata: Metadata = {
   title: "QB LAB Preview",
+  manifest: "/qb-lab/manifest.webmanifest",
+  appleWebApp: { capable: true, title: "QB LAB", statusBarStyle: "black-translucent" },
   description:
     "Explore the Coach Tae QB LAB interactive demonstration for athletes and families.",
   alternates: { canonical: "/qb-lab" },

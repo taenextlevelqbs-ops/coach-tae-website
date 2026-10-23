@@ -1012,6 +1012,7 @@
 .engine-workspace { display:grid; grid-template-columns:minmax(0,1.5fr) minmax(0,1fr); gap:24px; margin-top:20px; }
 .engine-workspace>* { min-width:0; }.engine-scoreboard { display:flex; justify-content:space-between; gap:8px; flex-wrap:wrap; padding:12px; background:#213a51; font-size:12px; border-radius:9px 9px 0 0; }
 .engine-viewport { width:100%; max-height:min(65vh,660px); overflow:auto; border:1px solid #526b7f; overscroll-behavior-x:contain; }
+.engine-viewport:not(.is-zoomed) { max-height:none; }
 .engine-field { width:100%; height:auto; display:block; }
 .engine-actions,.engine-targets { display:flex; flex-wrap:wrap; gap:8px; margin:14px 0; }
 .engine-targets button { flex:1 1 110px; }
@@ -1772,4 +1773,53 @@
 @media (prefers-reduced-motion: reduce) {
   .app-athlete-home .training-destination,
   .app-athlete-home .app-primary-button { transition: none; }
+}
+
+/* Beta mechanics and install controls stay within QB LAB. */
+.lab-install { width:min(1080px,calc(100% - 32px)); margin:8px auto; font-size:12px; }
+.lab-install summary { cursor:pointer; min-height:44px; display:flex; align-items:center; }
+.lab-install p { max-width:640px; padding:8px 0; }
+.lab-install button { min-height:44px; padding:10px 16px; border:1px solid #4ade80; border-radius:8px; background:#24423d; color:#9df1b9; }
+.simulator-rotate { background:#172337; color:#f4f7fb; padding:24px; border:1px solid #334155; border-radius:14px; max-width:620px; margin:auto; }
+.simulator-rotate[hidden] { display:none; }
+.simulator-rotate h1 { font-size:26px; line-height:1.25; margin:12px 0; }
+.simulator-rotate p { color:#b7c4d6; margin-bottom:16px; }
+.simulator-rotate button { min-height:44px; background:#4ade80; color:#082416; padding:10px 16px; border:0; border-radius:8px; font-weight:700; margin-bottom:16px; }
+.simulator-rotate a { color:#9df1b9; text-decoration:underline; }
+.adjustment-lesson { background:#172337; color:#f4f7fb; border:1px solid #334155; border-radius:14px; padding:22px; margin:20px 0; }
+.adjustment-lesson p { color:#b7c4d6; margin:12px 0; }
+.adjustment-lesson fieldset { border:0; padding:0; margin:18px 0; min-width:0; }
+.adjustment-lesson legend { font-weight:700; margin-bottom:12px; }
+.adjustment-lesson label { display:flex; align-items:center; gap:10px; padding:10px; min-height:44px; border:1px solid #334155; border-radius:8px; margin:8px 0; cursor:pointer; }
+.adjustment-lesson input { flex-shrink:0; accent-color:#4ade80; }
+.adjustment-lesson a { color:#9df1b9; text-decoration:underline; display:inline-block; margin:8px; }
+.engine-pocket-check { padding:14px 20px; background:#172337; color:#b7c4d6; border-bottom:1px solid #334155; }
+.engine-pocket-check button { min-height:44px; color:#9df1b9; border:1px solid #5b8872; padding:8px 12px; border-radius:8px; background:#24423d; }
+.engine-estimates { padding:12px; border:1px solid #334155; border-radius:8px; margin-bottom:16px; }
+.engine-estimates summary { cursor:pointer; min-height:32px; font-weight:700; }
+@media (max-height:500px) and (orientation:landscape) {
+  .simulator-orientation-shell .lab-page-heading { margin-bottom:14px; }
+  .simulator-orientation-shell .lab-page-heading h1 { font-size:26px; }
+  .simulator-orientation-shell .engine-viewport:not(.is-zoomed) .engine-field { height:max(120px,calc(100dvh - 180px)); width:100%; }
+}
+@media (max-width:1100px) and (orientation:portrait) {
+  /* Enforce the play orientation before hydration, too. Other QB LAB routes are unaffected. */
+  .simulator-orientation-shell > div { display:none; }
+  .simulator-orientation-shell .simulator-rotate { display:block; }
+}
+
+@media (max-height:500px) and (orientation:landscape) {
+  html:has(.simulator-orientation-shell) { scroll-padding-top:0; }
+  .qb-application:has(.simulator-orientation-shell) { padding-bottom:calc(76px + env(safe-area-inset-bottom)); }
+  .simulator-orientation-shell .engine-targets.is-live {
+    position:fixed; bottom:0; left:0; right:0; z-index:40; margin:0;
+    display:flex; flex-wrap:nowrap; gap:5px;
+    padding:6px max(8px,env(safe-area-inset-right)) max(6px,env(safe-area-inset-bottom)) max(8px,env(safe-area-inset-left));
+    background:#172337; border-top:1px solid #526b7f;
+  }
+  .simulator-orientation-shell .engine-targets.is-live button { flex:1 1 0; min-width:0; min-height:44px; padding:6px; font-size:12px; }
+}
+@media (max-width:600px) and (max-height:500px) and (orientation:landscape) {
+  .qb-application:has(.simulator-orientation-shell) { padding-bottom:calc(140px + env(safe-area-inset-bottom)); }
+  .simulator-orientation-shell .engine-targets.is-live { bottom:calc(62px + env(safe-area-inset-bottom)); }
 }
