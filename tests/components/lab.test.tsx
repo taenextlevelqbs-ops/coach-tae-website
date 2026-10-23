@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { LabShell } from "../../modules/qb-lab/LabShell";
 import { HomeDashboard } from "../../modules/qb-lab/HomeDashboard";
@@ -96,6 +96,7 @@ describe("QB LAB interactive components", () => {
         <FilmReview />
       </LabShell>,
     );
+    await user.click(screen.getByText("Explore sample feedback", { exact: true }));
     await user.click(screen.getByRole("button", { name: /Jump to 5 seconds/ }));
     expect(screen.getByRole("slider", { name: "Review timeline" })).toHaveValue(
       "5",
@@ -148,6 +149,7 @@ describe("QB LAB review desk", () => {
         <FilmReview />
       </LabShell>,
     );
+    await user.click(screen.getByText("Explore sample feedback", { exact: true }));
     await user.click(screen.getByRole("button", { name: /Jump to 5 seconds/ }));
     await user.selectOptions(
       screen.getByLabelText("Observation tag"),
@@ -206,6 +208,7 @@ describe("QB LAB review desk", () => {
         <FilmReview />
       </LabShell>,
     );
+    await user.click(screen.getByText("Explore sample feedback", { exact: true }));
     await user.click(
       screen.getByRole("button", { name: "Open Rotation study" }),
     );
@@ -230,50 +233,25 @@ describe("QB LAB review desk", () => {
 });
 
 describe("approved athlete dashboard", () => {
-  it("renders the exact demo dashboard and personalizes fixed profiles without creating records", async () => {
+  it("renders four destinations and a clear demo workout while preserving profile selection", async () => {
     const user = userEvent.setup();
-    render(
-      <LabShell>
-        <HomeDashboard />
-      </LabShell>,
-    );
-    await user.selectOptions(
-      screen.getByLabelText("Demo athlete profile"),
-      "B",
-    );
-    expect(
-      screen.getByRole("heading", { name: "Good afternoon, Jordan." }),
-    ).toBeInTheDocument();
-    expect(screen.getByText(/Your QB Lab/)).toHaveTextContent(
-      "Your QB Lab · Flag football · Age 12",
-    );
-    expect(
-      screen.getByRole("heading", { name: "Let's work on reading Cover 2." }),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole("link", { name: "Start training" }),
-    ).toHaveAttribute("href", "/qb-lab/session");
-    expect(
-      screen
-        .getByRole("region", { name: "Your training" })
-        .querySelectorAll("a"),
-    ).toHaveLength(6);
+    render(<LabShell><HomeDashboard /></LabShell>);
+    await user.selectOptions(screen.getByLabelText("Demo athlete profile"), "A");
+    expect(screen.getByRole("heading", { name: "What's up, Alex!" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Today's Training" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "3-Step Drop + Shuffle" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Start Training" })).toHaveAttribute("href", "/qb-lab/workouts/three-step-drop-shuffle");
+    const cards = screen.getByRole("region", { name: "Your training" });
+    expect(cards.querySelectorAll("a")).toHaveLength(4);
+    for (const [title, route] of [["Workouts", "workouts"], ["Recovery", "recovery"], ["QB Simulator", "simulator"], ["Film Room", "film"]])
+      expect(within(cards).getByRole("link", { name: new RegExp(title, "i") })).toHaveAttribute("href", `/qb-lab/${route}`);
     expect(screen.getByText("Sample coaching note")).toBeInTheDocument();
-    expect(screen.getByText(/not real athlete records/)).toBeInTheDocument();
-    await user.selectOptions(
-      screen.getByLabelText("Demo athlete profile"),
-      "A",
-    );
-    expect(
-      screen.getByRole("heading", { name: "Good afternoon, Alex." }),
-    ).toBeInTheDocument();
-    expect(screen.getByText(/Your QB Lab/)).toHaveTextContent(
-      "Tackle football",
-    );
-    expect(
-      screen
-        .getByRole("navigation", { name: "QB LAB navigation" })
-        .querySelectorAll("a"),
-    ).toHaveLength(4);
+    expect(screen.getByRole("contentinfo")).toHaveTextContent(/demo|synthetic/i);
+    await user.selectOptions(screen.getByLabelText("Demo athlete profile"), "B");
+    expect(screen.getByRole("heading", { name: "What's up, Jordan!" })).toBeInTheDocument();
+    const nav = within(screen.getByRole("navigation", { name: "QB LAB navigation" }));
+    expect(nav.getAllByRole("link")).toHaveLength(4);
+    expect(nav.getByRole("link", { name: "Train" })).toHaveAttribute("href", "/qb-lab/workouts");
+    expect(nav.getByRole("link", { name: "Simulator" })).toHaveAttribute("href", "/qb-lab/simulator");
   });
 });

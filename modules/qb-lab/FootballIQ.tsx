@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AdjustmentLesson } from "./football/AdjustmentLesson";
 import { RecognitionLab } from "./football/RecognitionLab";
 import { Field } from "./Field";
@@ -23,6 +23,18 @@ export function FootballIQ({
   const [answer, setAnswer] = useState<number | null>(null);
   const [submitted, setSubmitted] = useState(false);
   const [responses, setResponses] = useState<Record<number, number>>({});
+  const advanced = useRef<HTMLDetailsElement>(null);
+  useEffect(() => {
+    const reveal = () => {
+      if ((initialRecognition || window.location.hash === "#recognition") && advanced.current) {
+        advanced.current.open = true;
+        document.getElementById("recognition")?.scrollIntoView?.({ block: "start" });
+      }
+    };
+    reveal();
+    window.addEventListener("hashchange", reveal);
+    return () => window.removeEventListener("hashchange", reveal);
+  }, [initialRecognition]);
   const active = playing && progress < 100;
   useEffect(() => {
     if (!active) return;
@@ -47,25 +59,15 @@ export function FootballIQ({
     <>
       <div className="lab-page-heading">
         <div>
-          <p className="lab-kicker">FOOTBALL IQ · NOTICE THE CHANGE</p>
-          <h1>
-            Eyes up.
-            <br />
-            <em>Read the change.</em>
-          </h1>
+          <h1>Football IQ</h1>
           <p className="lab-lede">
-            A guided observation exercise. Watch the defenders, describe the
-            alignment and challenge the first assumption.
+            See the defense. Notice what changes. Make your next decision.
           </p>
         </div>
         <PathwaySwitch />
       </div>
-      <AdjustmentLesson key={`${profile.id}:${profile.pathway}`} />
-      <RecognitionLab
-        key={initialRecognition ?? "default"}
-        initialPreset={initialRecognition}
-      />
-      <h2>Foundations: visible observations</h2>
+      <AdjustmentLesson key={`${profile.id}:${pathway}`} />
+      <h2>Read the picture</h2>
       <div className="lab-iq-grid">
         <section className="lab-panel lab-field-panel">
           <div className="lab-card-top">
@@ -225,6 +227,14 @@ export function FootballIQ({
           )}
         </section>
       </div>
+      <details ref={advanced} open={!!initialRecognition} className="lab-panel secondary-details">
+        <summary>Advanced recognition lab</summary>
+        <p>Explore personnel, fronts and post-snap responsibilities. These teaching scenarios still require Coach Tae’s review.</p>
+        <RecognitionLab
+          key={initialRecognition ?? "default"}
+          initialPreset={initialRecognition}
+        />
+      </details>
       <div className="lab-app-toolbar">
         <p>
           Apply the observation process to a playable scenario. Coverage, blitz,

@@ -1,3 +1,4 @@
+import { openDisclosure } from "./disclosures";
 import { test, expect } from "./fixtures";
 import type { Play } from "../../modules/qb-lab/simulation/model";
 
@@ -35,6 +36,7 @@ test("duplicate preserves exact routes and alignment without overwriting the sou
   await expect(page.getByLabel("Route point 1 X", { exact: true })).toHaveValue("40");
 
   await page.getByRole("link", { name: "Run Integrity copy source in live engine", exact: true }).click();
+  await openDisclosure(page, "Advanced Settings");
   await expect(page.getByLabel("Formation / saved play")).toHaveValue(source.id);
 });
 

@@ -1,3 +1,4 @@
+import { openDisclosure } from "./disclosures";
 import { test, expect } from "./fixtures";
 import AxeBuilder from "@axe-core/playwright";
 test("unconfigured account and video services stay disabled without accepting private data", async ({
@@ -34,6 +35,7 @@ test("illustrated Film Room supports keyboard canvas markers and timestamped not
   page,
 }) => {
   await page.goto("/qb-lab/film");
+  await openDisclosure(page, "Explore sample feedback");
   await expect(
     page.getByRole("heading", { name: "Real uploads are locked" }),
   ).toBeVisible();

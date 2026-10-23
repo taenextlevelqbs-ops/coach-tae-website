@@ -22,12 +22,9 @@ export function Progress() {
     <>
       <div className="lab-page-heading">
         <div>
-          <p className="lab-kicker">PROGRESS CENTER / ACTUAL LOCAL EVENTS</p>
-          <h1>The work you recorded.</h1>
+          <h1>Your progress</h1>
           <p className="lab-lede">
-            The most recent browser events for demo athlete {profile.name}.
-            Self-reported completions and toy simulation checks are not verified
-            athlete development metrics.
+            The work you recorded, {profile.name}. Demo history stays in this browser; completed activities are not a measure of athletic ability.
           </p>
         </div>
         <button className="lab-button" onClick={downloadLab}>
@@ -101,7 +98,7 @@ export function Progress() {
           )}
         </section>
         <aside className="lab-panel">
-          <h2>Choose an intention.</h2>
+          <h2>Your goals</h2>
           <p>Fixed local goals. No ranking or skill estimate is generated.</p>
           {goals.map((g) => (
             <label className="lab-preference" key={g}>

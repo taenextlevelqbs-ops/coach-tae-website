@@ -1,3 +1,4 @@
+import { openDisclosure } from "./disclosures";
 import { test, expect } from "./fixtures";
 import AxeBuilder from "@axe-core/playwright";
 test.beforeEach(async ({ page }) => {
@@ -11,7 +12,8 @@ test("live pocket is playable by step, keyboard and touch, preserves declaration
   page,
 }) => {
   await page.goto("/qb-lab/simulator");
-  await page.getByRole("link", { name: "Enter live pocket" }).click();
+  await page.getByRole("link", { name: "Start learning", exact: true }).click();
+  await openDisclosure(page, "Advanced Settings");
   const lab = page.getByRole("region", { name: "Live pocket engine" });
   await expect(
     lab.getByRole("button", { name: "Snap live rep" }),
@@ -71,6 +73,7 @@ test("passing 7v7 has an explicit event clock, no physical rush and a real in-fl
   page,
 }) => {
   await page.goto("/qb-lab/simulator/engine");
+  await openDisclosure(page, "Advanced Settings");
   const lab = page.getByRole("region", { name: "Live pocket engine" });
   await lab.getByLabel("Game environment").selectOption("passing7");
   await expect(lab.getByLabel("Assigned rush count")).toHaveValue("0");
@@ -103,6 +106,7 @@ test("flag rules stay separate and the live workspace reflows accessibly", async
   page,
 }) => {
   await page.goto("/qb-lab/simulator/engine");
+  await openDisclosure(page, "Advanced Settings");
   const lab = page.getByRole("region", { name: "Live pocket engine" });
   await lab.getByLabel("Game environment").selectOption("flag8");
   await expect(
@@ -144,6 +148,7 @@ test("server-rendered controls stay disabled until the interactive engine is rea
       : r.abort(),
   );
   await page.goto("http://127.0.0.1:3150/qb-lab/simulator/engine");
+  await openDisclosure(page, "Advanced Settings");
   const lab = page.getByRole("region", { name: "Live pocket engine" });
   await expect(lab.getByLabel("Game environment")).toBeDisabled();
   await expect(

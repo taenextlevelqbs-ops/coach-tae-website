@@ -36,7 +36,7 @@ for (const name of [
 test("simulator moves by keyboard and touch, pauses, makes one bounded decision and persists it", async ({
   page,
 }) => {
-  await page.goto("/qb-lab/simulator");
+  await page.goto("/qb-lab/simulator/spacing");
   const field = page.getByLabel(
     "Quarterback movement area. Use arrow keys or W A S D.",
     { exact: true },
@@ -103,7 +103,7 @@ test("edited play survives save/reload and becomes runnable in the matching flag
   await expect(page.getByLabel("Player X", { exact: true })).toHaveValue("25");
   await page.getByRole("button", { name: "Undo", exact: true }).click();
   await page.getByRole("button", { name: "Redo", exact: true }).click();
-  await page.goto("/qb-lab/simulator");
+  await page.goto("/qb-lab/simulator/spacing");
   await page.getByRole("radio", { name: "Flag", exact: true }).check();
   await page
     .getByLabel("Simulation scenario", { exact: true })
@@ -125,10 +125,7 @@ test("coach assignment, guided activity and progress form a persisted loop witho
   await expect(
     page.getByText("Slow setup walkthrough · assigned", { exact: true }),
   ).toBeVisible();
-  await page.goto("/qb-lab/workouts");
-  await page
-    .getByRole("button", { name: /Slow setup walkthrough Footwork/ })
-    .click();
+  await page.goto("/qb-lab/workouts?activity=footwork&profile=A");
   for (let i = 0; i < 3; i++)
     await page.getByRole("button", { name: "Next step", exact: true }).click();
   await page

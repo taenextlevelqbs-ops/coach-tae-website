@@ -10,6 +10,7 @@ it("requires an observation, locks declarations at snap and resets without recor
       <EngineLab />
     </LabShell>,
   );
+  await user.click(screen.getByText("Advanced Settings", { exact: true }));
   const lab = screen.getByRole("region", { name: "Live pocket engine" });
   const snap = within(lab).getByRole("button", { name: "Snap live rep" });
   expect(snap).toBeDisabled();

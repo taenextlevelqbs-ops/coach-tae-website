@@ -1,3 +1,4 @@
+import { openDisclosure } from "./disclosures";
 import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 test.beforeEach(async ({ page }) => {
@@ -13,6 +14,7 @@ test("simulator requires landscape, pauses when rotated, and leaves the home por
   await page.setViewportSize({width:844,height:390});
   const lab = page.getByRole("region",{name:"Live pocket engine"});
   await expect(lab).toBeVisible();
+  await openDisclosure(page, "Advanced Settings");
   await expect(lab.getByRole("img",{name:/Live engine field/})).toHaveAttribute("viewBox","0 0 1120 360");
   await lab.getByLabel("Learning mode").selectOption("practice");
   await lab.getByLabel("Your possible coverage").selectOption("Cannot confirm from alignment");
@@ -26,12 +28,13 @@ test("simulator requires landscape, pauses when rotated, and leaves the home por
   await expect(lab.getByRole("button",{name:"Play live rep",exact:true})).toBeVisible();
   await page.setViewportSize({width:390,height:844});
   await page.getByRole("link",{name:"Back to your Lab"}).click();
-  await expect(page.getByRole("heading",{name:/Good afternoon, /})).toBeVisible();
+  await expect(page.getByRole("heading",{name:/What.s up, /})).toBeVisible();
   await expect(page.getByRole("region",{name:"Simulator orientation"})).toHaveCount(0);
 });
 test("line settings drive a server estimate and throws expose bounded synthetic estimates", async ({page}) => {
   await page.setViewportSize({width:1024,height:768});
   await page.goto("/qb-lab/simulator/engine");
+  await openDisclosure(page, "Advanced Settings");
   const lab=page.getByRole("region",{name:"Live pocket engine"});
   await lab.getByLabel("Synthetic line matchup").selectOption("offense-edge");
   await lab.getByLabel("Blitz tempo modifier").selectOption("0.12");
@@ -52,10 +55,12 @@ test("a saved studio play launches exactly and unknown IDs never silently launch
   await page.getByRole("button",{name:"Save play locally"}).click();
   await page.setViewportSize({width:1024,height:768});
   await page.getByRole("link",{name:"Run Beta pocket concept in live engine"}).click();
+  await openDisclosure(page, "Advanced Settings");
   await expect(page).toHaveURL(/engine\?play=/);
   await expect(page.getByLabel("Formation / saved play")).toHaveValue(/.+/);
   await expect(page.getByLabel("Formation / saved play").locator("option:checked")).toHaveText("Beta pocket concept");
   await page.reload();
+  await openDisclosure(page, "Advanced Settings");
   await expect(page.getByLabel("Formation / saved play").locator("option:checked")).toHaveText("Beta pocket concept");
   await page.goto("/qb-lab/simulator/engine?play=missing-fixture");
   await expect(page.getByRole("heading",{name:"Saved play unavailable"})).toBeVisible();
@@ -72,7 +77,9 @@ test("PWA controls the exact home route, serves offline guidance and excludes pr
   await context.setOffline(true);
   await page.goto("/qb-lab/film");
   await expect(page.getByRole("heading",{name:"Keep your eyes up."})).toBeVisible();
-  await expect(page.locator("html")).toHaveCSS("background-color","rgb(11, 18, 32)");
+  const offlineColor = await page.locator("html").evaluate(el => getComputedStyle(el).backgroundColor.match(/\d+/g)!.slice(0, 3).map(Number));
+  expect(Math.max(...offlineColor)).toBeLessThan(55);
+  expect(Math.max(...offlineColor) - Math.min(...offlineColor)).toBeLessThanOrEqual(3);
   const cached=await page.evaluate(async () => (await Promise.all((await caches.keys()).map(async key => (await (await caches.open(key)).keys()).map(r => new URL(r.url).pathname)))).flat());
   expect(cached).toContain("/qb-lab/offline.html");
   expect(cached.some(p => p.startsWith("/api/") || ["/qb-lab","/qb-lab/film"].includes(p))).toBe(false);

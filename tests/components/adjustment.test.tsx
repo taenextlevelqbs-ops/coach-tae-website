@@ -7,6 +7,7 @@ import { resetLab, useLocalLab } from "../../modules/qb-lab/platform/store";
 it("records only a fully reviewed pre-snap lesson, once, for the selected demo athlete", async () => {
   resetLab(); const { result } = renderHook(() => useLocalLab()); const user = userEvent.setup();
   render(<LabShell><AdjustmentLesson /></LabShell>);
+  await user.selectOptions(screen.getByLabelText("Demo athlete profile"), "B");
   const lesson = within(screen.getByRole("region", { name: "Pre-snap adjustment lesson" }));
   expect(lesson.getByRole("button",{name:"Check adjustment"})).toBeDisabled();
   for (let i=0;i<3;i++) {
@@ -23,6 +24,7 @@ it("records only a fully reviewed pre-snap lesson, once, for the selected demo a
 it("distinguishes incorrect answers from reviewed/completed decisions", async () => {
   resetLab(); const {result}=renderHook(()=>useLocalLab()); const user=userEvent.setup();
   render(<LabShell><AdjustmentLesson /></LabShell>);
+  await user.selectOptions(screen.getByLabelText("Demo athlete profile"), "B");
   const lesson=within(screen.getByRole("region",{name:"Pre-snap adjustment lesson"}));
   for(let i=0;i<3;i++) {
     await user.click(lesson.getAllByRole("radio")[i===0?0:1]);

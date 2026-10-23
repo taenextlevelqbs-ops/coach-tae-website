@@ -15,24 +15,25 @@ it("shows the selected learning pathway on home and resets the corresponding adj
   const user = userEvent.setup();
   render(<LabShell><PathwaySwitch /><HomeDashboard /><AdjustmentLesson /></LabShell>);
   await user.selectOptions(screen.getByLabelText("Demo athlete profile"), "A");
-  expect(screen.getByText(/Your QB Lab/)).toHaveTextContent("Tackle football");
+  expect(screen.getByRole("radio", { name: "Tackle" })).toBeChecked();
+  expect(screen.getByRole("heading", { name: "What's up, Alex!" })).toBeVisible();
   const lesson = within(screen.getByRole("region", { name: "Pre-snap adjustment lesson" }));
   await user.click(lesson.getAllByRole("radio")[1]);
   await user.click(lesson.getByRole("button", { name: "Check adjustment" }));
   await user.click(lesson.getByRole("button", { name: "Next adjustment" }));
   await user.click(screen.getByRole("radio", { name: "Flag" }));
-  expect(screen.getByText(/Your QB Lab/)).toHaveTextContent("Flag football");
+  expect(screen.getByRole("radio", { name: "Flag" })).toBeChecked();
   const updatedLesson = within(screen.getByRole("region", { name: "Pre-snap adjustment lesson" }));
   expect(updatedLesson.getByText(/Three short decisions/)).toHaveTextContent("Flag pathway");
   expect(updatedLesson.getByRole("group")).toHaveAccessibleName(/^1 of 3:/);
   expect(updatedLesson.getByRole("button", { name: "Check adjustment" })).toBeDisabled();
 });
 
-it("keeps Train active on the nested live simulator route", () => {
+it("keeps Simulator active on the nested live simulator route", () => {
   router.pathname = "/qb-lab/simulator/engine";
   render(<LabShell><p>Simulator</p></LabShell>);
   const nav = within(screen.getByRole("navigation", { name: "QB LAB navigation" }));
-  expect(nav.getByRole("link", { name: "Train" })).toHaveAttribute("aria-current", "page");
+  expect(nav.getByRole("link", { name: "Simulator" })).toHaveAttribute("aria-current", "page");
   expect(nav.getByRole("link", { name: "Home" })).not.toHaveAttribute("aria-current");
 });
 

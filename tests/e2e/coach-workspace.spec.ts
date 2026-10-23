@@ -1,3 +1,4 @@
+import { openDisclosure } from "./disclosures";
 import { test, expect } from "./fixtures";
 import AxeBuilder from "@axe-core/playwright";
 test.beforeEach(async ({ page }) => {
@@ -94,6 +95,7 @@ test("play script parsing links actual saved formation data to the live simulato
     .getByRole("link", { name: "Run Spacing study in simulator", exact: false })
     .click();
   await expect(page).toHaveURL(new RegExp(`play=${id}`));
+  await openDisclosure(page, "Advanced Settings");
   await expect(
     page.getByLabel("Formation / saved play", { exact: false }),
   ).toHaveValue(id);
@@ -212,8 +214,6 @@ test("all four coach tabs reflow and pass automated accessibility checks", async
     .click();
   await expect(page).toHaveURL(/\/qb-lab\/?$/);
   await expect(page.locator(".coach-console")).toHaveCount(0);
-  await expect(page.locator(".qb-application")).toHaveCSS(
-    "background-color",
-    "rgb(11, 18, 32)",
-  );
+  await expect(page.locator(".training-destination")).toHaveCount(4);
+  await expect(page.getByRole("heading", { name: "What's up, Alex!", exact: true })).toBeVisible();
 });

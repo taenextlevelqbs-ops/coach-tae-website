@@ -1,3 +1,4 @@
+import { openDisclosure } from "./disclosures";
 import { test, expect } from "./fixtures";
 import AxeBuilder from "@axe-core/playwright";
 test("saved hash geometry reaches the engine and exposes configurable split responsibilities and a display-only timing target", async ({
@@ -17,6 +18,7 @@ test("saved hash geometry reaches the engine and exposes configurable split resp
     .fill("Synthetic left-hash study");
   await page.getByRole("button", { name: "Save play locally", exact: true }).click();
   await page.goto("/qb-lab/simulator/engine");
+  await openDisclosure(page, "Advanced Settings");
   await page
     .getByLabel("Formation / saved play")
     .selectOption({ label: "Synthetic left-hash study" });

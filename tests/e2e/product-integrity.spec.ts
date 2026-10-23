@@ -27,8 +27,8 @@ test("the selected pathway persists into the athlete home", async ({ page }) => 
   await page.getByRole("radio", { name: "Flag", exact: true }).check();
   await expect(page.getByRole("region", { name: "Pre-snap adjustment lesson" }).getByText(/Three short decisions/)).toContainText("Flag pathway");
   await page.getByRole("navigation", { name: "QB LAB navigation" }).getByRole("link", { name: "Home", exact: true }).click();
-  await expect(page.getByRole("heading", { name: "Good afternoon, Alex." })).toBeVisible();
-  await expect(page.getByText(/Your QB Lab/)).toContainText("Flag football");
+  await expect(page.getByRole("heading", { name: "What's up, Alex!" })).toBeVisible();
+  await expect(page.getByRole("region", { name: "Your athlete home" })).toContainText("Flag football");
   await page.reload();
-  await expect(page.getByText(/Your QB Lab/)).toContainText("Flag football");
+  await expect(page.getByRole("region", { name: "Your athlete home" })).toContainText("Flag football");
 });

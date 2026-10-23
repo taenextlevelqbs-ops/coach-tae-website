@@ -1,3 +1,4 @@
+import { openDisclosure } from "./disclosures";
 import { expect, test } from "./fixtures";
 import AxeBuilder from "@axe-core/playwright";
 import { readFile } from "node:fs/promises";
@@ -60,9 +61,8 @@ for (const route of ["", "/athlete", "/iq", "/film", "/family"]) {
         () => document.documentElement.scrollWidth <= innerWidth,
       ),
     ).toBe(true);
-    await expect(
-      page.getByText("INTERACTIVE DEMO", { exact: true }),
-    ).toBeVisible();
+    await expect(page.locator(".app-footer")).toContainText(/demo|synthetic/i);
+    await expect(page.locator(".app-footer")).toContainText(/no real accounts|not a real account/i);
     await expect(page.locator('meta[name="robots"]')).toHaveAttribute(
       "content",
       /noindex/,
@@ -138,6 +138,7 @@ test("film submission is synthetic, dialog is keyboard accessible and timestamp 
     if (r.method() === "POST") posts.push(r.url());
   });
   await page.goto("/qb-lab/film");
+  await openDisclosure(page, "Explore sample feedback");
   const open = page.getByRole("button", { name: /Prepare a demo submission/ });
   await open.click();
   await expect(page.getByRole("dialog")).toBeVisible();
@@ -224,6 +225,7 @@ test("review desk keyboard tagging, chapter seeking and study changes are local"
   page,
 }) => {
   await page.goto("/qb-lab/film");
+  await openDisclosure(page, "Explore sample feedback");
   await page
     .getByRole("button", { name: "Seek chapter 2 at 5 seconds" })
     .click();
@@ -269,50 +271,30 @@ test("review desk keyboard tagging, chapter seeking and study changes are local"
   expect(await page.evaluate(() => localStorage.length)).toBe(0);
 });
 
-test("approved dashboard has the exact composition, six destinations and persistent navigation", async ({
-  page,
-}) => {
+test("approved dashboard has four destinations, a real drill and persistent simple navigation", async ({ page }) => {
   await page.goto("/qb-lab");
-  await expect(
-    page.getByRole("heading", { name: "Good afternoon, Jordan." }),
-  ).toBeVisible();
-  await expect(page.getByText("Your QB Lab", { exact: false })).toContainText(
-    "Flag football · Age 12",
-  );
-  await expect(
-    page.getByRole("heading", { name: "Let's work on reading Cover 2." }),
-  ).toBeVisible();
-  await expect(
-    page.getByRole("region", { name: "Your training" }).getByRole("link"),
-  ).toHaveCount(6);
-  await expect(
-    page.getByRole("heading", { name: "A note from Coach Tae" }),
-  ).toBeVisible();
+  await expect(page.getByRole("heading", { name: "What's up, Alex!", exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "3-Step Drop + Shuffle", exact: true })).toBeVisible();
+  await expect(page.getByRole("region", { name: "Your training" }).getByRole("link")).toHaveCount(4);
+  await expect(page.getByRole("heading", { name: "A Note From Coach Tae", exact: true })).toBeVisible();
   const nav = page.getByRole("navigation", { name: "QB LAB navigation" });
-  for (const name of ["Home", "Train", "Plays", "Profile"])
+  for (const name of ["Home", "Train", "Simulator", "Profile"])
     await expect(nav.getByRole("link", { name, exact: true })).toBeVisible();
-  await page.getByRole("link", { name: "Start training" }).click();
-  await expect(page).toHaveURL(/\/session$/);
-  await expect(page.getByText(/does not confirm Cover 2/)).toBeVisible();
-  await page.getByRole("link", { name: "Open Football IQ →" }).click();
-  await expect(page).toHaveURL(/\/iq$/);
+  await page.getByRole("link", { name: "Start Training", exact: true }).click();
+  await expect(page).toHaveURL(/\/workouts\/three-step-drop-shuffle$/);
+  await expect(page.getByRole("heading", { name: "Follow These Steps", exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Mark Drill Complete", exact: true })).toBeVisible();
   await nav.getByRole("link", { name: "Home", exact: true }).click();
-  await page.getByLabel("Demo athlete profile").selectOption("A");
-  await expect(
-    page.getByRole("heading", { name: "Good afternoon, Alex." }),
-  ).toBeVisible();
+  await page.getByLabel("Demo athlete profile").selectOption("B");
+  await expect(page.getByRole("heading", { name: "What's up, Jordan!", exact: true })).toBeVisible();
   await page.reload();
-  await expect(
-    page.getByRole("heading", { name: "Good afternoon, Alex." }),
-  ).toBeVisible();
+  await expect(page.getByRole("heading", { name: "What's up, Jordan!", exact: true })).toBeVisible();
   await nav.getByRole("link", { name: "Profile", exact: true }).click();
   await expect(page).toHaveURL(/\/profile$/);
   await expect(page.getByRole("link", { name: "Family Hub →" })).toBeVisible();
 });
 
-test("IQ feedback connects to the athlete home and a matching guided workout", async ({
-  page,
-}) => {
+test("IQ feedback connects to a matching guided recommendation inside Train", async ({ page }) => {
   await page.goto("/qb-lab/iq");
   for (const answer of [
     "One deep defender",
@@ -324,20 +306,13 @@ test("IQ feedback connects to the athlete home and a matching guided workout", a
     const next = page.getByRole("button", { name: /Next observation/ });
     if (await next.count()) await next.click();
   }
-  await page.getByRole("link", { name: "See my next step →" }).click();
-  await expect(
-    page.getByRole("heading", { name: "Walk the starting picture" }),
-  ).toBeVisible();
-  await expect(
-    page.getByText(/An observation needs another look/),
-  ).toBeVisible();
+  await page.getByRole("navigation", { name: "QB LAB navigation" }).getByRole("link", { name: "Train", exact: true }).click();
+  await openDisclosure(page, "Recommended practice");
+  await expect(page.getByRole("heading", { name: "Walk the starting picture", exact: true })).toBeVisible();
+  await expect(page.getByText(/An observation needs another look/)).toBeVisible();
   await page.reload();
-  await page.getByRole("link", { name: "Start training" }).click();
+  await openDisclosure(page, "Recommended practice");
+  await page.getByRole("link", { name: "Open recommended practice", exact: true }).click();
   await expect(page).toHaveURL(/activity=observe&profile=A/);
-  await expect(
-    page.getByRole("heading", {
-      name: "Walk the starting picture",
-      exact: true,
-    }),
-  ).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Walk the starting picture", exact: true })).toBeVisible();
 });

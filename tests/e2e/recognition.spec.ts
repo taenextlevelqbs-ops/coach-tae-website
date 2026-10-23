@@ -1,3 +1,4 @@
+import { openDisclosure } from "./disclosures";
 import { expect, test } from "./fixtures";
 import AxeBuilder from "@axe-core/playwright";
 test.beforeEach(async ({ page }) => {
@@ -10,7 +11,7 @@ test.beforeEach(async ({ page }) => {
 test("tackle personnel and coverage remain independent and a completed rep records actual activity", async ({
   page,
 }) => {
-  await page.goto("/qb-lab/simulator");
+  await page.goto("/qb-lab/simulator/spacing");
   const lab = page.getByRole("region", {
     name: "Defensive recognition workspace",
   });
@@ -88,6 +89,7 @@ test("flag rules gate the snap, show the seven-yard line, and keep larger format
   page,
 }) => {
   await page.goto("/qb-lab/iq");
+  await openDisclosure(page, "Advanced recognition lab");
   const lab = page.getByRole("region", {
     name: "Defensive recognition workspace",
   });
@@ -158,6 +160,7 @@ test("custom labels and 8v8 saved formations are shared with the recognition wor
     .getByRole("button", { name: "Save play locally", exact: true })
     .click();
   await page.goto("/qb-lab/iq");
+  await openDisclosure(page, "Advanced recognition lab");
   const lab = page.getByRole("region", {
     name: "Defensive recognition workspace",
   });
