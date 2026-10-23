@@ -82,6 +82,10 @@ describe("strictly private video policy scaffold", () => {
       { id: "other-coach", role: "coach" as const },
       { id: "guardian-test", role: "guardian" as const },
       { id: "coach-test", role: "administrator" as const },
+      // Matching an ID cannot substitute for the verified role or exact pair.
+      { id: "player-test", role: "guardian" as const },
+      { id: "player-test", role: "coach" as const },
+      { id: "coach-test", role: "player" as const },
     ])
       expect(canReadVideo(principal, video, athlete, 1000)).toBe(false);
     expect(
@@ -111,10 +115,16 @@ describe("strictly private video policy scaffold", () => {
       { retainUntil: NaN },
       { playerUserId: "other-player" },
       { athleteId: "other-athlete" },
+      { coachUserId: "other-coach" },
+      { visibility: "Public" as "Private" },
     ])
       expect(canReadVideo(p, { ...video, ...patch }, athlete, 1000)).toBe(
         false,
       );
+    expect(canReadVideo(p, video, athlete, Infinity)).toBe(false);
+    expect(
+      canReadVideo(p, video, { ...athlete, assignedCoachId: "" }, 1000),
+    ).toBe(false);
   });
   it("derives private intent ownership from trusted relationships and rejects bad metadata", () => {
     const p = { id: "player-test", role: "player" as const };
@@ -128,6 +138,15 @@ describe("strictly private video policy scaffold", () => {
     expect(() =>
       uploadIntent({ id: "other", role: "player" }, athlete, meta, 1000),
     ).toThrow(/authorized/);
+    for (const principal of [
+      { id: "guardian-test", role: "guardian" as const },
+      { id: "player-test", role: "guardian" as const },
+      { id: "coach-test", role: "coach" as const },
+      { id: "player-test", role: "administrator" as const },
+    ])
+      expect(() => uploadIntent(principal, athlete, meta, 1000)).toThrow(
+        /authorized/,
+      );
     for (const m of [
       { bytes: 0, mime: "video/mp4" },
       { bytes: 101 * 1024 * 1024, mime: "video/mp4" },

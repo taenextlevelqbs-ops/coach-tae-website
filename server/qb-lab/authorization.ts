@@ -1,4 +1,7 @@
-/** Pure policy boundary. Actor and relationships must come from verified server-side sources, never client JSON. */
+/** Training/profile policy scaffold only. Media authorization lives exclusively in video/policy.ts.
+ * Actor and relationships must come from verified server-side sources, never client JSON.
+ * No route currently calls this scaffold, and it must not authorize a storage signer.
+ */
 export type Actor = {
   id: string;
   role: "adult" | "guardian" | "coach" | "administrator";
@@ -16,9 +19,6 @@ export type PrivateAthlete = {
 export type Action =
   | "read-profile"
   | "assign"
-  | "read-released-feedback"
-  | "upload"
-  | "review"
   | "delete";
 export function authorize(
   actor: Actor | null,
@@ -26,7 +26,13 @@ export function authorize(
   action: Action,
   now: number,
 ): boolean {
-  if (!actor || !actor.adultVerified || !actor.id || !Number.isFinite(now))
+  if (
+    !["read-profile", "assign", "delete"].includes(action) ||
+    !actor ||
+    !actor.adultVerified ||
+    !actor.id ||
+    !Number.isFinite(now)
+  )
     return false;
   const consent =
     !athlete.minor ||
@@ -44,8 +50,7 @@ export function authorize(
   if (!consent) return false;
   const coach = actor.role === "coach" && athlete.coaches.includes(actor.id);
   // An administrator role by itself grants no private athlete access or media capability.
-  if (action === "assign" || action === "review") return coach;
-  if (action === "upload") return owner || guardian;
+  if (action === "assign") return coach;
   return owner || guardian || coach;
 }
 export interface SessionVerifier {
@@ -61,43 +66,6 @@ export async function authenticatedActor(
   } catch {
     return null;
   }
-}
-export function validUploadMetadata(input: {
-  bytes: number;
-  mime: string;
-  extension: string;
-}) {
-  return (
-    Number.isInteger(input.bytes) &&
-    input.bytes > 0 &&
-    input.bytes <= 100 * 1024 * 1024 &&
-    ((input.mime === "video/mp4" && input.extension === ".mp4") ||
-      (input.mime === "video/quicktime" && input.extension === ".mov"))
-  );
-}
-export type MediaRecord = {
-  athlete: PrivateAthlete;
-  status: "quarantine" | "validated" | "released";
-  deleted: boolean;
-  retainedUntil: number;
-};
-export function canIssueMediaAccess(
-  actor: Actor | null,
-  media: MediaRecord,
-  now: number,
-) {
-  return (
-    !media.deleted &&
-    media.retainedUntil > now &&
-    media.status !== "quarantine" &&
-    authorize(
-      actor,
-      media.athlete,
-      actor?.role === "coach" ? "review" : "read-released-feedback",
-      now,
-    ) &&
-    (actor?.role === "coach" || media.status === "released")
-  );
 }
 export function validPremiumEntitlement(
   actor: Actor | null,
