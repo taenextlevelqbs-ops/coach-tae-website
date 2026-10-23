@@ -78,3 +78,15 @@ it("rejects unverified email, unverified adult membership and metadata-only coac
     role: "adult",
   });
 });
+it('requires provider-verified aal2 and matching identity for coach and administrator', async () => {
+ const getClaims = vi.fn().mockResolvedValue({ data: { claims: { sub: 'synthetic', aal: 'aal1' } } });
+ const single = vi.fn().mockResolvedValue({ data: { id: 'synthetic', role: 'coach', adult_verified: true } });
+ const client = { auth: { getUser: async () => ({ data: { user: { id: 'synthetic', email_confirmed_at: 'date' } } }), getClaims }, from: () => ({ select: () => ({ eq: () => ({ single }) }) }) };
+ await expect(verifiedAccount(client as never)).rejects.toThrow('MFA_REQUIRED');
+ getClaims.mockResolvedValue({ data: { claims: { sub: 'other', aal: 'aal2' } } });
+ await expect(verifiedAccount(client as never)).rejects.toThrow('MFA_REQUIRED');
+ getClaims.mockResolvedValue({ data: { claims: { sub: 'synthetic', aal: 'aal2' } } });
+ await expect(verifiedAccount(client as never)).resolves.toMatchObject({ role: 'coach' });
+ single.mockResolvedValue({ data: { id: 'synthetic', role: 'administrator', adult_verified: true } });
+ await expect(verifiedAccount(client as never)).resolves.toMatchObject({ role: 'administrator' });
+});

@@ -6,6 +6,7 @@ export async function signInMember(email: string, password: string, destination:
     headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email, password }),
   });
   const data = await response.json();
+  if (response.ok && data.mfaRequired === true) return "/qb-lab/account-help?mfa=required";
   if (!response.ok || data.signedIn !== true) throw new Error("SIGN_IN_FAILED");
   return safeReturnPath(destination);
 }

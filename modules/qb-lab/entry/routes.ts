@@ -1,8 +1,8 @@
 export const introductionPath = "/qb-lab/welcome";
 export const dashboardPath = "/qb-lab";
 const publicPages = new Set([
-  introductionPath, "/qb-lab/sample", "/qb-lab/sign-in",
-  "/qb-lab/create-account", "/qb-lab/forbidden",
+  introductionPath, "/qb-lab/welcome/workflows", "/qb-lab/sample", "/qb-lab/sign-in",
+  "/qb-lab/account-help", "/qb-lab/create-account", "/qb-lab/forbidden",
 ]);
 const publicAssets = new Set([
   "/qb-lab/sw.js", "/qb-lab/offline.html", "/qb-lab/offline.css",

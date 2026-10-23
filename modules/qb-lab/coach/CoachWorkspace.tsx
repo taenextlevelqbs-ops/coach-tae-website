@@ -1,5 +1,6 @@
 "use client";
 import { useRef, useState, useSyncExternalStore } from "react";
+import Link from "next/link";
 import { AppIcon, type AppIconName } from "../AppIcon";
 import { Overview } from "./Overview";
 import { Roster } from "./Roster";
@@ -54,6 +55,7 @@ export function CoachWorkspace() {
           Synthetic workspace<span>Real accounts &amp; uploads disabled</span>
         </div>
       </header>
+      <p><Link className="lab-button" href="/qb-lab/messages">Account messaging &amp; schedule →</Link><Link className="lab-button" href="/qb-lab/welcome/workflows">Synthetic coaching walkthrough →</Link></p>
       <nav
         className="coach-tabs"
         role="tablist"

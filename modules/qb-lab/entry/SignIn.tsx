@@ -28,6 +28,6 @@ export function SignIn({ enabled, destination }: { enabled: boolean; destination
       <button className="train-button" disabled={busy}>{busy ? "Checking your account…" : "Sign In"}</button>
       {error && <p role="alert">{error}</p>}
     </form>}
-    <div className="public-account-links"><Link href="/qb-lab/create-account">Create Account availability →</Link><Link href="/qb-lab/sample">Explore the public sample →</Link></div>
+    <div className="public-account-links"><Link href="/qb-lab/account-help">Password recovery, verification &amp; MFA →</Link><Link href="/qb-lab/create-account">Create Account availability →</Link><Link href="/qb-lab/sample">Explore the public sample →</Link></div>
   </section>;
 }

@@ -50,6 +50,7 @@ export function HomeDashboard() {
       <span className="coach-note-avatar" aria-hidden="true">CT</span>
       <div><div className="coach-note-heading"><h2 id="coach-note-title">A Note From Coach Tae</h2><span>Sample coaching note</span></div>
         <blockquote>“Take your time with each rep. Stay curious, talk through what you see and ask your coach when you need a hand.”</blockquote>
+        <Link className="lab-text-link" href="/qb-lab/messages">Account notifications &amp; schedule →</Link>
       </div>
     </section>
     <p className="dashboard-disclosure">{profile.name} and this coaching note are synthetic examples. Training content is draft, not an approved personal prescription. Local practice history is available in your <Link href="/qb-lab/progress">Progress</Link>.</p>

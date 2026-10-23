@@ -24,7 +24,7 @@ export async function accountClient(
     },
   });
 }
-export async function verifiedAccount(
+export async function verifiedMembership(
   client: Awaited<ReturnType<typeof accountClient>>,
 ) {
   // Network verification, never getSession() or browser-supplied role metadata.
@@ -39,12 +39,23 @@ export async function verifiedAccount(
   if (
     denied ||
     !account?.adult_verified ||
-    !["adult", "guardian", "coach"].includes(account.role)
+    !["adult", "guardian", "coach", "administrator"].includes(account.role)
   )
     throw new AccountError(403, "VERIFIED_MEMBERSHIP_REQUIRED");
   return account as {
     id: string;
-    role: "adult" | "guardian" | "coach";
+    role: "adult" | "guardian" | "coach" | "administrator";
     adult_verified: true;
   };
+}
+
+/** Full authorization gate; bootstrap identity alone never permits private operations. */
+export async function verifiedAccount(client: Awaited<ReturnType<typeof accountClient>>) {
+  const account = await verifiedMembership(client);
+  if (["coach", "administrator"].includes(account.role)) {
+    const { data, error } = await client.auth.getClaims();
+    if (error || data?.claims.sub !== account.id || data?.claims.aal !== "aal2")
+      throw new AccountError(403, "MFA_REQUIRED");
+  }
+  return account;
 }

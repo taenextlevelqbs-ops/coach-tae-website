@@ -68,3 +68,7 @@ See [release gaps](QB-LAB-RELEASE-GAP-AUDIT.md), [Phase 2 foundation](QB-LAB-PHA
 The public website now leads to `/qb-lab/welcome`; `/qb-lab/sample` is read-only and explicitly draft. Registration and sign-in remain unavailable without approved infrastructure. The preserved `/qb-lab` athlete dashboard and existing tools now require verified server membership. See [Public entry review](QB-LAB-PUBLIC-ENTRY-REVIEW.md), including the inactive v3 HttpOnly/Secure/Strict host-only cookie change needed for both page and API requests. No real or pretend registration is activated.
 
 For current dependency evidence, [the advisory-withdrawal report](QB-LAB-ATHLETE-SECURITY-STATUS.md) supersedes the historical five-high audit observation above; full and production audits currently report zero. Audit enforcement remains enabled.
+
+## Membership and messaging candidate
+
+Migration 004 and guarded authentication/MFA, messaging and schedule adapters are now implemented but unapplied to hosted infrastructure. See [Membership readiness](QB-LAB-MEMBERSHIP-READINESS.md) for exact setup, default-off email gate, synthetic walkthrough, direct-database MFA, required provider testing and substantial remaining account-to-training integration gaps. The earlier 001–003-only schema description is historical; no checklist approval is implied.

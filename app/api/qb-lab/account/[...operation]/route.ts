@@ -51,6 +51,8 @@ async function handle(
       try {
         await verifiedAccount(client);
       } catch (error) {
+        if (error instanceof AccountError && error.code === "MFA_REQUIRED")
+          return accountResponse({ signedIn: false, mfaRequired: true });
         await client.auth.signOut({ scope: "local" });
         throw error;
       }
@@ -67,7 +69,7 @@ async function handle(
     if (request.method === "GET" && operation === "athletes") {
       const { data, error } = await client
         .from("qb_athletes")
-        .select("id,pathway,age_band,minor")
+        .select("id,pathway,age_band,minor,age_group,experience")
         .order("id")
         .limit(100);
       if (error) throw new AccountError(503, "DATABASE_UNAVAILABLE");
@@ -125,7 +127,7 @@ async function handle(
       fields(input, ["id", "kind", "contentKey", "durationSeconds"]);
       if (
         typeof input.kind !== "string" ||
-        !["lesson", "simulation", "workout"].includes(input.kind) ||
+        !["lesson", "simulation", "workout", "recovery"].includes(input.kind) ||
         !Number.isInteger(input.durationSeconds) ||
         Number(input.durationSeconds) < 0 ||
         Number(input.durationSeconds) > 3600

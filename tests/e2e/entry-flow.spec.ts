@@ -87,3 +87,23 @@ for (const path of ["welcome", "sample", "sign-in", "create-account", "forbidden
     await expect(page.getByRole("main")).toBeFocused();
   });
 }
+test('synthetic coach messaging, guardian oversight and scheduled delivery work without private services', async ({ page }) => {
+  const posts: string[] = [];
+  page.on('request', req => { if (req.method() === 'POST') posts.push(req.url()); });
+  await page.goto('/qb-lab/welcome/workflows');
+  await page.getByRole('checkbox', { name: 'Schedule for tomorrow in the demo clock' }).check();
+  await page.getByRole('button', { name: 'Send synthetic message' }).click();
+  await page.getByLabel('Preview perspective').selectOption('guardian');
+  await expect(page.getByText('No synthetic messages yet.', { exact: false })).toBeVisible();
+  await page.getByText('Demonstration clock & audit trail', { exact: true }).click();
+  await page.getByRole('button', { name: 'Advance demo clock one day' }).click();
+  await expect(page.getByRole('button', { name: 'Mark read' })).toBeVisible();
+  await page.getByRole('button', { name: 'Mark read' }).click();
+  await expect(page.getByText('Read in demonstration', { exact: true })).toBeVisible();
+  const result = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa']).analyze();
+  expect(result.violations).toEqual([]);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  expect(posts).toEqual([]);
+  await page.reload();
+  await expect(page.getByText('No synthetic messages yet.', { exact: false })).toBeVisible();
+});

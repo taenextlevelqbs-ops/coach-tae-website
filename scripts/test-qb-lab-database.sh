@@ -18,7 +18,7 @@ if [[ "$ready" != true ]]; then
  echo "Ephemeral PostgreSQL did not become ready." >&2
  exit 1
 fi
-for sql_file in tests/database/auth-fixture.sql db/migrations/001_qb_lab_candidate.sql tests/database/isolation.sql db/migrations/002_qb_lab_persistence.sql tests/database/persistence.sql db/migrations/003_qb_lab_billing_inbox.sql tests/database/billing.sql; do
+for sql_file in tests/database/auth-fixture.sql db/migrations/001_qb_lab_candidate.sql tests/database/isolation.sql db/migrations/002_qb_lab_persistence.sql tests/database/persistence.sql db/migrations/003_qb_lab_billing_inbox.sql tests/database/billing.sql db/migrations/004_qb_lab_communications.sql tests/database/communications.sql; do
  echo "Checking $sql_file"
  docker exec --interactive "$container_name" psql --host 127.0.0.1 --username postgres --set ON_ERROR_STOP=1 < "$sql_file"
 done

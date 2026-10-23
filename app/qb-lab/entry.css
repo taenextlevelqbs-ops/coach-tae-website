@@ -64,3 +64,18 @@
   .public-lab-main h1 { font-size: 28px; }
   .public-actions > .train-button { width: 100%; }
 }
+
+/* Shared communications use existing monochrome application tokens. */
+.membership-workspace {max-width: 960px; margin-inline:auto; display:grid; gap:20px;}
+.membership-workspace h1 {font-size:clamp(1.5rem,4vw,2rem);font-weight:700;}
+.membership-workspace label {display:grid;gap:8px;margin-block:12px;}
+.membership-workspace input:not([type="checkbox"]), .membership-workspace textarea, .membership-workspace select {width:100%;max-width:100%;background:#17191c;color:#fff;border:1px solid #63676d;border-radius:8px;padding:10px;min-height:44px;}
+.membership-workspace input[type="checkbox"] {width:20px;height:20px;accent-color:white;}
+.membership-workspace label:has(input[type="checkbox"]) {display:flex;align-items:center;}
+.membership-workspace .lab-panel {background:#17191c;color:#fff;border:1px solid #41454b;border-radius:14px;padding:20px;}
+.membership-message {padding-block:16px;border-bottom:1px solid #63676d;overflow-wrap:anywhere;}
+.membership-workspace small {color:#c5c7cb;}
+.membership-workspace .lab-button {margin:6px;white-space:normal;}
+.membership-workspace :focus-visible {outline:3px solid white;outline-offset:4px;}
+.membership-workspace fieldset {border:1px solid #63676d;padding:12px;border-radius:8px;}
+.membership-workspace select {text-overflow:ellipsis;}

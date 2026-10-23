@@ -57,6 +57,7 @@ export function Family() {
   }
   return (
     <>
+      <p><Link className="lab-button" href="/qb-lab/messages">Linked account notifications &amp; schedule →</Link></p>
       <div className="lab-page-heading">
         <div>
           <p className="lab-kicker">FAMILY HUB / GROW TOGETHER</p>

@@ -1,3 +1,14 @@
+## Secure membership and coaching additions
+
+Local validation: lint/TypeScript passed; 194 component/domain tests, isolated PostgreSQL migrations 001–004 and 368 browser tests passed. Full and production dependency audits report zero findings; dependencies unchanged. Browser tests distinguish preserved prototype interactions from guarded-app checks; no hosted identity/media/billing acceptance is claimed.
+
+Preserve the existing welcome page, sample, monochrome athlete experience and training tools. Add a public **synthetic, memory-only coaching walkthrough** at `/qb-lab/welcome/workflows`, a protected account inbox/schedule at `/qb-lab/messages`, and staging-only verification/recovery/MFA at `/qb-lab/account-help`.
+
+Candidate migration 004 adds private in-app communications, atomic authorized targeting + assignments, guardian-visible minor notices, due-time visibility, recipient acknowledgements, revision-checked schedules, audit events, age/pathway/experience fields and direct-database staff MFA enforcement. New endpoints verify provider identity and server-owned membership; disabled configuration fails closed before credentials/body processing. No public signup, child accounts, real upload, outbound coaching email or payment activation.
+
+**Not launch ready:** dedicated Supabase and verified guardian-consent infrastructure remain unapproved; provider flows are implemented but not hosted-tested. Existing main training tools still use explicitly synthetic browser-local history and are not fully wired to durable account progress. No unsupervised replies, unrestricted platform broadcast, live film pipeline, billing portal, production monitoring or certified compliance is claimed. Full setup instructions and remaining implementation gaps: `docs/QB-LAB-MEMBERSHIP-READINESS.md`.
+
+
 Visitors clicking QB LAB on the public Coach Tae website now reach a concise public introduction at `/qb-lab/welcome`, before authentication. It uses the approved black/charcoal/white athlete design, four capability cards, a working read-only sample, Get Started and Sign In. Public pages do not mount the demo athlete provider or read/write training history. The single sample remains explicitly **draft pending Coach Tae approval**; no approval or personal training prescription is invented.
 
 The exact approved athlete dashboard remains at `/qb-lab`, with all existing workouts, recovery content, simulator, playbook, replay and coaching implementations preserved. Private page requests, including RSC/prefetch, now require verified server membership. Coach pages additionally require the verified coach role. Browser profiles, role claims and forged cookies grant no access. Future staging cookies use Secure/HttpOnly/Strict v3 cookies available to page guards and APIs; private responses are not cached. Private APIs retain independent authorization and RLS/service gates.
