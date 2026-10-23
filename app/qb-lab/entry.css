@@ -1,0 +1,81 @@
+/* Public entry uses the athlete palette without mounting an athlete session or training store. */
+.qb-application.public-lab { min-height: 100dvh; }
+.public-lab-header { max-width: 1080px; margin: auto; padding: 20px 24px; display: flex; justify-content: space-between; align-items: center; gap: 20px; border-bottom: 1px solid #303034; }
+.public-lab-header nav { display: flex; align-items: center; gap: 8px; }
+.public-lab-header nav a { display: inline-flex; min-height: 44px; align-items: center; justify-content: center; padding: 10px 16px; border-radius: 9px; font-size: 13px; font-weight: 650; color: #e4e4ec; }
+.public-lab-header nav a:hover { background: #303036; }
+.public-lab-header nav .public-header-start { background: #f4f4f5; color: #17171a; }
+.public-lab-header nav .public-header-start:hover { background: #dcdce2; }
+.public-lab-main { max-width: 900px; width: calc(100% - 48px); margin: 0 auto; padding: 44px 0 38px; min-height: 68vh; }
+.public-lab-main :is(h1,h2,h3) { color: #f5f5f8; line-height: 1.25; letter-spacing: -.5px; font-weight: 700; }
+.public-lab-main h1 { font-size: clamp(29px,4vw,42px); margin: 0 0 16px; }
+.public-lab-main h2 { font-size: 19px; margin: 0 0 12px; }
+.public-lab-main p { color: #bdbdc8; line-height: 1.65; margin: 0 0 16px; font-size: 15px; }
+.public-lab-main .public-eyebrow { font-size: 10px; letter-spacing: 1.7px; font-weight: 650; color: #aaaab7; margin-bottom: 18px; }
+.public-intro-copy { max-width: 720px; }
+.public-intro-copy > p:not(.public-eyebrow) { max-width: 670px; }
+.public-actions { display: flex; flex-wrap: wrap; gap: 12px 22px; align-items: center; margin: 24px 0 18px; }
+.public-sample-action { display: inline-flex; gap: 10px; align-items: center; min-height: 48px; font-size: 14px; color: #e0e0eb; }
+.public-sample-action:hover { text-decoration: underline; text-underline-offset: 5px; }
+.public-sample-action svg { height: 17px; width: 17px; }
+.public-lab-main .public-availability { color: #acacb9; font-size: 12px; line-height: 1.65; }
+.public-feature-grid { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 12px; margin: 30px 0; }
+.public-feature-grid article { background: #19191d; border: 1px solid #38383f; border-radius: 14px; padding: 20px; min-width: 0; }
+.public-feature-grid svg { width: 26px; height: 26px; margin-bottom: 18px; color: #efeff5; }
+.public-feature-grid h2 { font-size: 15px; letter-spacing: -.2px; margin-bottom: 10px; }
+.public-feature-grid p { font-size: 12px; margin: 0; }
+.public-personalization { border-top: 1px solid #393940; padding: 26px 0 0; max-width: 780px; }
+.public-personalization p { font-size: 13px; }
+.public-lab-footer { max-width: 1080px; width: calc(100% - 48px); margin: auto; border-top: 1px solid #303038; padding: 22px 0; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; color: #a9a9b5; font-size: 11px; }
+.public-lab-footer a { min-height: 44px; display: inline-flex; align-items: flex-start; text-decoration: underline; text-underline-offset: 4px; }
+.public-account-page { max-width: 740px; margin: auto; }
+.public-status-panel, .public-registration-paths article { border: 1px solid #41414b; border-radius: 14px; padding: 24px; background: #1b1b20; margin: 24px 0; }
+.public-status-panel p, .public-registration-paths article p { font-size: 14px; }
+.public-lab-main button:disabled { cursor: not-allowed; opacity: .65; }
+.public-account-links { display: flex; flex-wrap: wrap; gap: 12px 24px; margin-top: 26px; }
+.public-account-links a { color: #d6d6e2; font-size: 13px; min-height: 44px; display: inline-flex; align-items: center; text-decoration: underline; text-underline-offset: 4px; }
+.public-registration-paths { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 16px; }
+.public-registration-paths article { display: flex; flex-direction: column; margin: 0 0 22px; }
+.public-registration-paths button { margin-top: auto; }
+.public-status-panel label { display: block; margin: 20px 0; color: #d5d5e2; font-size: 14px; }
+.public-status-panel input { display: block; width: 100%; margin-top: 8px; padding: 12px; border: 1px solid #727280; border-radius: 8px; background: #25252c; color: #f1f1f8; min-height: 48px; }
+.public-sample { max-width: 760px; }
+.public-lab-main .public-readonly { border: 1px solid #51515c; border-radius: 9px; padding: 10px 14px; margin: 24px 0 16px; font-size: 12px; color: #d1d1df; background: #202027; }
+.public-lab-main .public-sample .train-draft { display: block; font-size: 12px; margin: 16px 0 22px; }
+.public-lab-main .public-sample .train-metadata { margin: 0 0 22px; }
+.public-lab-main .public-sample .train-safety { font-size: 12px; }
+@media(max-width: 760px) {
+  .public-lab-header { padding: 16px; gap: 12px; }
+  .public-lab-header nav { gap: 0; }
+  .public-lab-header nav a { padding: 10px 12px; font-size: 12px; }
+  .public-lab-main { width: calc(100% - 32px); padding: 30px 0; }
+  .public-feature-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .public-feature-grid article { padding: 18px; }
+  .public-feature-grid h2 { font-size: 14px; }
+  .public-feature-grid p { font-size: 12px; }
+  .public-personalization { padding-top: 24px; }
+  .public-registration-paths { grid-template-columns: 1fr; gap: 0; }
+  .public-status-panel, .public-registration-paths article { padding: 20px; }
+  .public-lab-footer { width: calc(100% - 32px); }
+  .public-account-links { flex-direction: column; gap: 4px; }
+}
+@media(max-width:360px) {
+  .public-lab-header nav a { padding: 9px; font-size: 11px; }
+  .public-lab-main h1 { font-size: 28px; }
+  .public-actions > .train-button { width: 100%; }
+}
+
+/* Shared communications use existing monochrome application tokens. */
+.membership-workspace {max-width: 960px; margin-inline:auto; display:grid; gap:20px;}
+.membership-workspace h1 {font-size:clamp(1.5rem,4vw,2rem);font-weight:700;}
+.membership-workspace label {display:grid;gap:8px;margin-block:12px;}
+.membership-workspace input:not([type="checkbox"]), .membership-workspace textarea, .membership-workspace select {width:100%;max-width:100%;background:#17191c;color:#fff;border:1px solid #63676d;border-radius:8px;padding:10px;min-height:44px;}
+.membership-workspace input[type="checkbox"] {width:20px;height:20px;accent-color:white;}
+.membership-workspace label:has(input[type="checkbox"]) {display:flex;align-items:center;}
+.membership-workspace .lab-panel {background:#17191c;color:#fff;border:1px solid #41454b;border-radius:14px;padding:20px;}
+.membership-message {padding-block:16px;border-bottom:1px solid #63676d;overflow-wrap:anywhere;}
+.membership-workspace small {color:#c5c7cb;}
+.membership-workspace .lab-button {margin:6px;white-space:normal;}
+.membership-workspace :focus-visible {outline:3px solid white;outline-offset:4px;}
+.membership-workspace fieldset {border:1px solid #63676d;padding:12px;border-radius:8px;}
+.membership-workspace select {text-overflow:ellipsis;}

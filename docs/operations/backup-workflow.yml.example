@@ -1,0 +1,30 @@
+# REVIEW TEMPLATE ONLY. Not installed as an active GitHub workflow. No secrets exist.
+# Prefer provider-managed backups/PITR after budget/region/retention approval.
+# If self-managed export is selected, use an approved isolated runner with pg_dump and age,
+# a protected environment, encrypted-object-store upload and separate restore verification.
+name: QB LAB synthetic staging backup
+on:
+  workflow_dispatch:
+# Add a daily schedule only AFTER review, successful isolated restore rehearsal and owner approval.
+permissions:
+  contents: read
+jobs:
+  backup:
+    if: vars.QB_LAB_BACKUPS_APPROVED == 'synthetic-staging'
+    environment: qb-lab-staging-backups
+    runs-on: self-hosted
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          persist-credentials: false
+      - name: Create encrypted staging archive on the protected runner
+        run: bash scripts/operations/backup-staging.sh
+        env:
+          QB_LAB_BACKUP_STAGE: synthetic-staging
+          QB_LAB_BACKUP_RECIPIENT: ${{ vars.QB_LAB_BACKUP_RECIPIENT }}
+          QB_LAB_BACKUP_DIRECTORY: ${{ vars.QB_LAB_BACKUP_DIRECTORY }}
+          PGSERVICEFILE: ${{ vars.QB_LAB_PGSERVICEFILE }}
+          PGPASSFILE: ${{ vars.QB_LAB_PGPASSFILE }}
+# Deliberately incomplete: no upload destination, credentials, schedule or retention job.
+# Do NOT publish a database archive as an Actions artifact. Do not commit password files.
