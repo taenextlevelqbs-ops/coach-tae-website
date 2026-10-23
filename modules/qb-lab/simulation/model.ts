@@ -1,3 +1,4 @@
+import type { Tactics } from "../football/geometry";
 export type Format = "tackle" | "flag5" | "flag7" | "flag8";
 export type Point = { x: number; y: number };
 export type Player = {
@@ -15,6 +16,7 @@ export type Play = {
   format: Format;
   players: Player[];
   personnel?: "10" | "11" | "12";
+  tactics?: Tactics;
 };
 export type Scenario = {
   id: string;

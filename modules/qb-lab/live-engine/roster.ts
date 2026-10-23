@@ -1,3 +1,5 @@
+import { toField, validTactics, HS_FIELD_WIDTH } from "../football/geometry";
+import { assignSpatialZones, selectedHalf } from "./spatial";
 import {
   buildDefense,
   validateFormation,
@@ -76,8 +78,30 @@ export function sharedPlay(c: EngineConfig): Play {
 }
 export function validateConfig(c: EngineConfig): string[] {
   const issues = validateRules(c.rules);
-  if (c.matchup !== undefined && !["balanced", "offense-edge", "defense-edge"].includes(c.matchup)) issues.push("Invalid synthetic matchup.");
-  if (c.blitzTempo !== undefined && (!Number.isFinite(c.blitzTempo) || c.blitzTempo < 0 || c.blitzTempo > 0.25)) issues.push("Blitz tempo must be from 0 to 0.25.");
+  if (c.halfSide !== undefined && !["left", "right"].includes(c.halfSide))
+    issues.push("Invalid half-field side.");
+  if (
+    c.matchDepth !== undefined &&
+    (!Number.isFinite(c.matchDepth) || c.matchDepth < 10 || c.matchDepth > 12)
+  )
+    issues.push("Match depth must be 10–12 yards.");
+  if (c.pocketPreset !== undefined && typeof c.pocketPreset !== "boolean")
+    issues.push("Invalid pocket teaching switch.");
+  if (
+    c.play?.tactics &&
+    (!validTactics(c.play.tactics) || c.rules.format !== "tackle11")
+  )
+    issues.push("High-school hash tactics require a tackle play.");
+  if (
+    c.matchup !== undefined &&
+    !["balanced", "offense-edge", "defense-edge"].includes(c.matchup)
+  )
+    issues.push("Invalid synthetic matchup.");
+  if (
+    c.blitzTempo !== undefined &&
+    (!Number.isFinite(c.blitzTempo) || c.blitzTempo < 0 || c.blitzTempo > 0.25)
+  )
+    issues.push("Blitz tempo must be from 0 to 0.25.");
   if (
     !Object.keys(personnelGroups).includes(c.personnel) ||
     !fronts.includes(c.front) ||
@@ -146,6 +170,27 @@ export function validateConfig(c: EngineConfig): string[] {
     )
       issues.push("Saved play does not match the game format.");
     issues.push(...validateFormation(p));
+    if (p.tactics && Math.abs(c.rules.width - HS_FIELD_WIDTH) > 1e-6)
+      issues.push("The high-school hash preset requires a 160-foot field.");
+    if (
+      p.players.some((a) => {
+        const world = toField(
+          a.start,
+          c.rules.width,
+          c.rules.los,
+          p.tactics,
+          undefined,
+          ["OL", "C", "QB", "RB", "DL"].includes(a.role ?? ""),
+        );
+        return (
+          world.x < 0 ||
+          world.x > c.rules.width ||
+          world.y < 0 ||
+          world.y > c.rules.length
+        );
+      })
+    )
+      issues.push("Projected formation starts outside the field.");
     if (
       p.players.some(
         (a) =>
@@ -171,20 +216,45 @@ export function validateConfig(c: EngineConfig): string[] {
 export function makeRoster(c: EngineConfig): Actor[] {
   const r = c.rules;
   const play = sharedPlay(c);
-  const world = (p: Point): Point => ({
-    x: (p.x * r.width) / 100,
-    y: r.los + (70 - p.y) * 0.5,
-  });
+  const world = (p: Point): Point =>
+    toField(
+      p,
+      r.width,
+      r.los,
+      r.format === "tackle11" ? play.tactics : undefined,
+    );
   const actor = (p: Player, team: Actor["team"]): Actor => ({
     id: p.id,
     label: p.label,
     team,
     role: p.role ?? "WR",
     eligible: !!p.eligible,
-    pos: world(p.start),
-    start: world(p.start),
+    pos: toField(
+      p.start,
+      r.width,
+      r.los,
+      r.format === "tackle11" ? play.tactics : undefined,
+      undefined,
+      ["OL", "C", "QB", "RB", "DL"].includes(p.role ?? ""),
+    ),
+    start: toField(
+      p.start,
+      r.width,
+      r.los,
+      r.format === "tackle11" ? play.tactics : undefined,
+      undefined,
+      ["OL", "C", "QB", "RB", "DL"].includes(p.role ?? ""),
+    ),
     velocity: { x: 0, y: 0 },
-    route: p.route.map(world),
+    route: p.route.map((point) =>
+      toField(
+        point,
+        r.width,
+        r.los,
+        r.format === "tackle11" ? play.tactics : undefined,
+        p.start,
+      ),
+    ),
     ratings: ratings(c.seed, p.id),
     job: "route",
     landmark: world(p.start),
@@ -230,6 +300,7 @@ export function makeRoster(c: EngineConfig): Actor[] {
       c.coverage,
       c.shell,
       r.rushers,
+      selectedHalf(c),
     );
     defense = d.players.map((p) => {
       const a = actor(p, "defense");
@@ -309,10 +380,17 @@ export function makeRoster(c: EngineConfig): Actor[] {
       return a;
     });
   }
-  const edge = c.matchup === "offense-edge" ? 0.15 : c.matchup === "defense-edge" ? -0.15 : 0;
-  for (const a of offense.filter(p => p.job === "block")) {
+  const edge =
+    c.matchup === "offense-edge"
+      ? 0.15
+      : c.matchup === "defense-edge"
+        ? -0.15
+        : 0;
+  for (const a of offense.filter((p) => p.job === "block")) {
     a.ratings.passBlock = bound(a.ratings.passBlock + edge, 0, 1);
     a.ratings.anchor = bound(a.ratings.anchor + edge, 0, 1);
   }
-  return [...offense, ...defense];
+  const players = [...offense, ...defense];
+  assignSpatialZones(players, c);
+  return players;
 }

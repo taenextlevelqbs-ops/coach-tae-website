@@ -1,3 +1,4 @@
+import { deepZones, defaultTactics } from "./geometry";
 import { position } from "../simulation/engine";
 import {
   formation,
@@ -17,6 +18,8 @@ export type Personnel = keyof typeof personnelGroups;
 export const fronts = [
   "Odd",
   "Even",
+  "Over",
+  "Under",
   "Three-man surface",
   "Four-man surface",
   "Bear",
@@ -30,6 +33,7 @@ export const coverages = [
   "Cover 3",
   "Cover 4",
   "Cover 6",
+  "Cover 8",
   "Quarters match",
 ] as const;
 export type Coverage = (typeof coverages)[number];
@@ -88,6 +92,7 @@ const deepCount: Record<Coverage, number> = {
   "Cover 3": 3,
   "Cover 4": 4,
   "Cover 6": 3,
+  "Cover 8": 3,
   "Quarters match": 4,
 };
 export function validRules(r: Rules, format: Format) {
@@ -107,6 +112,7 @@ export function validRules(r: Rules, format: Format) {
 }
 export function validateFormation(play: Play): string[] {
   const issues: string[] = [];
+  if (play.tactics && play.players.find(p=>p.role === "C")?.start.x !== 50) issues.push("A hash-tagged play requires the center at editor x=50 (the ball spot).");
   if (play.players.filter((p) => p.id === "QB").length !== 1)
     issues.push("Exactly one quarterback must be identified.");
   if (play.players.filter((p) => p.role === "C").length !== 1)
@@ -148,6 +154,13 @@ export function buildDefense(
   coverage: Coverage,
   shell: 0 | 1 | 2,
   rush: number,
+  halfSide: "left" | "right" = coverage === "Cover 8"
+    ? play.tactics?.hash === "right"
+      ? "left"
+      : play.tactics?.hash === "left"
+        ? "right"
+        : (play.tactics?.strongSide ?? "right")
+    : "left",
 ): Defense {
   const counts = personnelGroups[personnel];
   const roles = [
@@ -159,18 +172,51 @@ export function buildDefense(
   const matchReceivers = [...eligible]
     .filter((p) => p.role !== "RB")
     .sort((a, b) => a.start.x - b.start.x);
+  const strength = play.tactics?.strongSide ?? defaultTactics.strongSide;
+  const center = play.players.find((p) => p.role === "C")?.start.x ?? 50;
+  const guards = play.players
+    .filter((p) => p.role === "OL")
+    .sort((a, b) => a.start.x - b.start.x);
+  const strongGuard =
+    strength === "right"
+      ? (guards[2]?.start.x ?? 56)
+      : (guards[1]?.start.x ?? 44);
+  const weakGuard =
+    strength === "right"
+      ? (guards[1]?.start.x ?? 44)
+      : (guards[2]?.start.x ?? 56);
+  const sign = strength === "right" ? 1 : -1;
   const dlX =
-    front === "Bear"
-      ? [44, 50, 56, 31, 69]
-      : front === "Overload"
-        ? [50, 56, 62, 69, 75]
-        : front === "Even" || front === "Four-man surface"
-          ? [35, 47, 59, 69, 77]
-          : [35, 50, 65, 27, 73];
+    front === "Over"
+      ? [
+          center - 15,
+          center - sign * 0.7,
+          strongGuard + sign * 0.7,
+          center + 15,
+          center + 20,
+        ]
+      : front === "Under"
+        ? [
+            center - 15,
+            weakGuard - sign * 0.7,
+            center + sign * 0.7,
+            center + 15,
+            center + 20,
+          ]
+        : front === "Bear"
+          ? [44, 50, 56, 31, 69]
+          : front === "Overload"
+            ? [50, 56, 62, 69, 75]
+            : front === "Even" || front === "Four-man surface"
+              ? [35, 47, 59, 69, 77]
+              : [35, 50, 65, 27, 73];
   const surface =
     front === "Three-man surface" || front === "Odd"
       ? 3
-      : front === "Four-man surface" || front === "Even"
+      : front === "Four-man surface" ||
+          front === "Even" ||
+          front === "Over" ||
+          front === "Under"
         ? 4
         : front === "Bear"
           ? 5
@@ -189,11 +235,15 @@ export function buildDefense(
         : ["CB-L", "CB-R", "FS", "SS", "Nickel"][i - counts.DL - counts.LB],
   );
   const priority =
-    coverage === "Cover 2" || coverage === "Cover 1"
-      ? ["FS", "SS", "CB-L", "CB-R", "Nickel"]
-      : coverage === "Cover 3"
-        ? ["CB-L", "FS", "CB-R", "SS", "Nickel"]
-        : ["CB-L", "FS", "SS", "CB-R", "Nickel"];
+    coverage === "Cover 6" || coverage === "Cover 8"
+      ? halfSide === "left"
+        ? ["FS", "SS", "CB-R", "CB-L", "Nickel"]
+        : ["CB-L", "FS", "SS", "CB-R", "Nickel"]
+      : coverage === "Cover 2" || coverage === "Cover 1"
+        ? ["FS", "SS", "CB-L", "CB-R", "Nickel"]
+        : coverage === "Cover 3"
+          ? ["CB-L", "FS", "CB-R", "SS", "Nickel"]
+          : ["CB-L", "FS", "SS", "CB-R", "Nickel"];
   const remaining = roles.map((_, i) => i).filter((i) => i >= rushCount);
   const deepIndices = [...remaining]
     .sort((a, b) => {
@@ -271,22 +321,25 @@ export function buildDefense(
       };
       end = { x: 45 + (i % 3) * 5, y: 84 };
     } else if (slot < deep) {
-      const split =
-        coverage === "Cover 6"
+      const zones = deepZones(coverage, 100, halfSide);
+      const split = zones.length
+        ? zones.map((z) => (z.minX + z.maxX) / 2)
+        : coverage === "Cover 6"
           ? [15, 35, 75]
           : Array.from({ length: deep }, (_, j) => (100 * (j + 0.5)) / deep);
       end = { x: split[slot], y: 12 };
       job = {
         player: id,
-        job: coverage === "Quarters match" ? "match" : "zone",
+        job: zones[slot]?.match ? "match" : "zone",
         responsibility:
-          coverage === "Cover 1"
+          zones[slot]?.name ??
+          (coverage === "Cover 1"
             ? "Deep middle help"
             : coverage === "Cover 6"
               ? slot < 2
                 ? "Left-side deep quarter"
                 : "Right-side deep half"
-              : `Deep ${deep === 2 ? "half" : deep === 3 ? "third" : "quarter"} ${slot + 1}`,
+              : `Deep ${deep === 2 ? "half" : deep === 3 ? "third" : "quarter"} ${slot + 1}`),
       };
       if (coverage === "Quarters match" && eligible.length > 0) {
         const receivers = matchReceivers.length ? matchReceivers : eligible;

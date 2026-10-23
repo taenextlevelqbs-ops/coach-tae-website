@@ -1,9 +1,17 @@
 "use client";
+import {
+  HS_FIELD_WIDTH,
+  HS_HASH_INSET,
+  toField,
+  fromField,
+  type Tactics,
+} from "../football/geometry";
 import { useRef } from "react";
 import { position } from "./engine";
 import type { Player, Point } from "./model";
 export function SimField({
   players,
+  tactics,
   defenders = [],
   time = 0,
   qb,
@@ -15,6 +23,7 @@ export function SimField({
   showGaps,
   ball,
 }: {
+  tactics?: Tactics;
   rushYards?: number;
   showGaps?: boolean;
   ball?: { from: Point; to: Point; progress: number };
@@ -30,16 +39,42 @@ export function SimField({
   const svg = useRef<SVGSVGElement>(null);
   const dragging = useRef<string | null>(null);
   const didDrag = useRef(false);
+  const rigid = (player?: Player) =>
+    ["OL", "C", "QB", "RB", "DL"].includes(player?.role ?? "");
+  function project(point: Point, player?: Player, route = false): Point {
+    if (!tactics) return point;
+    const p = toField(
+      point,
+      HS_FIELD_WIDTH,
+      0,
+      tactics,
+      route ? player?.start : undefined,
+      !route && rigid(player),
+    );
+    return { x: (p.x / HS_FIELD_WIDTH) * 100, y: 70 - p.y * 2 };
+  }
   function coords(clientX: number, clientY: number): Point {
     const element = svg.current!;
-    const p = element.createSVGPoint();
-    p.x = clientX;
-    p.y = clientY;
+    const cursor = element.createSVGPoint();
+    cursor.x = clientX;
+    cursor.y = clientY;
     const inverse = element.getScreenCTM()?.inverse();
-    const local = inverse ? p.matrixTransform(inverse) : p;
+    const local = inverse ? cursor.matrixTransform(inverse) : cursor;
+    const p = { x: local.x / 10, y: local.y / 7 };
+    const player = players.find((p) => p.id === (dragging.current ?? selected));
+    const raw = tactics
+      ? fromField(
+          { x: (p.x / 100) * HS_FIELD_WIDTH, y: (70 - p.y) * 0.5 },
+          HS_FIELD_WIDTH,
+          0,
+          tactics,
+          dragging.current ? undefined : player?.start,
+          !!dragging.current && rigid(player),
+        )
+      : p;
     return {
-      x: Math.max(0, Math.min(100, local.x / 10)),
-      y: Math.max(0, Math.min(100, local.y / 7)),
+      x: Math.max(0, Math.min(100, raw.x)),
+      y: Math.max(0, Math.min(100, raw.y)),
     };
   }
   return (
@@ -93,7 +128,11 @@ export function SimField({
         />
       ))}
       <path
-        d="M320 40V660M680 40V660"
+        d={
+          tactics
+            ? `M${(HS_HASH_INSET / HS_FIELD_WIDTH) * 1000} 0V700M${(1 - HS_HASH_INSET / HS_FIELD_WIDTH) * 1000} 0V700`
+            : "M320 40V660M680 40V660"
+        }
         stroke="#bad5da"
         strokeOpacity=".25"
         strokeDasharray="3 14"
@@ -164,7 +203,10 @@ export function SimField({
           <polyline
             key={`route-${p.id}`}
             points={[p.start, ...p.route]
-              .map((point) => `${point.x * 10},${point.y * 7}`)
+              .map((point, i) => {
+                const at = project(point, p, i > 0);
+                return `${at.x * 10},${at.y * 7}`;
+              })
               .join(" ")}
             fill="none"
             stroke={selected === p.id ? "#f0c77a" : "#e0ebd9"}
@@ -192,7 +234,8 @@ export function SimField({
       )}
       {[...players, ...defenders].map((player) => {
         const defense = defenders.includes(player);
-        const at = player.id === "QB" && qb ? qb : position(player, time);
+        const rawAt = player.id === "QB" && qb ? qb : position(player, time);
+        const at = project(rawAt, player);
         return (
           <g
             key={player.id}
@@ -220,8 +263,8 @@ export function SimField({
                 e.preventDefault();
                 onSelect(player.id);
                 onMove?.(player.id, {
-                  x: Math.max(0, Math.min(100, at.x + delta.x)),
-                  y: Math.max(0, Math.min(100, at.y + delta.y)),
+                  x: Math.max(0, Math.min(100, rawAt.x + delta.x)),
+                  y: Math.max(0, Math.min(100, rawAt.y + delta.y)),
                 });
               }
             }}

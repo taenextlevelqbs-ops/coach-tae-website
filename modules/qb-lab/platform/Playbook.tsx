@@ -1,4 +1,11 @@
 "use client";
+import {
+  defaultTactics,
+  toField,
+  HS_FIELD_WIDTH,
+  type HashSpot,
+  type Side,
+} from "../football/geometry";
 import { useState } from "react";
 import Link from "next/link";
 import {
@@ -26,6 +33,14 @@ export function Playbook() {
   const [drawing, setDrawing] = useState(false);
   const [message, setMessage] = useState("");
   const player = play.players.find((p) => p.id === selected) ?? play.players[0];
+  const selectedField = toField(
+    player.start,
+    HS_FIELD_WIDTH,
+    0,
+    play.tactics,
+    undefined,
+    ["OL", "C", "QB", "RB", "DL"].includes(player.role ?? ""),
+  );
   function edit(next: Play) {
     setPast((p) => [...p, play].slice(-40));
     setFuture([]);
@@ -156,6 +171,7 @@ export function Playbook() {
               ...formation(play.format, false),
               id: play.id,
               name: play.name,
+              ...(play.tactics ? { tactics: play.tactics } : {}),
             });
             setSelected("QB");
           }}
@@ -169,6 +185,7 @@ export function Playbook() {
               ...formation(play.format, true),
               id: play.id,
               name: play.name,
+              ...(play.tactics ? { tactics: play.tactics } : {}),
             });
             setSelected("QB");
           }}
@@ -176,6 +193,78 @@ export function Playbook() {
           Spread formation
         </button>
       </div>
+      {play.format === "tackle" && (
+        <fieldset className="lab-app-toolbar">
+          <legend>High-school field geometry</legend>
+          <label>
+            Ball hash
+            <select
+              aria-label="Playbook ball hash"
+              value={play.tactics?.hash ?? "middle"}
+              onChange={(e) =>
+                edit({
+                  ...play,
+                  tactics: {
+                    ...(play.tactics ?? defaultTactics),
+                    hash: e.target.value as HashSpot,
+                  },
+                })
+              }
+            >
+              <option value="left">Left hash</option>
+              <option value="middle">Middle</option>
+              <option value="right">Right hash</option>
+            </select>
+          </label>
+          <label>
+            Declared formation strength
+            <select
+              aria-label="Playbook strong side"
+              value={play.tactics?.strongSide ?? "right"}
+              onChange={(e) =>
+                edit({
+                  ...play,
+                  tactics: {
+                    ...(play.tactics ?? defaultTactics),
+                    strongSide: e.target.value as Side,
+                  },
+                })
+              }
+            >
+              <option value="left">Left</option>
+              <option value="right">Right</option>
+            </select>
+          </label>
+          <label>
+            Boundary break depth
+            <select
+              aria-label="Boundary break depth"
+              value={play.tactics?.boundaryBreakScale ?? 1}
+              onChange={(e) =>
+                edit({
+                  ...play,
+                  tactics: {
+                    ...(play.tactics ?? defaultTactics),
+                    boundaryBreakScale: Number(e.target.value),
+                  },
+                })
+              }
+            >
+              <option value={1}>Authored depth · unchanged</option>
+              <option value={0.85}>
+                85% depth · quick-break teaching adjustment
+              </option>
+            </select>
+          </label>
+          <p>
+            160-foot field (53⅓ yd); high-school hashes 53 ft 4 in from either
+            sideline. Selected {player.label}: x {selectedField.x.toFixed(2)}{" "}
+            yd, depth {selectedField.y.toFixed(2)} yd. Editor coordinates remain
+            normalized; saved tactics transfer to the live engine. A shorter
+            boundary break is an optional coaching adjustment, not a rule.
+          </p>
+        </fieldset>
+      )}
       <p className="lab-fine">
         X/H/Y/Z are system-configurable labels. Roles and routes are separate.{" "}
         {validateFormation(play).join(" ")} Structural checks do not certify
@@ -196,6 +285,7 @@ export function Playbook() {
                 ),
                 id: play.id,
                 name: play.name,
+                ...(play.tactics ? { tactics: play.tactics } : {}),
               })
             }
           >
@@ -208,6 +298,7 @@ export function Playbook() {
       <div className="lab-simulator-grid">
         <section className="lab-simulator-stage">
           <SimField
+            tactics={play.format === "tackle" ? play.tactics : undefined}
             players={play.players}
             selected={player.id}
             onSelect={setSelected}
@@ -446,7 +537,13 @@ export function Playbook() {
                 >
                   {p.name} · {p.format}
                 </button>
-                <Link className="lab-button" href={`/qb-lab/simulator/engine?play=${encodeURIComponent(p.id)}`} aria-label={`Run ${p.name} in live engine`}>Run live rep →</Link>
+                <Link
+                  className="lab-button"
+                  href={`/qb-lab/simulator/engine?play=${encodeURIComponent(p.id)}`}
+                  aria-label={`Run ${p.name} in live engine`}
+                >
+                  Run live rep →
+                </Link>
                 <button
                   className="lab-button"
                   aria-label={`Delete saved play ${p.name}`}

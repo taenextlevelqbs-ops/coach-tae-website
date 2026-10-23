@@ -48,7 +48,7 @@ export function rulesFor(format: GameFormat): Rules {
     offense: count,
     defense: count,
     eligibleLimit: tackle ? 5 : passing ? 5 : count - 1,
-    width: tackle ? 53.33 : 40,
+    width: tackle ? 160 / 3 : 40,
     length: tackle ? 100 : 60,
     los: tackle ? 30 : 15,
     passClock: tackle ? null : passing ? 5 : 7,

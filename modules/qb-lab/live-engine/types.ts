@@ -1,3 +1,4 @@
+import type { SpatialZone, Side } from "../football/geometry";
 import type { Point, Play } from "../simulation/model";
 import type { Personnel, Front, Coverage } from "../football/content";
 import type { Rules } from "./formats";
@@ -66,12 +67,17 @@ export type Actor = {
   delay: number;
   recoveryUntil: number;
   fatigue: number;
+  zone?: SpatialZone;
+  matched?: boolean;
 };
 export type EngineConfig = {
   rules: Rules;
   seed: number;
   matchup?: "balanced" | "offense-edge" | "defense-edge";
   blitzTempo?: number;
+  halfSide?: Side;
+  matchDepth?: number;
+  pocketPreset?: boolean;
   personnel: Personnel;
   front: Front;
   coverage: Coverage;
@@ -140,6 +146,12 @@ export type EngineState = {
     | "release"
     | "follow-through";
   endedAt?: number;
+  pocket?: {
+    deadline: number;
+    escaped: boolean;
+    origin: Point;
+    broken: boolean;
+  };
 };
 export type Input = {
   move?: Point;

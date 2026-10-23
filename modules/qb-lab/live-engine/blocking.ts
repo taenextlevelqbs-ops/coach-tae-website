@@ -61,8 +61,17 @@ export function blockTarget(
   r: Actor,
   qb: Actor,
   los: number,
+  arc = false,
 ): { x: number; y: number } {
   const d = Math.max(0.1, distance(r.pos, qb.pos));
+  if (arc && (b.role === "OL" || b.role === "C")) {
+    const offset = Math.abs(b.start.x - qb.start.x);
+    const anchorY = b.start.y - (b.role === "C" ? 0.8 : offset > 4 ? 2.5 : 1.4);
+    return {
+      x: bound(r.pos.x, b.start.x - 1, b.start.x + 1),
+      y: Math.max(qb.pos.y + 1, Math.min(anchorY, r.pos.y - 0.7)),
+    };
+  }
   // Interpose on the rusher/QB segment, protect the near shoulder rather than chase behind the QB.
   return {
     x: r.pos.x + ((qb.pos.x - r.pos.x) / d) * 0.8,
@@ -97,7 +106,8 @@ export function resolveBlocks(s: EngineState, dt: number) {
       const defense =
         b.ratings.passBlock + b.ratings.anchor + (double ? 0.5 : 0);
       const control = bound(
-        (previous?.control ?? 0.5) + (defense - attack - 0.14 - (s.config.blitzTempo ?? 0)) * dt * 0.45,
+        (previous?.control ?? 0.5) +
+          (defense - attack - 0.14 - (s.config.blitzTempo ?? 0)) * dt * 0.45,
         0,
         1,
       );

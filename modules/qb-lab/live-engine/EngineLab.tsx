@@ -1,4 +1,6 @@
 "use client";
+import { defaultTactics, type HashSpot, type Side } from "../football/geometry";
+import { sharedPlay } from "./roster";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
 import type { Play } from "../simulation/model";
@@ -35,7 +37,17 @@ export function EngineLab({ initialPlayId }: { initialPlayId?: string } = {}) {
   const { state } = useLocalLab();
   const play = state.plays.find((p) => p.id === initialPlayId);
   const ready = useSyncExternalStore(subscribeReady, clientReady, serverReady);
-  if (initialPlayId && ready && !play) return <section role="alert"><h1>Saved play unavailable</h1><p>This play is not saved on this device. No substitute formation was launched.</p><Link href="/qb-lab/playbook">Open Playbook Studio</Link></section>;
+  if (initialPlayId && ready && !play)
+    return (
+      <section role="alert">
+        <h1>Saved play unavailable</h1>
+        <p>
+          This play is not saved on this device. No substitute formation was
+          launched.
+        </p>
+        <Link href="/qb-lab/playbook">Open Playbook Studio</Link>
+      </section>
+    );
   return (
     <EngineDesk
       key={`${profile.id}:${initialPlayId ?? ""}:${play ? JSON.stringify(play) : "default"}`}
@@ -77,7 +89,10 @@ function EngineDesk({ initialPlay }: { initialPlay?: Play }) {
   }, [zoom]);
   const held = useRef<Input["move"]>({ x: 0, y: 0 });
   useEffect(() => {
-    const pause = () => { held.current = { x: 0, y: 0 }; setRunning(false); };
+    const pause = () => {
+      held.current = { x: 0, y: 0 };
+      setRunning(false);
+    };
     window.addEventListener("qb-lab:pause-simulator", pause);
     return () => window.removeEventListener("qb-lab:pause-simulator", pause);
   }, []);
@@ -124,8 +139,13 @@ function EngineDesk({ initialPlay }: { initialPlay?: Play }) {
       setSim(snap(staged));
       setRunning(config.mode !== "learn");
       setRecorded(false);
-      if (window.matchMedia?.("(max-height: 500px) and (orientation: landscape)")?.matches) {
-        fieldViewport.current?.previousElementSibling?.scrollIntoView({ block: "start" });
+      if (
+        window.matchMedia?.("(max-height: 500px) and (orientation: landscape)")
+          ?.matches
+      ) {
+        fieldViewport.current?.previousElementSibling?.scrollIntoView({
+          block: "start",
+        });
       }
     }
   }
@@ -203,14 +223,130 @@ function EngineDesk({ initialPlay }: { initialPlay?: Play }) {
               </option>
             </select>
           </label>
-          {config.rules.format === "tackle11" && <>
-            <label>Synthetic line matchup<select value={config.matchup ?? "balanced"} onChange={e => change({ matchup: e.target.value as EngineConfig["matchup"] })}>
-              <option value="balanced">Balanced ratings</option><option value="offense-edge">Blocking advantage</option><option value="defense-edge">Rush advantage</option>
-            </select></label>
-            <label>Blitz tempo modifier<select value={config.blitzTempo ?? 0} onChange={e => change({ blitzTempo: Number(e.target.value) })}>
-              <option value="0">Standard</option><option value="0.12">Accelerated pressure</option><option value="0.25">Aggressive pressure</option>
-            </select></label>
-          </>}
+          {config.rules.format === "tackle11" && (
+            <>
+              <label>
+                Ball hash
+                <select
+                  aria-label="Engine ball hash"
+                  value={config.play?.tactics?.hash ?? "middle"}
+                  onChange={(e) => {
+                    const p = sharedPlay(config);
+                    change({
+                      play: {
+                        ...p,
+                        tactics: {
+                          ...(p.tactics ?? defaultTactics),
+                          hash: e.target.value as HashSpot,
+                        },
+                      },
+                    });
+                  }}
+                >
+                  <option value="left">Left hash</option>
+                  <option value="middle">Middle</option>
+                  <option value="right">Right hash</option>
+                </select>
+              </label>
+              <label>
+                Declared strong side
+                <select
+                  value={config.play?.tactics?.strongSide ?? "right"}
+                  onChange={(e) => {
+                    const p = sharedPlay(config);
+                    change({
+                      play: {
+                        ...p,
+                        tactics: {
+                          ...(p.tactics ?? defaultTactics),
+                          strongSide: e.target.value as Side,
+                        },
+                      },
+                    });
+                  }}
+                >
+                  <option value="left">Left</option>
+                  <option value="right">Right</option>
+                </select>
+              </label>
+              <label>
+                Split coverage half side
+                <select
+                  value={config.halfSide ?? ""}
+                  onChange={(e) =>
+                    change({
+                      halfSide: e.target.value
+                        ? (e.target.value as Side)
+                        : undefined,
+                    })
+                  }
+                >
+                  <option value="">
+                    Preset · Cover 6 left / Cover 8 field side
+                  </option>
+                  <option value="left">Left half / right quarters</option>
+                  <option value="right">Left quarters / right half</option>
+                </select>
+              </label>
+              <label>
+                Vertical match trigger
+                <select
+                  value={config.matchDepth ?? 11}
+                  onChange={(e) =>
+                    change({ matchDepth: Number(e.target.value) })
+                  }
+                >
+                  <option value={10}>10 yards</option>
+                  <option value={11}>11 yards</option>
+                  <option value={12}>12 yards</option>
+                </select>
+              </label>
+              <label>
+                <input
+                  type="checkbox"
+                  checked={!!config.pocketPreset}
+                  onChange={(e) => change({ pocketPreset: e.target.checked })}
+                />
+                High-school pocket teaching preset
+              </label>
+              <p>
+                Optional synthetic targets: standard rush ≈3s; five/six rush
+                ≈1.8–2.2s, adjusted by matchup. One reposition after a shed may
+                add 1s; movement never removes pursuers or guarantees safety.
+                Over: strong 3/weak 1; Under: weak 3/strong 1. An inside guard
+                shade is 2i. Match and Cover 8 terminology require Coach Tae
+                review.
+              </p>
+              <label>
+                Synthetic line matchup
+                <select
+                  value={config.matchup ?? "balanced"}
+                  onChange={(e) =>
+                    change({
+                      matchup: e.target.value as EngineConfig["matchup"],
+                    })
+                  }
+                >
+                  <option value="balanced">Balanced ratings</option>
+                  <option value="offense-edge">Blocking advantage</option>
+                  <option value="defense-edge">Rush advantage</option>
+                </select>
+              </label>
+              <label>
+                Blitz tempo modifier
+                <select
+                  value={config.blitzTempo ?? 0}
+                  onChange={(e) =>
+                    change({ blitzTempo: Number(e.target.value) })
+                  }
+                >
+                  <option value="0">Standard</option>
+                  <option value="0.12">Accelerated pressure</option>
+                  <option value="0.25">Aggressive pressure</option>
+                </select>
+              </label>
+            </>
+          )}
           <label>
             Repeatable scenario seed
             <input
@@ -375,7 +511,12 @@ function EngineDesk({ initialPlay }: { initialPlay?: Play }) {
             </select>
           </label>
         </fieldset>
-        {config.rules.format === "tackle11" && <PocketCheck key={`${config.rules.rushers}:${config.matchup}:${config.blitzTempo}:${config.help}`} config={config} />}
+        {config.rules.format === "tackle11" && (
+          <PocketCheck
+            key={`${config.rules.rushers}:${config.matchup}:${config.blitzTempo}:${config.help}`}
+            config={config}
+          />
+        )}
         <details className="engine-call">
           <summary>Teaching setup: actual post-snap responsibilities</summary>
           <label>
@@ -599,6 +740,16 @@ function EngineDesk({ initialPlay }: { initialPlay?: Play }) {
         {s && (
           <div className="engine-workspace">
             <div>
+              {s.pocket && (
+                <p role="status" aria-label="Teaching pocket countdown">
+                  Teaching pocket:{" "}
+                  {Math.max(0, s.pocket.deadline - s.tick / 30).toFixed(2)}s ·{" "}
+                  {s.pocket.broken ? "arc challenged" : "working"} ·{" "}
+                  {s.config.rules.rushers >= 5
+                    ? "Identify the hot answer; coverage still matters."
+                    : "Read, set and throw."}
+                </p>
+              )}
               <div className="engine-scoreboard">
                 <span>
                   {s.config.rules.offense} offense / {s.config.rules.defense}{" "}
@@ -705,11 +856,37 @@ function EngineDesk({ initialPlay }: { initialPlay?: Play }) {
                 QB {s.players.find((p) => p.job === "qb")!.pos.x.toFixed(1)},{" "}
                 {s.players.find((p) => p.job === "qb")!.pos.y.toFixed(1)} yards
                 · pressure {s.pressure.toFixed(2)}
-                {pocketWindow(s) !== null && <> · estimated pocket remaining {pocketWindow(s)!.toFixed(1)}s (advisory, not a sack clock)</>}
+                {pocketWindow(s) !== null && (
+                  <>
+                    {" "}
+                    · estimated pocket remaining {pocketWindow(s)!.toFixed(1)}s
+                    (advisory, not a sack clock)
+                  </>
+                )}
               </output>
             </div>
             <aside>
-              {s.phase === "live" && <details className="engine-estimates"><summary>Synthetic throw estimates</summary><p>Teaching estimates, not athlete statistics. Balance, release timing, pressure, range and observed separation affect dispersion. Live ball geometry still decides the outcome.</p><ul>{s.players.filter(p => p.job === "route" && p.eligible).map(p => <li key={p.id}>{p.label}: {Math.round(throwEstimate(s, p).probability * 100)}% model completion estimate</li>)}</ul></details>}
+              {s.phase === "live" && (
+                <details className="engine-estimates">
+                  <summary>Synthetic throw estimates</summary>
+                  <p>
+                    Teaching estimates, not athlete statistics. Balance, release
+                    timing, pressure, range and observed separation affect
+                    dispersion. Live ball geometry still decides the outcome.
+                  </p>
+                  <ul>
+                    {s.players
+                      .filter((p) => p.job === "route" && p.eligible)
+                      .map((p) => (
+                        <li key={p.id}>
+                          {p.label}:{" "}
+                          {Math.round(throwEstimate(s, p).probability * 100)}%
+                          model completion estimate
+                        </li>
+                      ))}
+                  </ul>
+                </details>
+              )}
               <h3>{done ? "What happened" : "Your pocket decision"}</h3>
               <p>
                 {s.config.rules.format === "passing7"
@@ -730,7 +907,9 @@ function EngineDesk({ initialPlay }: { initialPlay?: Play }) {
                   <option value="2">Two yards right</option>
                 </select>
               </label>
-              <div className={`engine-targets${s.phase === "live" || s.phase === "flight" ? " is-live" : ""}`}>
+              <div
+                className={`engine-targets${s.phase === "live" || s.phase === "flight" ? " is-live" : ""}`}
+              >
                 {s.players
                   .filter((p) => p.job === "route" && p.eligible)
                   .map((p) => (

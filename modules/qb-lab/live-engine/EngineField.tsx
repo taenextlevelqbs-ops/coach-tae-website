@@ -1,8 +1,11 @@
 "use client";
+import { HS_HASH_INSET } from "../football/geometry";
 import { useSyncExternalStore } from "react";
 import type { EngineState } from "./types";
 const wideQuery = "(max-height: 500px) and (orientation: landscape)";
-const wideSnapshot = () => typeof window.matchMedia === "function" && window.matchMedia(wideQuery).matches;
+const wideSnapshot = () =>
+  typeof window.matchMedia === "function" &&
+  window.matchMedia(wideQuery).matches;
 const regularSnapshot = () => false;
 function subscribeField(update: () => void) {
   if (typeof window.matchMedia !== "function") return () => {};
@@ -11,7 +14,11 @@ function subscribeField(update: () => void) {
   return () => media.removeEventListener("change", update);
 }
 export function EngineField({ state: s }: { state: EngineState }) {
-  const wide = useSyncExternalStore(subscribeField, wideSnapshot, regularSnapshot);
+  const wide = useSyncExternalStore(
+    subscribeField,
+    wideSnapshot,
+    regularSnapshot,
+  );
   const canvasHeight = wide ? 360 : 690;
   const canvasWidth = wide ? 1120 : 640;
   const right = canvasWidth - 20;
@@ -21,7 +28,8 @@ export function EngineField({ state: s }: { state: EngineState }) {
   const sx = (x: number) => 20 + (x / r.width) * (canvasWidth - 40);
   const low = Math.max(0, r.los - 15),
     high = Math.min(r.length, r.los + 35);
-  const sy = (y: number) => fieldBottom - ((y - low) / (high - low)) * fieldDepth;
+  const sy = (y: number) =>
+    fieldBottom - ((y - low) / (high - low)) * fieldDepth;
   const qb = s.players.find((p) => p.job === "qb")!;
   const phase = ((s.tick % 16) / 16) * Math.PI * 2;
   const gait =
@@ -42,12 +50,32 @@ export function EngineField({ state: s }: { state: EngineState }) {
         (_, i) => low + i * 5,
       ).map((y) => (
         <g key={y}>
-          <path d={`M20 ${sy(y)}H${right}`} stroke="#96b8bf" strokeOpacity=".25" />
+          <path
+            d={`M20 ${sy(y)}H${right}`}
+            stroke="#96b8bf"
+            strokeOpacity=".25"
+          />
           <text x="23" y={sy(y) - 5} fontSize="11" fill="#c0d9db">
             {Math.round(y)} yd
           </text>
         </g>
       ))}
+      {r.format === "tackle11" &&
+        [HS_HASH_INSET, r.width - HS_HASH_INSET].map((x) => (
+          <g key={x}>
+            {Array.from(
+              { length: Math.floor(high - low) + 1 },
+              (_, i) => low + i,
+            ).map((y) => (
+              <path
+                key={y}
+                d={`M${sx(x) - 3} ${sy(y)}h6`}
+                stroke="#a7bec8"
+                strokeOpacity=".5"
+              />
+            ))}
+          </g>
+        ))}
       <path
         d={`M20 ${sy(r.los)}H${right}`}
         stroke="#efc778"
@@ -79,6 +107,35 @@ export function EngineField({ state: s }: { state: EngineState }) {
           >
             {r.rushDistance}-yard rush line
           </text>
+        </g>
+      )}
+      {s.config.mode === "learn" && (
+        <g aria-label="Authored spatial coverage windows">
+          {s.players
+            .filter((p) => p.zone)
+            .map((p) => {
+              const z = p.zone!;
+              const top = Math.min(high, r.los + z.maxDepth),
+                bottom = Math.max(low, r.los + z.minDepth);
+              return top > bottom ? (
+                <rect
+                  key={p.id}
+                  x={sx(z.minX)}
+                  y={sy(top)}
+                  width={sx(z.maxX) - sx(z.minX)}
+                  height={sy(bottom) - sy(top)}
+                  fill={z.match ? "#eab308" : "#74cef1"}
+                  fillOpacity=".025"
+                  stroke="#9ebbc7"
+                  strokeOpacity=".3"
+                  strokeDasharray="4 7"
+                >
+                  <title>
+                    {p.label}: {z.name}
+                  </title>
+                </rect>
+              ) : null;
+            })}
         </g>
       )}
       {s.phase === "ready" &&
@@ -191,7 +248,9 @@ export function EngineField({ state: s }: { state: EngineState }) {
         </g>
       )}
       <text x="25" y={canvasHeight - 15} fontSize="12" fill="#dae8eb">
-        {wide ? "Wide schematic · yard-based engine · enlarge to inspect" : "Yards · synthetic attributes · simplified positional contact"}
+        {wide
+          ? "Wide schematic · yard-based engine · enlarge to inspect"
+          : "Yards · synthetic attributes · simplified positional contact"}
       </text>
     </svg>
   );

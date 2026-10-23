@@ -1,3 +1,5 @@
+import { spatialTarget } from "./spatial";
+import { updatePocket, makePocket } from "./tactical-pocket";
 import { tuning } from "./tuning";
 import type { Point } from "../simulation/model";
 import type { EngineConfig, EngineState, Actor, Input } from "./types";
@@ -20,6 +22,7 @@ export function createEngine(config: EngineConfig): EngineState {
     pressure: 0,
     peakPressure: 0,
     qbState: "stance",
+    pocket: makePocket(config, players),
   };
 }
 export function snap(state: EngineState): EngineState {
@@ -82,6 +85,8 @@ function rushTarget(a: Actor, qb: Actor, los: number): Point {
   };
 }
 export function coverageTarget(a: Actor, s: EngineState): Point {
+  const spatial = spatialTarget(a, s);
+  if (spatial) return spatial;
   const receiver = s.players.find(
     (p) => p.id === a.receiver && p.team === "offense",
   );
@@ -104,7 +109,12 @@ export function coverageTarget(a: Actor, s: EngineState): Point {
   const qb = s.players.find((p) => p.job === "qb")!;
   if (s.phase === "live" && qb.pos.y > los) return qb.pos;
   const close = s.players
-    .filter((p) => p.job === "route" && Math.abs(p.pos.x - a.landmark.x) < (a.landmark.y > los + 12 ? 10 : 6) && Math.abs(p.pos.y - a.landmark.y) < 9)
+    .filter(
+      (p) =>
+        p.job === "route" &&
+        Math.abs(p.pos.x - a.landmark.x) < (a.landmark.y > los + 12 ? 10 : 6) &&
+        Math.abs(p.pos.y - a.landmark.y) < 9,
+    )
     .sort((p, q) => distance(p.pos, a.pos) - distance(q.pos, a.pos))[0];
   if (close)
     return {
@@ -177,7 +187,7 @@ export function step(state: EngineState, input: Input = {}): EngineState {
     if (threat && t >= a.recoveryUntil)
       moveToward(
         a,
-        blockTarget(a, threat, qb, r.los),
+        blockTarget(a, threat, qb, r.los, !!s.config.pocketPreset),
         STEP,
         2.3 + a.ratings.footwork,
       );
@@ -185,10 +195,16 @@ export function step(state: EngineState, input: Input = {}): EngineState {
   for (const a of s.players.filter((p) => p.team === "defense")) {
     if (a.job === "rush") {
       if (t < a.delay) continue;
-      moveToward(a, rushTarget(a, qb, r.los), STEP, 4.2 + a.ratings.speed * 2 + (s.config.blitzTempo ?? 0) * 2);
+      moveToward(
+        a,
+        rushTarget(a, qb, r.los),
+        STEP,
+        4.2 + a.ratings.speed * 2 + (s.config.blitzTempo ?? 0) * 2,
+      );
     } else moveToward(a, coverageTarget(a, s), STEP);
   }
   if (r.blocking) resolveBlocks(s, STEP);
+  updatePocket(s, !!input.move && Math.hypot(input.move.x, input.move.y) > 0);
   const rush = s.players.filter((p) => p.job === "rush");
   const nearest = rush.length
     ? Math.min(...rush.map((p) => distance(p.pos, qb.pos)))

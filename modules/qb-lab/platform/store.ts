@@ -1,4 +1,5 @@
 "use client";
+import { validTactics } from "../football/geometry";
 import { useSyncExternalStore } from "react";
 import {
   validReport,
@@ -63,6 +64,8 @@ export function validPlay(value: unknown): value is Play {
   if (!value || typeof value !== "object") return false;
   const p = value as Play;
   return (
+    (p.tactics === undefined ||
+      (p.format === "tackle" && validTactics(p.tactics))) &&
     text(p.id) &&
     text(p.name, 50) &&
     ["tackle", "flag5", "flag7", "flag8"].includes(p.format) &&
@@ -127,7 +130,18 @@ export function parseState(raw: string): LocalState {
         text(a.at) &&
         !Number.isNaN(Date.parse(a.at)) &&
         (a.points === undefined || [0, 1, 2].includes(a.points)) &&
-        (a.review === undefined || (a.kind === "lesson" && ["pre-snap-adjustments:flag", "pre-snap-adjustments:tackle"].includes(a.reference) && a.points === undefined && a.review !== null && a.review.total === 3 && Number.isInteger(a.review.correct) && a.review.correct >= 0 && a.review.correct <= 3)) &&
+        (a.review === undefined ||
+          (a.kind === "lesson" &&
+            [
+              "pre-snap-adjustments:flag",
+              "pre-snap-adjustments:tackle",
+            ].includes(a.reference) &&
+            a.points === undefined &&
+            a.review !== null &&
+            a.review.total === 3 &&
+            Number.isInteger(a.review.correct) &&
+            a.review.correct >= 0 &&
+            a.review.correct <= 3)) &&
         (a.engine === undefined ||
           (a.kind === "simulation" &&
             a.points === undefined &&
@@ -163,6 +177,15 @@ export function parseState(raw: string): LocalState {
     plays: input.plays.map((p) => ({
       id: p.id,
       name: p.name,
+      ...(p.tactics
+        ? {
+            tactics: {
+              hash: p.tactics.hash,
+              strongSide: p.tactics.strongSide,
+              boundaryBreakScale: p.tactics.boundaryBreakScale,
+            },
+          }
+        : {}),
       format: p.format,
       ...(p.personnel ? { personnel: p.personnel } : {}),
       players: p.players.map((a) => ({
@@ -183,7 +206,9 @@ export function parseState(raw: string): LocalState {
       at: a.at,
       ...(a.points !== undefined ? { points: a.points } : {}),
       ...(a.engine ? { engine: cleanReport(a.engine) } : {}),
-      ...(a.review ? { review: { correct: a.review.correct, total: 3 as const } } : {}),
+      ...(a.review
+        ? { review: { correct: a.review.correct, total: 3 as const } }
+        : {}),
     })),
     assignments: input.assignments.map((a) => ({
       id: a.id,
@@ -257,7 +282,9 @@ export function recordActivity(
         at: new Date().toISOString(),
         ...(points !== undefined ? { points } : {}),
         ...(engine ? { engine: cleanReport(engine) } : {}),
-        ...(review ? { review: { correct: review.correct, total: 3 as const } } : {}),
+        ...(review
+          ? { review: { correct: review.correct, total: 3 as const } }
+          : {}),
       },
     ].slice(-200),
     assignments: s.assignments.map((a) =>
