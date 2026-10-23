@@ -9,7 +9,7 @@ import {
   verifiedAccount,
 } from "@/server/qb-lab/accounts/session";
 beforeEach(() => vi.resetAllMocks());
-it("keeps even refreshed provider session cookies secure, HttpOnly and limited to QB LAB APIs", async () => {
+it("keeps even refreshed provider session cookies secure, HttpOnly and available to verified page guards and APIs", async () => {
   await accountClient({
     origin: "https://stage.example",
     provider: "https://isolated.supabase.co",
@@ -30,7 +30,7 @@ it("keeps even refreshed provider session cookies secure, HttpOnly and limited t
       httpOnly: true,
       secure: true,
       sameSite: "strict",
-      path: "/api/qb-lab",
+      path: "/",
     }),
   );
 });

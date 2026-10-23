@@ -1,4 +1,5 @@
 import { createServerClient } from "@supabase/ssr";
+import { accountCookieOptions } from "./cookie-policy";
 import { cookies } from "next/headers";
 import { AccountError } from "./http";
 import type { accountConfig } from "./config";
@@ -7,13 +8,7 @@ export async function accountClient(
 ) {
   const jar = await cookies();
   return createServerClient(config.provider, config.key, {
-    cookieOptions: {
-      name: "qb-stage-auth-v2",
-      httpOnly: true,
-      secure: true,
-      sameSite: "strict",
-      path: "/api/qb-lab",
-    },
+    cookieOptions: accountCookieOptions,
     cookies: {
       getAll: () => jar.getAll(),
       setAll: (changes) => {
@@ -23,7 +18,7 @@ export async function accountClient(
             httpOnly: true,
             secure: true,
             sameSite: "strict",
-            path: "/api/qb-lab",
+            path: accountCookieOptions.path,
           });
       },
     },
