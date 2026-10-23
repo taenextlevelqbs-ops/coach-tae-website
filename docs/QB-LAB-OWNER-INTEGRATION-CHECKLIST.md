@@ -62,3 +62,9 @@ These are existing server-only configuration **names**, not values or an instruc
 - [ ] Record exact reviewed commit, CI run, scoped desktop/mobile/accessibility evidence, provider isolation results, consent approval, rollback plan and explicit owner approval before any real athlete beta. Obtain separate production-launch approval afterward.
 
 See [release gaps](QB-LAB-RELEASE-GAP-AUDIT.md), [Phase 2 foundation](QB-LAB-PHASE-2-FOUNDATION.md), [Phase 3 limits](QB-LAB-PHASE-3-READINESS.md) and [operations runbook](operations/LAUNCH-RUNBOOK.md). No checklist item is checked merely because a local test or Preview deployment succeeds.
+
+## Public entry update — 2026-10-23
+
+The public website now leads to `/qb-lab/welcome`; `/qb-lab/sample` is read-only and explicitly draft. Registration and sign-in remain unavailable without approved infrastructure. The preserved `/qb-lab` athlete dashboard and existing tools now require verified server membership. See [Public entry review](QB-LAB-PUBLIC-ENTRY-REVIEW.md), including the inactive v3 HttpOnly/Secure/Strict host-only cookie change needed for both page and API requests. No real or pretend registration is activated.
+
+For current dependency evidence, [the advisory-withdrawal report](QB-LAB-ATHLETE-SECURITY-STATUS.md) supersedes the historical five-high audit observation above; full and production audits currently report zero. Audit enforcement remains enabled.

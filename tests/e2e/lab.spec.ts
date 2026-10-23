@@ -45,7 +45,7 @@ test("existing homepage, navigation, prices and booking links remain functional"
     .getByRole("link", { name: "QB LAB", exact: true })
     .filter({ visible: true })
     .click();
-  await expect(page).toHaveURL(/\/qb-lab$/);
+  await expect(page).toHaveURL(/\/qb-lab\/welcome$/);
 });
 for (const route of ["", "/athlete", "/iq", "/film", "/family"]) {
   test(`${route || "/landing"} is reachable and reflows without runtime errors`, async ({
