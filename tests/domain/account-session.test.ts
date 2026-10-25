@@ -90,3 +90,8 @@ it('requires provider-verified aal2 and matching identity for coach and administ
  single.mockResolvedValue({ data: { id: 'synthetic', role: 'administrator', adult_verified: true } });
  await expect(verifiedAccount(client as never)).resolves.toMatchObject({ role: 'administrator' });
 });
+it('requires a server-owned athlete linkage and current consent instead of adult self-verification for a minor login',async()=>{
+ const rpc=vi.fn().mockResolvedValue({data:false});const client={auth:{getUser:async()=>({data:{user:{id:'synthetic-child',email_confirmed_at:'confirmed'}}})},from:()=>({select:()=>({eq:()=>({single:async()=>({data:{id:'synthetic-child',role:'athlete',adult_verified:false}})})})}),rpc};
+ await expect(verifiedAccount(client as never)).rejects.toThrow('VERIFIED_GUARDIAN_LINK_REQUIRED');
+ rpc.mockResolvedValue({data:true});await expect(verifiedAccount(client as never)).resolves.toMatchObject({role:'athlete',adult_verified:false});expect(rpc).toHaveBeenCalledWith('qb_identity_ready');
+});

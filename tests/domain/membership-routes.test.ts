@@ -86,3 +86,14 @@ it('does not claim password-change success when provider revocation fails', asyn
  expect(response.status).toBe(503);
  expect(await response.json()).toEqual({ code: 'PASSWORD_CHANGED_REAUTH_REQUIRED' });
 });
+it('verifies owner-configured one-time invite/recovery hashes and refuses unknown or expired link types',async()=>{
+ const verifyOtp=vi.fn().mockResolvedValue({error:null}),signOut=vi.fn();m.client.mockResolvedValue({auth:{verifyOtp,signOut}});
+ expect((await auth(req({action:'verify-link',tokenHash:'synthetic-one-time-token-hash',type:'invite'}))).status).toBe(200);
+ expect(verifyOtp).toHaveBeenCalledWith({token_hash:'synthetic-one-time-token-hash',type:'invite'});
+ expect((await auth(req({action:'verify-link',tokenHash:'synthetic',type:'email_change'}))).status).toBe(422);
+ verifyOtp.mockResolvedValue({error:new Error('Expired')});expect((await auth(req({action:'verify-link',tokenHash:'synthetic',type:'recovery'}))).status).toBe(401);
+});
+it('clears a provider invite session if server-owned membership is absent',async()=>{
+ const signOut=vi.fn();m.client.mockResolvedValue({auth:{verifyOtp:async()=>({error:null}),signOut}});m.base.mockRejectedValue(new AccountError(403,'VERIFIED_MEMBERSHIP_REQUIRED'));
+ expect((await auth(req({action:'verify-link',tokenHash:'synthetic',type:'signup'}))).status).toBe(403);expect(signOut).toHaveBeenCalledWith({scope:'local'});
+});

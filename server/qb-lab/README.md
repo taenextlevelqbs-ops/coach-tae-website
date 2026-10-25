@@ -1,3 +1,5 @@
+> Final six-capability MVP update: [current readiness and setup](../../docs/QB-LAB-FINAL-MVP-READINESS.md). The report below is historical; account-backed MVP routes, weekly quizzes and private media adapters now exist, while hosted configuration and real-data activation remain blocked.
+
 > Phase 3: [readiness and launch blockers](../../docs/QB-LAB-PHASE-3-READINESS.md) documents explicit coach API guards, test-only billing foundations, cookie v2, private inbox migration and inactive operations setup. Real integrations remain disabled; no production readiness is claimed.
 
 > Phase 2 update: a separately gated synthetic-staging account adapter now exists; no integration is configured or approved. All existing private/coach/video routes remain disabled. See [Phase 2 setup and limits](../../docs/QB-LAB-PHASE-2-FOUNDATION.md). The following describes the original disabled boundary and remaining real-data gates.

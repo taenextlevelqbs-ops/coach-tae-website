@@ -1,3 +1,5 @@
+> Final six-capability MVP update: [current readiness and setup](QB-LAB-FINAL-MVP-READINESS.md). The report below is historical; account-backed MVP routes, weekly quizzes and private media adapters now exist, while hosted configuration and real-data activation remain blocked.
+
 # Membership, progress and coaching readiness
 
 Status: integration-ready additions and synthetic demonstrations, **not a live membership platform**. No hosted project was provisioned, no real account created, no email sent, no video collected, no payment enabled. PR #3 remains draft. Production and PR #2 are outside this change.

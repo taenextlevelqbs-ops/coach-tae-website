@@ -1,6 +1,6 @@
 import { accountConfig } from "@/server/qb-lab/accounts/config";
 import { accountClient, verifiedAccount } from "@/server/qb-lab/accounts/session";
-import { AccountError, accountResponse, boundedJson, fields, requireOrigin, text, uuid } from "@/server/qb-lab/accounts/http";
+import { AccountError, accountResponse, boundedJson, fields, requireOrigin, text, paragraph, uuid } from "@/server/qb-lab/accounts/http";
 function instant(value: unknown) {
   if (typeof value !== 'string' || value.length > 40 || !/Z$|[+-]\d{2}:\d{2}$/.test(value) || !Number.isFinite(Date.parse(value))) throw new AccountError(422, 'INVALID_DATE');
   return new Date(value).toISOString();
@@ -33,14 +33,14 @@ async function handle(request: Request) {
       if (error) throw new AccountError(403, 'WRITE_DENIED');
       return accountResponse({ saved: true });
     }
-    if (account.role !== 'coach') throw new AccountError(403, 'COACH_REQUIRED');
+    if (!['coach','administrator'].includes(account.role)) throw new AccountError(403, 'COACH_REQUIRED');
     if (input.action === 'message') {
       fields(input, ['action', 'athletes', 'body', 'publishAt', 'contentKey']);
       if (!Array.isArray(input.athletes) || input.athletes.length < 1 || input.athletes.length > 100) throw new AccountError(422, 'INVALID_RECIPIENTS');
       const targets = input.athletes.map(uuid);
       if (new Set(targets).size !== targets.length) throw new AccountError(422, 'INVALID_RECIPIENTS');
       const { data, error } = await client.rpc('qb_send_message', {
-        targets, message: text(input.body, 2000), delivery: instant(input.publishAt),
+        targets, message: paragraph(input.body, 2000), delivery: instant(input.publishAt),
         content_key: input.contentKey == null ? null : text(input.contentKey, 120),
       });
       if (error) throw new AccountError(403, 'WRITE_DENIED');

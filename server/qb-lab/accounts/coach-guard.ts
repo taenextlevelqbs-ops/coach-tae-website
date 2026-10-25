@@ -10,7 +10,7 @@ export async function guardedCoach(request: Request) {
     if (!["GET", "HEAD"].includes(request.method))
       requireOrigin(request, config.origin);
     const account = await verifiedAccount(await accountClient(config));
-    if (account.role !== "coach") throw new AccountError(403, "COACH_REQUIRED");
+    if (!["coach", "administrator"].includes(account.role)) throw new AccountError(403, "COACH_REQUIRED");
     // Identity/role alone cannot enable unimplemented roster/media services.
     return privateWorkspaceUnavailable();
   } catch (error) {

@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import { MemberShell } from "./mvp/MemberShell";
 import { PwaSupport } from "./PwaInstall";
 import { isPublicLabPage } from "./entry/routes";
 import { PublicLabShell } from "./entry/PublicLabShell";
@@ -82,9 +83,11 @@ const navigation: {
     ],
   },
 ];
-export function LabShell({ children }: { children: ReactNode }) {
+export function LabShell({ children, accountsEnabled = false }: { children: ReactNode; accountsEnabled?: boolean }) {
   const current = usePathname();
   if (isPublicLabPage(current)) return <PublicLabShell>{children}</PublicLabShell>;
+  const core = current === "/qb-lab" || ["workouts", "recovery", "profile", "family", "coach", "film", "progress", "messages", "iq"].some(part => current === `/qb-lab/${part}` || current.startsWith(`/qb-lab/${part}/`));
+  if (accountsEnabled && core) return <MemberShell>{children}</MemberShell>;
   return <PrivateLabShell>{children}</PrivateLabShell>;
 }
 function PrivateLabShell({ children }: { children: ReactNode }) {

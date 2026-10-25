@@ -38,14 +38,19 @@ export async function verifiedMembership(
     .single();
   if (
     denied ||
-    !account?.adult_verified ||
-    !["adult", "guardian", "coach", "administrator"].includes(account.role)
+    !account ||
+    !["adult", "guardian", "athlete", "coach", "administrator"].includes(account.role) ||
+    (account.role !== "athlete" && !account.adult_verified)
   )
     throw new AccountError(403, "VERIFIED_MEMBERSHIP_REQUIRED");
+  if (account.role === "athlete") {
+    const linked = await client.rpc("qb_identity_ready");
+    if (linked.error || linked.data !== true) throw new AccountError(403, "VERIFIED_GUARDIAN_LINK_REQUIRED");
+  }
   return account as {
     id: string;
-    role: "adult" | "guardian" | "coach" | "administrator";
-    adult_verified: true;
+    role: "adult" | "guardian" | "athlete" | "coach" | "administrator";
+    adult_verified: boolean;
   };
 }
 

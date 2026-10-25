@@ -148,7 +148,7 @@ async function handle(
       return accountResponse({ saved: true, source: "self_reported" });
     }
     if (request.method === "POST" && operation === "assignments") {
-      if (account.role !== "coach")
+      if (!["coach", "administrator"].includes(account.role))
         throw new AccountError(403, "COACH_REQUIRED");
       const input = await boundedJson(request);
       fields(input, ["contentKey", "title"]);

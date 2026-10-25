@@ -79,3 +79,22 @@
 .membership-workspace :focus-visible {outline:3px solid white;outline-offset:4px;}
 .membership-workspace fieldset {border:1px solid #63676d;padding:12px;border-radius:8px;}
 .membership-workspace select {text-overflow:ellipsis;}
+
+/* Account-backed MVP preserves the existing four-card athlete design and four-item navigation. */
+.mvp-application .mvp-main {max-width:960px;margin:auto;padding:24px 24px 110px;}
+.mvp-account-bar {display:flex;gap:16px;align-items:center;justify-content:space-between;margin-bottom:24px;color:#b5b5bd;font-size:12px;}
+.mvp-account-bar label {display:grid;gap:6px;}
+.mvp-account-bar select {background:#222224;border:1px solid #62626c;color:#fff;border-radius:8px;padding:8px;max-width:240px;}
+.mvp-application .membership-workspace, .mvp-application .membership-workspace>* {min-width:0;}
+.mvp-application .lab-panel {background:#19191b;border:1px solid #41414b;border-radius:14px;padding:20px;margin-block:16px;}
+.mvp-application :is(p,li,blockquote) {overflow-wrap:anywhere;}
+.mvp-application video {width:100%;max-height:480px;background:black;border-radius:12px;}
+.mvp-quiz fieldset {margin-block:20px;}
+.mvp-answer {border-left:3px solid #eee;padding-left:14px;margin-top:12px;}
+.mvp-weekly {padding:20px;border:1px solid #41414b;border-radius:14px;}
+.mvp-directory-row, .mvp-bank-row {border-bottom:1px solid #41414b;padding-block:12px;}
+.mvp-application .app-bottom-nav {display:none;}
+.mvp-application .public-lab-header nav {flex-wrap:wrap;}
+.mvp-application button:disabled {opacity:.6;cursor:not-allowed;}
+.mvp-application .train-list {display:grid;gap:14px;}
+@media(max-width:760px){.mvp-application .mvp-main {padding:20px 16px 110px;}.mvp-account-bar {align-items:flex-start;flex-direction:column;}.mvp-application .public-lab-header nav {display:none;}.mvp-application .app-bottom-nav {display:flex;}.mvp-application .public-lab-header {padding:16px;}.mvp-application .lab-panel{padding:16px;}}

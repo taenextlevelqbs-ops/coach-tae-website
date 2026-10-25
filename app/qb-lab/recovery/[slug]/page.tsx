@@ -1,3 +1,4 @@
+import { MemberTraining } from "@/modules/qb-lab/mvp/MemberTraining";
 import { accountConfig } from "@/server/qb-lab/accounts/config";
 import { AccountTrainingRecorder } from "@/modules/qb-lab/membership/AccountTrainingRecorder";
 import { notFound } from "next/navigation";
@@ -12,5 +13,6 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
   const { slug } = await params;
   const item = getRecoveryExercise(slug);
   if (!item) notFound();
+  if (accountConfig() !== null) return <MemberTraining item={item} />;
   return <><InstructionDetail item={item} />{accountConfig() !== null && <AccountTrainingRecorder key={item.slug} contentKey={item.slug} kind="recovery" />}</>;
 }

@@ -1,0 +1,8 @@
+"use client";
+import Link from 'next/link';
+import { useMember } from './MemberProvider';
+import { workouts } from '../training/workouts';
+import { recoveryExercises } from '../training/recovery';
+export function MemberProgress(){const {profile,data,loading}=useMember();const catalog=[...workouts,...recoveryExercises];return <div className="train-page membership-workspace"><h1>{profile?.display_name??'Your'} training history</h1><p>Database records across devices. Workout and recovery completion are self-reported; quiz scores are calculated on the server.</p>
+ {loading?<p role="status">Loading history…</p>:!data?<p>Account history is unavailable. No completion count or score is assumed.</p>:<><h2>Workouts & recovery</h2>{!data?.training.length&&<p>No training has been started yet.</p>}<ul>{data?.training.map(r=>{const item=catalog.find(i=>`${i.kind}:${i.slug}`===r.content_key);return <li key={r.id}><Link href={item?`/qb-lab/${item.kind==='workout'?'workouts':'recovery'}/${item.slug}`:'/qb-lab/workouts'}>{item?.title??r.content_key}</Link> · {r.completed_at?'Completed':'In Progress'} · <time dateTime={r.completed_at??r.started_at}>{new Date(r.completed_at??r.started_at).toLocaleString()}</time></li>;})}</ul><h2>Weekly quiz scores</h2>{!data?.quizzes.length&&<p>No weekly quiz assignments yet.</p>}<ul>{data?.quizzes.map(q=><li key={q.assignment}>{q.title} · Week {q.week} · {q.score===null?'Not submitted':`${q.score} / 10 · ${new Date(q.completed_at!).toLocaleString()}`}</li>)}</ul><Link className="lab-button" href="/qb-lab/iq">Review quiz answers</Link></>}
+ <Link className="train-back" href="/qb-lab">Back to your next session →</Link></div>;}

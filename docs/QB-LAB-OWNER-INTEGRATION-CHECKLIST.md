@@ -72,3 +72,7 @@ For current dependency evidence, [the advisory-withdrawal report](QB-LAB-ATHLETE
 ## Membership and messaging candidate
 
 Migration 004 and guarded authentication/MFA, messaging and schedule adapters are now implemented but unapplied to hosted infrastructure. See [Membership readiness](QB-LAB-MEMBERSHIP-READINESS.md) for exact setup, default-off email gate, synthetic walkthrough, direct-database MFA, required provider testing and substantial remaining account-to-training integration gaps. The earlier 001–003-only schema description is historical; no checklist approval is implied.
+
+## Final six-capability MVP update
+
+The final MVP supersedes prior platform-expansion and billing plans. Account-backed home/training/quiz/film/message workflows are implemented, with schemas 005–007, private storage policy setup and an isolated processor implementation. Hosted services remain unconfigured. Use [Final MVP readiness](QB-LAB-FINAL-MVP-READINESS.md) and [exact owner setup](QB-LAB-MVP-OWNER-SETUP.md), including current invitation email templates, rather than treating historical adapter gaps or billing proposals as this release scope. No approval is implied by this update.

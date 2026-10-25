@@ -1,3 +1,4 @@
+import { accountConfig } from "@/server/qb-lab/accounts/config";
 import type { Metadata } from "next";
 import { LabShell } from "@/modules/qb-lab/LabShell";
 import "./lab.css";
@@ -15,5 +16,5 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 export default function Layout({ children }: { children: React.ReactNode }) {
-  return <LabShell>{children}</LabShell>;
+  return <LabShell accountsEnabled={accountConfig() !== null}>{children}</LabShell>;
 }

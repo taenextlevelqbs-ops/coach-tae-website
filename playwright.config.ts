@@ -18,7 +18,7 @@ export default defineConfig({
   projects: [
     {
       name: "desktop",
-      testIgnore: "**/entry-flow.spec.ts",
+      testIgnore: ["**/entry-flow.spec.ts", "**/mvp-journey.spec.ts"],
       use: {
         ...devices["Desktop Chrome"],
         viewport: { width: 1280, height: 900 },
@@ -26,7 +26,7 @@ export default defineConfig({
     },
     {
       name: "tablet",
-      testIgnore: "**/entry-flow.spec.ts",
+      testIgnore: ["**/entry-flow.spec.ts", "**/mvp-journey.spec.ts"],
       use: {
         ...devices["Desktop Chrome"],
         viewport: { width: 768, height: 1024 },
@@ -34,12 +34,12 @@ export default defineConfig({
     },
     {
       name: "mobile",
-      testIgnore: "**/entry-flow.spec.ts",
+      testIgnore: ["**/entry-flow.spec.ts", "**/mvp-journey.spec.ts"],
       use: { ...devices["Pixel 7"], viewport: { width: 390, height: 844 } },
     },
     {
       name: "compact",
-      testIgnore: "**/entry-flow.spec.ts",
+      testIgnore: ["**/entry-flow.spec.ts", "**/mvp-journey.spec.ts"],
       use: { ...devices["Pixel 7"], viewport: { width: 320, height: 740 } },
     },
     ...[
@@ -48,6 +48,11 @@ export default defineConfig({
       { name: "entry-mobile", width: 390, height: 844 },
       { name: "entry-compact", width: 320, height: 740 },
     ].map(view => ({ name: view.name, testMatch: "**/entry-flow.spec.ts", use: { ...devices["Desktop Chrome"], viewport: { width: view.width, height: view.height }, baseURL: "http://127.0.0.1:3192" } })),
+    ...[
+      {name:"mvp-desktop",width:1280,height:900},
+      {name:"mvp-ipad",width:768,height:1024},
+      {name:"mvp-mobile",width:390,height:844},
+    ].map(view=>({name:view.name,testMatch:"**/mvp-journey.spec.ts",use:{...devices["Desktop Chrome"],viewport:{width:view.width,height:view.height},baseURL:"http://127.0.0.1:3204"}})),
   ],
   webServer: [{
     command: "node node_modules/next/dist/bin/next start .qb-lab-browser-harness --hostname 127.0.0.1 --port 3150",
@@ -63,5 +68,12 @@ export default defineConfig({
     gracefulShutdown: { signal: "SIGTERM", timeout: 5000 },
     timeout: 120_000,
     env: { NEXT_TELEMETRY_DISABLED: "1", QB_LAB_ACCOUNTS_STAGE: "disabled" },
+  }, {
+    command:"node node_modules/next/dist/bin/next start .qb-lab-browser-harness --hostname 127.0.0.1 --port 3204",
+    url:"http://127.0.0.1:3204/qb-lab/welcome",reuseExistingServer:false,
+    gracefulShutdown:{signal:"SIGTERM",timeout:5000},timeout:120_000,
+    // Explicitly fake provider values for the isolated component harness. Browser tests intercept APIs.
+    // This server omits proxy.ts; the real application's guards are tested separately on 3192.
+    env:{NEXT_TELEMETRY_DISABLED:"1",QB_LAB_ACCOUNTS_STAGE:"synthetic-staging",QB_LAB_ACCOUNT_ORIGIN:"https://synthetic-stage.example",QB_LAB_SUPABASE_URL:"https://synthetic-stage.supabase.co",QB_LAB_SUPABASE_PUBLISHABLE_KEY:"sb_publishable_synthetic_not_real"},
   }],
 });

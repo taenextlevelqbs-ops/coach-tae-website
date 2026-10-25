@@ -87,3 +87,9 @@ export function text(value: unknown, max: number): string {
     throw new AccountError(422, "INVALID_TEXT");
   return value.trim();
 }
+
+/** Bounded coaching paragraphs; allow line breaks, never NUL or other control characters. */
+export function paragraph(value: unknown,max: number): string {
+ if(typeof value!=="string" || !value.trim() || value.length>max || /[\x00-\x08\x0b\x0c\x0e-\x1f]/.test(value))throw new AccountError(422,"INVALID_TEXT");
+ return value.replace(/\r\n?/g,"\n").trim();
+}

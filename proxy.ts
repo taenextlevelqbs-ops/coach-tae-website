@@ -35,7 +35,7 @@ export async function proxy(request: NextRequest) {
     });
     const member = await verifiedAccount(client);
     const path = decodeURIComponent(request.nextUrl.pathname);
-    if ((path === "/qb-lab/coach" || path.startsWith("/qb-lab/coach/")) && member.role !== "coach")
+    if ((path === "/qb-lab/coach" || path.startsWith("/qb-lab/coach/")) && !["coach", "administrator"].includes(member.role))
       return redirectTo("/qb-lab/forbidden");
     response.headers.set("Cache-Control", "private, no-store");
     return response;

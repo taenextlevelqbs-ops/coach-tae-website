@@ -19,6 +19,15 @@ export async function POST(request: Request) {
       // Identical result for missing users/provider rejection; never enumerate membership.
       return accountResponse({ message: 'If eligible, a provider email will be sent.' });
     }
+    if (input.action === 'verify-link') {
+      fields(input, ['action', 'tokenHash', 'type']);
+      const type=input.type;
+      if (type !== 'invite' && type !== 'recovery' && type !== 'signup' && type !== 'email') throw new AccountError(422, 'INVALID_LINK_TYPE');
+      const { error }=await client.auth.verifyOtp({token_hash:text(input.tokenHash,2048),type});
+      if(error)throw new AccountError(401,'INVALID_OR_EXPIRED_LINK');
+      try{await verifiedMembership(client);}catch(error){await client.auth.signOut({scope:'local'});throw error;}
+      return accountResponse({verified:true});
+    }
     if (input.action === 'exchange') {
       fields(input, ['action', 'code']);
       const { error } = await client.auth.exchangeCodeForSession(text(input.code, 2048));
