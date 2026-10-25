@@ -988,4 +988,3 @@ Key: `recovery:rest-recovery-education` · After-Training Cooldown
 **Dose:** Comfortable movement · dose pending review. Duration shown (At your pace) is an educational draft, not a personal prescription.
 
 Reviewer/version/evidence: pending.
-

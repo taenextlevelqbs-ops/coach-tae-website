@@ -73,3 +73,5 @@ These are concrete blockers, not requests to create another website. Keep PR #3 
 - Desktop/mobile screenshots are in the delivery artifact, explicitly distinguishing actual production-built public pages from the isolated synthetic-provider component harness. Hosted private account screenshots are not claimed.
 
 The code is ready for the documented **synthetic staging integration review**, not real child enrollment or production activation.
+
+Final rendered evidence: eight desktop/mobile page checks had zero automated accessibility violations, horizontal overflow or runtime errors. The account viewport captures use the isolated synthetic-provider harness; public welcome/sample/sign-in captures use the actual production build with services disabled. Requested/expired film metadata and written feedback are purged only after the isolated worker confirms object deletion; rejected-clip status remains visible until its retention expiry. No hosted object purge is claimed without provider acceptance.
