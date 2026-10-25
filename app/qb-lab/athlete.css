@@ -1,0 +1,331 @@
+/* One scoped athlete design system. Public coaching pages do not import this file.
+   Existing football fields retain their instructional colors; surrounding tools share these tokens. */
+.qb-application.qb-application {
+  --app-bg: #0c0c0d;
+  --app-card: #19191b;
+  --app-raised: #222224;
+  --app-line: #353538;
+  --app-text: #f6f6f7;
+  --app-muted: #b5b5bd;
+  --lab-ink: var(--app-text);
+  --lab-muted: var(--app-muted);
+  --lab-line: var(--app-line);
+  --lab-accent: var(--app-text);
+  --lab-paper: var(--app-bg);
+  --lab-panel: var(--app-card);
+  --lab-display: Arial, Helvetica, sans-serif;
+  background: var(--app-bg);
+  color: var(--app-text);
+  color-scheme: dark;
+  min-height: 100dvh;
+  padding-bottom: 0;
+  font: 15px/1.55 Arial, Helvetica, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+.qb-application *, .qb-application *::before, .qb-application *::after { box-sizing: border-box; }
+.qb-application.qb-application :focus-visible { outline: 3px solid #fff; outline-offset: 4px; }
+.qb-application.qb-application :is(button,a,summary,input,select,textarea) { touch-action: manipulation; }
+.qb-application.qb-application :is(button,a,summary,select) { -webkit-tap-highlight-color: transparent; }
+.qb-application.qb-application :is(button,a) { transition: background-color .15s ease, border-color .15s ease; }
+.qb-application.qb-application .app-header {
+  background: #111112;
+  color: var(--app-text);
+  border-bottom: 1px solid #28282b;
+  height: 76px;
+  padding: 0 max(24px, calc((100% - 1120px) / 2));
+  gap: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.qb-application.qb-application .app-wordmark { display: flex; flex-direction: column; gap: 0; color: #fff; line-height: 1.15; text-decoration: none; min-height: 44px; justify-content: center; flex-shrink: 0; }
+.app-brand-coach { font-size: 10px; font-weight: 700; letter-spacing: 2.3px; }
+.app-brand-lab { font-size: 24px; letter-spacing: -.7px; font-weight: 800; }
+.qb-application.qb-application .app-navigation { display: flex; height: auto; gap: 5px; background: #19191b; border: 1px solid #303033; border-radius: 12px; padding: 4px; }
+.qb-application.qb-application .app-navigation a { color: #b5b5bd; background: transparent; padding: 10px 14px; min-height: 44px; border-radius: 8px; font-size: 13px; font-weight: 600; display: flex; gap: 7px; align-items: center; justify-content: center; text-decoration: none; }
+.qb-application.qb-application .app-navigation a:hover { background: #2b2b2e; color: #fff; }
+.qb-application.qb-application .app-navigation a[aria-current="page"] { color: #fff; background: #303033; }
+.qb-application.qb-application .app-navigation svg { width: 18px; height: 18px; }
+.app-account-actions { display: flex; gap: 12px; align-items: center; }
+.qb-application.qb-application .app-profile-picker { display: flex; align-items: center; gap: 6px; }
+.qb-application.qb-application .app-profile-avatar { width: 32px; height: 32px; background: #38383c; color: #fff; font-size: 13px; border: 1px solid #505055; }
+.qb-application.qb-application .app-profile-picker select { color: #ededf0; background: #111112; border: 0; width: 108px; font-size: 12px; min-height: 44px; padding: 6px 0; }
+.qb-application.qb-application .app-profile-picker option { color: #f6f6f7; background: #19191b; }
+.app-notifications { position: relative; }
+.app-notifications > summary { width: 44px; height: 44px; display: grid; place-items: center; cursor: pointer; border-radius: 10px; list-style: none; color: #c7c7ce; }
+.app-notifications > summary::-webkit-details-marker { display: none; }
+.app-notifications > summary:hover, .app-notifications[open] > summary { background: #29292c; color: #fff; }
+.app-notifications svg { width: 21px; height: 21px; }
+.app-notification-panel { position: absolute; top: 52px; right: 0; z-index: 30; width: min(290px, calc(100vw - 32px)); background: #222224; padding: 20px; border: 1px solid #45454a; border-radius: 14px; box-shadow: 0 14px 40px #0008; font-size: 13px; }
+.app-notification-panel p { color: var(--app-muted); margin: 8px 0 14px; }
+.app-notification-panel a { color: #fff; text-decoration: underline; text-underline-offset: 4px; display: inline-flex; align-items: center; min-height: 44px; }
+.qb-application.qb-application .app-main { width: min(1080px, calc(100% - 48px)); margin: 0 auto; padding: 38px 0 32px; min-height: 70vh; }
+.qb-application.qb-application .app-home-main { width: min(880px, calc(100% - 48px)); }
+.qb-application.qb-application .qb-lab {
+  --lab-ink: var(--app-text);
+  --lab-muted: var(--app-muted);
+  --lab-line: var(--app-line);
+  --lab-accent: var(--app-text);
+  --lab-paper: var(--app-bg);
+  --lab-panel: var(--app-card);
+  --lab-display: Arial, Helvetica, sans-serif;
+}
+.qb-application.qb-application .app-tool-workspace.qb-lab { background: transparent; color: var(--app-text); min-height: auto; padding: 0; font: inherit; color-scheme: dark; }
+.qb-application.qb-application .app-footer { background: transparent; color: #a6a6af; border-top: 1px solid #29292c; max-width: 1080px; width: calc(100% - 48px); margin: 0 auto; padding: 20px 0 28px; display: flex; justify-content: space-between; gap: 20px; font-size: 11px; line-height: 1.6; }
+.qb-application.qb-application .app-footer a { color: #c9c9d0; flex-shrink: 0; min-height: 44px; display: inline-flex; align-items: flex-start; text-underline-offset: 4px; }
+.qb-application.qb-application .app-skip { color: #111; background: #fff; border: 1px solid #fff; z-index: 100; }
+
+/* Actual home composition: greeting, one next action, four destinations, one coaching note. */
+.qb-application.qb-application .athlete-dashboard { display: grid; gap: 24px; }
+.qb-application.qb-application .dashboard-greeting { display: block; margin: 0; padding: 0; border: 0; }
+.qb-application.qb-application .dashboard-greeting h1 { color: #fff; font-size: clamp(26px, 3vw, 34px); font-weight: 750; letter-spacing: -.8px; line-height: 1.2; margin: 0 0 8px; }
+.qb-application.qb-application .dashboard-greeting p { color: #c6c6ce; font-size: 16px; margin: 0; }
+.qb-application.qb-application .dashboard-demo-label { display: inline-block; background: transparent; border: 0; border-radius: 0; color: #aaaab3; font-size: 11px; margin-top: 9px; padding: 0; }
+.qb-application.qb-application .session-card { background: #19191b; color: #fff; border: 1px solid #3d3d41; border-radius: 18px; padding: 24px; box-shadow: 0 8px 24px #0002; margin: 0; }
+.qb-application.qb-application .session-heading { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin: 0 0 16px; }
+.qb-application.qb-application .session-heading h2 { font: 600 14px/1.35 Arial, sans-serif; color: #d0d0d7; margin: 0; letter-spacing: 0; }
+.session-status { color: #d1d1d7; border: 1px solid #444448; border-radius: 20px; padding: 4px 9px; font-size: 10px; line-height: 1.2; }
+.qb-application.qb-application .session-card h3 { font: 700 clamp(21px, 2.5vw, 26px)/1.2 Arial, sans-serif; color: #fff; letter-spacing: -.5px; margin: 0 0 8px; }
+.qb-application.qb-application .session-description { color: #bdbdc5; font-size: 14px; line-height: 1.5; max-width: 580px; margin: 0 0 20px; }
+.qb-application.qb-application .session-action { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; margin: 0 0 18px; }
+.qb-application.qb-application .session-time { display: flex; align-items: center; gap: 7px; color: #bdbdc5; font-size: 12px; }
+.qb-application.qb-application .session-time svg { width: 16px; height: 16px; }
+.qb-application.qb-application .app-primary-button, .qb-application.qb-application .train-button { background: #f4f4f5; border: 1px solid #f4f4f5; border-radius: 10px; color: #161618 !important; display: inline-flex; gap: 12px; align-items: center; justify-content: center; padding: 13px 20px; min-height: 48px; line-height: 1.4; font: 700 14px/1.4 Arial, sans-serif; text-decoration: none; cursor: pointer; }
+.qb-application.qb-application .app-primary-button:hover, .qb-application.qb-application .train-button:hover { background: #dcdce0; border-color: #dcdce0; }
+.qb-application.qb-application .app-primary-button svg, .qb-application .train-button svg { width: 18px; height: 18px; flex-shrink: 0; }
+.qb-application.qb-application .session-demo { font-size: 10px; color: #a8a8b1; display: block; margin: 10px 0 0; line-height: 1.5; }
+.qb-application.qb-application .training-destinations { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 14px; }
+.qb-application.qb-application .training-destination { display: flex; align-items: center; gap: 16px; min-height: 112px; padding: 22px; background: #19191b; color: #fff; border: 1px solid #303034; border-radius: 16px; text-decoration: none; position: relative; }
+.qb-application.qb-application .training-destination:hover { background: #242427; border-color: #57575c; }
+.qb-application.qb-application .destination-icon { display: grid; place-items: center; background: transparent; border: 0; padding: 0; color: #f2f2f5; width: 30px; height: 36px; flex-shrink: 0; }
+.qb-application.qb-application .destination-icon svg { width: 28px; height: 28px; }
+.qb-application.qb-application .training-destination strong { display: block; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; }
+.qb-application.qb-application .training-destination small { display: block; font-size: 13px; color: #b5b5be; margin-top: 5px; line-height: 1.4; }
+.qb-application.qb-application .destination-arrow { color: #9999a3; margin-left: auto; width: 16px; flex-shrink: 0; }
+.qb-application.qb-application .destination-arrow svg { width: 16px; height: 16px; }
+.qb-application.qb-application .coach-note-card { border: 1px solid #303034; border-radius: 16px; padding: 22px; display: flex; align-items: flex-start; gap: 16px; background: #161618; color: #f4f4f7; }
+.qb-application.qb-application .coach-note-avatar { border: 1px solid #49494e; border-radius: 50%; color: #ededf0; background: #29292c; height: 38px; width: 38px; flex-shrink: 0; font-size: 12px; display: grid; place-items: center; }
+.qb-application.qb-application .coach-note-heading { display: flex; justify-content: space-between; gap: 8px 20px; align-items: baseline; flex-wrap: wrap; margin-bottom: 8px; }
+.qb-application.qb-application .coach-note-heading h2 { font-size: 15px; font-weight: 650; letter-spacing: -.2px; margin: 0; color: #f6f6f7; }
+.qb-application.qb-application .coach-note-heading span { font-size: 10px; color: #aaaab4; }
+.qb-application.qb-application .coach-note-card blockquote { margin: 0; font: 14px/1.65 Arial,sans-serif; color: #c3c3cb; }
+.qb-application.qb-application .dashboard-disclosure { margin: -8px 0 0; font-size: 11px; color: #a3a3ae; line-height: 1.6; }
+.dashboard-disclosure a { color: #d2d2d8; text-decoration: underline; text-underline-offset: 3px; }
+
+/* Reusable learning pages. */
+.qb-application .train-page { max-width: 820px; margin: 0 auto; }
+.qb-application .train-header { margin: 0 0 26px; }
+.qb-application .train-header h1 { margin: 12px 0 8px; }
+.qb-application .train-header p { color: var(--app-muted); font-size: 16px; margin: 0; max-width: 620px; }
+.qb-application .train-back { color: #c5c5ce; font-size: 13px; min-height: 44px; display: inline-flex; align-items: center; text-decoration: none; text-underline-offset: 4px; }
+.qb-application .train-back:hover { color: #fff; text-decoration: underline; }
+.qb-application .train-muted, .qb-application .train-demo-note { color: var(--app-muted); font-size: 13px; line-height: 1.6; }
+.qb-application .train-demo-note { margin-bottom: 22px; }
+.qb-application .train-category-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px; margin-bottom: 24px; }
+.qb-application .train-category { width: 100%; min-height: 100px; background: #19191b; border: 1px solid #39393d; border-radius: 14px; padding: 20px; display: flex; justify-content: space-between; align-items: center; gap: 12px; color: #f6f6f7; text-align: left; font: inherit; }
+.qb-application .train-category strong { font-size: 16px; font-weight: 650; }
+.qb-application .train-category small { display: block; margin-top: 5px; font-size: 12px; }
+.qb-application .train-category:hover { background: #262629; border-color: #62626a; }
+.qb-application .train-category[aria-pressed="true"] { background: #303033; border-color: #e3e3e7; }
+.qb-application .train-list { margin: 24px 0; }
+.qb-application .train-list h2 { margin: 0 0 14px; }
+.qb-application .train-drill-link { min-height: 76px; border-bottom: 1px solid #343438; padding: 16px 4px; display: flex; gap: 14px; align-items: center; justify-content: space-between; color: #f1f1f4; text-decoration: none; }
+.qb-application .train-drill-link strong { font-size: 15px; }
+.qb-application .train-drill-link small { display: block; margin-top: 3px; font-size: 12px; }
+.qb-application .train-drill-link:hover { background: #1d1d20; }
+.qb-application .train-inline-links { display: flex; gap: 10px 24px; flex-wrap: wrap; margin-top: 24px; }
+.qb-application .train-mode-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 14px; margin: 24px 0; }
+.qb-application .train-mode-card { border: 1px solid #3b3b40; border-radius: 16px; background: #19191b; padding: 24px; display: flex; flex-direction: column; color: #fff; text-decoration: none; }
+.qb-application .train-mode-card:hover { background: #242427; border-color: #707078; }
+.qb-application .train-mode-card > svg { height: 30px; width: 30px; margin-bottom: 26px; }
+.qb-application .train-mode-card h2 { font-size: 22px; margin-bottom: 10px; }
+.qb-application .train-mode-card h2 small { font-size: 11px; font-weight: 500; letter-spacing: 0; color: #b5b5bd; }
+.qb-application .train-mode-card p { font-size: 13px; color: #bebec7; margin-bottom: 12px; }
+.qb-application .train-mode-card .train-button { margin-top: auto; padding: 12px; width: 100%; font-size: 12px; }
+.qb-application .train-metadata { display: flex; gap: 8px; flex-wrap: wrap; margin: -2px 0 20px; }
+.qb-application .train-chip { display: inline-flex; gap: 7px; align-items: center; background: #222225; color: #d3d3db; border: 1px solid #414146; border-radius: 8px; padding: 9px 12px; font-size: 12px; }
+.qb-application .train-chip svg { width: 16px; height: 16px; }
+.qb-application .instruction-context { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; font-size: 11px; color: #b6b6bf; margin: 16px 0 12px; }
+.qb-application .train-draft { display: inline-block; color: #c0c0ca; font-size: 11px; }
+.qb-application .train-safety { color: #bfbfc8; font-size: 12px; line-height: 1.65; margin: 10px 0 24px; max-width: 720px; }
+.qb-application .train-diagram { border: 1px solid #38383d; background: #18181b; border-radius: 16px; padding: 18px; margin: 24px 0; text-align: center; }
+.qb-application .train-diagram svg { display: block; max-width: 440px; width: 100%; height: auto; margin: 0 auto; color: #e4e4eb; }
+.qb-application .train-diagram text { fill: #d8d8e0; font-size: 10px; }
+.qb-application .train-diagram .train-diagram-direction { fill: #ababba; font-size: 9px; }
+.qb-application .train-diagram figcaption { font-size: 11px; color: #b1b1bd; line-height: 1.6; max-width: 600px; margin: 12px auto 0; }
+.qb-application .instruction-start { padding: 4px 0; margin: 20px 0; }
+.qb-application .instruction-start h2 { margin-bottom: 10px; }
+.qb-application .instruction-start p { font-size: 15px; color: #c8c8d0; }
+.qb-application .train-listen { background: #232326; border: 1px solid #505058; padding: 10px 14px; display: inline-flex; gap: 8px; align-items: center; color: #ededf2; border-radius: 10px; min-height: 44px; font-size: 13px; margin-bottom: 24px; }
+.qb-application .train-listen svg { width: 17px; height: 17px; }
+.qb-application .instruction-steps { margin: 14px 0 30px; }
+.qb-application .instruction-steps ol { list-style: none; margin: 0; padding: 0; }
+.qb-application .instruction-steps li { display: flex; gap: 16px; padding: 20px 0; border-bottom: 1px solid #2e2e33; }
+.qb-application .instruction-number { display: grid; place-items: center; width: 30px; height: 30px; flex-shrink: 0; border-radius: 50%; background: #29292e; border: 1px solid #49494f; font-size: 12px; color: #e4e4ec; }
+.qb-application .instruction-steps h3 { margin: 2px 0 7px; font-size: 16px; }
+.qb-application .instruction-steps p { margin: 0; font-size: 15px; line-height: 1.65; color: #c4c4ce; max-width: 630px; }
+.qb-application .train-coach-tip { background: #1d1d20; border: 1px solid #43434a; border-radius: 14px; padding: 22px; display: flex; gap: 14px; margin: 28px 0; }
+.qb-application .train-coach-monogram { background: #36363c; border: 1px solid #53535b; width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; flex-shrink: 0; font-size: 11px; }
+.qb-application .train-coach-tip h2 { font-size: 16px; margin: 0 0 8px; }
+.qb-application .train-coach-tip p { font-size: 14px; line-height: 1.65; color: #d1d1da; margin: 0 0 10px; }
+.qb-application .train-coach-tip small { font-size: 11px; color: #acacb7; }
+.qb-application .train-details, .qb-application .secondary-details { border: 1px solid #39393f; border-radius: 12px; padding: 0 20px; background: #18181b; margin: 22px 0; }
+.qb-application :is(.train-details,.secondary-details) > summary { font-size: 14px; color: #dddde5; cursor: pointer; min-height: 52px; padding: 14px 0; }
+.qb-application :is(.train-details,.secondary-details)[open] > summary { margin-bottom: 14px; border-bottom: 1px solid #3a3a40; }
+.qb-application .train-details > div { padding: 4px 0 16px; font-size: 13px; color: #bebeca; }
+.qb-application .train-details h3 { font-size: 15px; margin: 16px 0 8px; }
+.qb-application .train-details li { margin-bottom: 8px; }
+.qb-application .instruction-completion { margin: 30px 0 12px; display: flex; flex-direction: column; align-items: stretch; gap: 14px; }
+.qb-application .instruction-completion > .train-button { width: 100%; }
+.qb-application.qb-application .train-button-secondary { background: #242428; color: #ededf2 !important; border-color: #505058; }
+.qb-application.qb-application .train-button-secondary:hover { background: #36363b; border-color: #888892; }
+.qb-application.qb-application .train-button:disabled { cursor: default; opacity: .65; }
+.qb-application .train-success { display: flex; gap: 14px; padding: 20px; background: #212125; border: 1px solid #53535c; border-radius: 12px; }
+.qb-application .train-success > svg { width: 24px; height: 24px; flex-shrink: 0; margin-top: 2px; }
+.qb-application .train-success strong { font-size: 16px; }
+.qb-application .train-success p { margin: 6px 0 0; color: #bdbdca; font-size: 12px; }
+.qb-application .train-progress { color: #c7c7cf; font-size: 11px; margin: 12px 0; }
+.qb-application .train-progress > div { display: flex; justify-content: space-between; gap: 12px; margin: 0 0 8px; }
+.qb-application.qb-application .train-progress progress { appearance: none; display: block; width: 100%; height: 5px; border: 0; border-radius: 5px; background: #3c3c42; overflow: hidden; accent-color: #e5e5ed; }
+.qb-application .train-progress progress::-webkit-progress-bar { background: #3c3c42; }
+.qb-application .train-progress progress::-webkit-progress-value { background: #e5e5ed; border-radius: 5px; }
+.qb-application .train-progress progress::-moz-progress-bar { background: #e5e5ed; border-radius: 5px; }
+.qb-application .train-session-list { list-style: none; padding: 0; margin: 28px 0; }
+.qb-application .train-session-list li { display: flex; gap: 20px; align-items: center; justify-content: space-between; padding: 24px; border: 1px solid #3c3c43; border-radius: 14px; background: #19191c; margin: 12px 0; }
+.qb-application .train-session-list h2 { font-size: 18px; margin: 8px 0; }
+.qb-application .train-session-list p { font-size: 13px; color: #b6b6c1; margin: 0; }
+.qb-application .train-assignment { padding: 22px; border: 1px solid #666670; border-radius: 12px; background: #222227; margin-bottom: 24px; }
+
+/* Theme bridge for preserved advanced modules: keep the football implementation, remove notebook/green chrome. */
+.qb-application.qb-application .qb-lab :is(h1,h2,h3,h4) { font-family: Arial,Helvetica,sans-serif; color: #f4f4f7; letter-spacing: -.4px; }
+.qb-application.qb-application .qb-lab h1 { font-size: clamp(26px,3.5vw,36px); line-height: 1.2; margin-bottom: 10px; font-weight: 700; letter-spacing: -.8px; }
+.qb-application.qb-application .qb-lab h2 { font-size: 22px; line-height: 1.3; }
+.qb-application.qb-application .qb-lab h3 { font-size: 17px; line-height: 1.4; }
+.qb-application.qb-application .lab-page-heading { margin: 0 0 26px; padding: 0; }
+.qb-application.qb-application :is(.lab-lede,.lab-kicker,.lab-text-link,.lab-safety-note,.lab-footnote) { color: #bebec8; }
+.qb-application.qb-application .lab-kicker { font: 600 10px/1.5 Arial,sans-serif; letter-spacing: 1px; }
+.qb-application.qb-application .lab-index { display: none; }
+.qb-application.qb-application :is(.lab-panel,.lab-card,.lab-settings,.lab-callout,.lab-recommendation,.lab-workout,.lab-checkpoint,.lab-saved-play,.app-profile-page,.lab-app-queue,.lab-app-launcher a,.lab-activity-list li,.lab-assignment-row,.lab-family-briefing,.lab-family-summary,.lab-profile,.lab-observation-feedback) { background: #19191c; color: #efeff4; border-color: #3c3c43; border-radius: 14px; }
+.qb-application.qb-application .app-profile-page { background: transparent; border: 0; padding: 0; }
+.qb-application.qb-application .lab-panel { padding: 22px; }
+.qb-application.qb-application :is(.lab-panel,.lab-callout,.lab-settings,.lab-card,.lab-app-queue,.lab-profile) p { color: #bebec9; }
+.qb-application.qb-application :is(.lab-field-card,.lab-field-top,.lab-card-top,.lab-read-description,.lab-coverage-copy,.lab-queue-message,.lab-safety-note,.lab-feedback,.lab-activity-desk) { background: #202024; color: #d5d5df; border-color: #414148; }
+.qb-application.qb-application :is(.lab-button,.lab-touch-pad button,.lab-target-grid button,.engine-lab button,.coach-console button,.simulator-rotate button,.lab-install button) { background: #29292e; color: #f0f0f5; border: 1px solid #62626c; border-radius: 8px; min-height: 44px; }
+.qb-application.qb-application :is(.lab-button,.engine-lab button,.coach-console button):hover:not(:disabled) { background: #3b3b43; border-color: #a0a0aa; }
+.qb-application.qb-application :is(.lab-button.primary,.coach-console .coach-primary,.simulator-rotate button) { background: #eeeeF2; color: #17171b; border-color: #eeeef2; }
+.qb-application.qb-application :is(.lab-button.primary,.coach-console .coach-primary):hover:not(:disabled) { background: #d5d5dd; color: #17171b; }
+.qb-application.qb-application :is(button[aria-pressed="true"],.lab-button[aria-pressed="true"],.lab-switch label.selected,.coach-tabs button[aria-selected="true"],.lab-answer:has(input:checked)) { background: #3b3b42; color: #fff; border-color: #b5b5c0; }
+.qb-application.qb-application :is(input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),select,textarea) { background: #242429; color: #f2f2f6; border-color: #666670; border-radius: 8px; min-height: 44px; font: inherit; }
+.qb-application.qb-application :is(input,select,textarea)::placeholder { color: #b4b4c0; }
+.qb-application.qb-application input { accent-color: #e4e4ee; }
+.qb-application.qb-application input[type="range"] { accent-color: #e4e4ee; }
+.qb-application.qb-application :is(.lab-switch,.lab-tab-list,.lab-tabs) { border-color: #505059; background: #202024; }
+.qb-application.qb-application .lab-switch label { background: #202024; color: #bbbBC5; border-color: #505059; }
+.qb-application.qb-application :is(.lab-answer,.lab-library-row,.lab-read-card,.lab-stat,.lab-metric,.app-profile-links a) { color: #e4e4ec; background: #202024; border-color: #484850; border-radius: 9px; }
+.qb-application.qb-application :is(.lab-answer,.lab-library-row):hover { background: #33333b; }
+.qb-application.qb-application :is(.lab-answer,.lab-stat,.lab-metric) small { color: #c5c5d0; }
+.qb-application.qb-application .app-profile-links a { padding: 14px; min-height: 48px; }
+.qb-application.qb-application :is(.lab-dialog,.lab-dialog form) { color: #ededf3; background: #202025; border-color: #6a6a75; }
+.qb-application.qb-application .lab-dialog::backdrop { background: #000b; }
+.qb-application.qb-application :is(.lab-film-console,.lab-film-player,.lab-feedback-panel,.lab-timeline,.lab-timeline-chapters,.lab-clip-index,.lab-film-toolbar,.lab-player-controls,.lab-film-console-bar,.lab-timeline button,.lab-clip-index button,.lab-read-sequence,.lab-tag-form,.lab-tag-list li) { color: #d7d7e1; background: #1b1b20; border-color: #4a4a54; }
+.qb-application.qb-application :is(.lab-clip-index button[aria-pressed="true"],.lab-timeline-chapters button[aria-current="true"]) { background: #3b3b44; border-color: #aaaab5; color: #fff; }
+.qb-application.qb-application :is(.lab-clip-icon,.lab-clip-index small,.lab-clip-duration,.lab-timecode small,.lab-player-controls label,.lab-feedback-panel p,.lab-read-sequence p,.lab-film-console-bar b) { color: #bdbdce; }
+.qb-application.qb-application :is(.recognition-lab,.engine-lab,.coach-console,.lab-simulator-stage,.simulator-rotate,.adjustment-lesson) { background: #18181c; color: #eeeeF4; border-color: #484850; }
+.qb-application.qb-application :is(.recognition-lab,.engine-lab,.coach-console) :is(p,legend,label,li,output) { color: #c7c7d3; }
+.qb-application.qb-application :is(.recognition-title span,.recognition-review,.recognition-hint,.engine-title span,.engine-events time,.engine-hint,.engine-lab output,.coach-eyebrow,.coach-footer,.coach-header p,.coach-workspace-status) { color: #c5c5d0; }
+.qb-application.qb-application :is(.engine-config,.engine-call,.engine-ledger,.engine-viewport,.recognition-board,.recognition-config,.recognition-rules,.engine-estimates) { border-color: #55555f; }
+.qb-application.qb-application :is(.engine-scoreboard,.engine-feedback,.engine-notice,.engine-pocket-check,.recognition-feedback,.recognition-board-top,.coach-card,.coach-metric,.coach-player,.coach-position,.coach-calendar-day,.coach-event,.coach-script,.coach-tags span,.coach-session-note,.coach-review-panel) { background: #222228; color: #d8d8e2; border-color: #4c4c56; }
+.qb-application.qb-application :is(.engine-lab,.recognition-lab,.adjustment-lesson,.simulator-rotate,.coach-console) a { color: #ededf5; }
+.qb-application.qb-application :is(.engine-config,.engine-feedback,.recognition-feedback,.coach-private,.coach-approval,.coach-session-note,.coach-tabs,.coach-header) { border-color: #55555f; }
+.qb-application.qb-application .engine-pocket-check button { color: #eeeef6; background: #303038; border-color: #656572; }
+.qb-application.qb-application :is(.coach-avatar,.coach-upload-symbol,.coach-position h3,.coach-private,.coach-ready-boundary,.coach-session-note strong,.coach-status-light) { color: #ddddE7; background-color: transparent; }
+.qb-application.qb-application .coach-player.is-selected { border-color: #b5b5c0; background: #303038; }
+.qb-application.qb-application .coach-dropzone { background: #202026; border-color: #696976; }
+.qb-application.qb-application .coach-dropzone.is-dragging { background: #373740; border-color: #e1e1ef; }
+.qb-application.qb-application .coach-tabs button[aria-selected="true"] { background: #383840; color: #fff; border-color: #c0c0ca; }
+.qb-application.qb-application .coach-chart .coach-chart-grid { stroke: #55555f; }
+.qb-application.qb-application .coach-status-light { background: #d4d4df; box-shadow: none; }
+.qb-application.qb-application .lab-install { width: 100%; margin: 0; color: #c3c3ce; }
+.qb-application.qb-application .lab-install button { color: #f0f0f5; }
+
+.qb-application.qb-application .train-coach-tip h2 { font-size: 16px; }
+.qb-application.qb-application .instruction-steps h3 { font-size: 16px; }
+.qb-application.qb-application .train-list h2 { font-size: 19px; }
+@media (max-width: 760px) {
+  .qb-application.qb-application .app-header { height: 68px; padding: 0 18px; gap: 10px; }
+  .qb-application.qb-application .app-brand-coach { font-size: 9px; letter-spacing: 1.8px; }
+  .qb-application.qb-application .app-brand-lab { font-size: 21px; }
+  .qb-application.qb-application .app-navigation { position: fixed; z-index: 40; inset: auto 0 0; width: 100%; border: 0; border-top: 1px solid #3d3d44; border-radius: 0; padding: 7px 10px calc(7px + env(safe-area-inset-bottom)); display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 4px; background: #161619; box-shadow: 0 -6px 20px #0004; }
+  .qb-application.qb-application .app-navigation a { min-height: 51px; gap: 4px; flex-direction: column; padding: 5px 2px; font-size: 10px; border-radius: 10px; }
+  .qb-application.qb-application .app-navigation svg { width: 20px; height: 20px; }
+  .qb-application.qb-application .app-main { width: calc(100% - 32px); padding: 26px 0 24px; }
+  .qb-application.qb-application .app-footer { flex-direction: column; gap: 8px; width: calc(100% - 32px); padding: 18px 0 calc(86px + env(safe-area-inset-bottom)); font-size: 10px; }
+  .qb-application.qb-application .app-profile-picker select { width: 102px; font-size: 11px; }
+  .app-account-actions { gap: 2px; }
+  .app-notification-panel { right: -100px; }
+  .qb-application.qb-application .athlete-dashboard { gap: 20px; }
+  .qb-application.qb-application .dashboard-greeting h1 { font-size: 27px; }
+  .qb-application.qb-application .dashboard-greeting p { font-size: 14px; }
+  .qb-application.qb-application .session-card { padding: 20px; border-radius: 16px; }
+  .qb-application.qb-application .session-heading { margin-bottom: 12px; }
+  .qb-application.qb-application .session-card h3 { font-size: 22px; }
+  .qb-application.qb-application .session-description { font-size: 13px; margin-bottom: 16px; }
+  .qb-application.qb-application .session-action { gap: 12px; margin-bottom: 14px; }
+  .qb-application.qb-application .app-primary-button { width: 100%; }
+  .qb-application.qb-application .training-destinations { gap: 12px; }
+  .qb-application.qb-application .training-destination { display: block; padding: 18px 14px; min-height: 132px; border-radius: 14px; }
+  .qb-application.qb-application .destination-icon { margin-bottom: 12px; width: 26px; height: 26px; }
+  .qb-application.qb-application .destination-icon svg { width: 26px; height: 26px; }
+  .qb-application.qb-application .training-destination strong { font-size: 12px; letter-spacing: .4px; }
+  .qb-application.qb-application .training-destination small { font-size: 11px; }
+  .qb-application.qb-application .destination-arrow { position: absolute; right: 14px; top: 20px; }
+  .qb-application.qb-application .coach-note-card { padding: 18px; gap: 12px; }
+  .qb-application.qb-application .coach-note-heading { display: block; }
+  .qb-application.qb-application .coach-note-heading h2 { font-size: 14px; margin-bottom: 4px; }
+  .qb-application.qb-application .coach-note-heading span { font-size: 10px; }
+  .qb-application.qb-application .coach-note-card blockquote { font-size: 13px; }
+  .qb-application .train-category { padding: 17px; min-height: 104px; }
+  .qb-application .train-category strong { font-size: 14px; }
+  .qb-application .train-category small { font-size: 11px; }
+  .qb-application .train-mode-grid { grid-template-columns: 1fr; }
+  .qb-application .train-mode-card { padding: 22px; }
+  .qb-application .train-mode-card > svg { margin-bottom: 16px; }
+  .qb-application .train-session-list li { padding: 18px; flex-direction: column; align-items: stretch; gap: 14px; }
+  .qb-application .train-coach-tip { padding: 18px; gap: 12px; }
+  .qb-application .instruction-steps li { gap: 12px; }
+  .qb-application .instruction-steps p { font-size: 14px; }
+  .qb-application .train-chip { padding: 8px 10px; font-size: 11px; }
+  .qb-application.qb-application .qb-lab h1 { font-size: 28px; }
+  .qb-application.qb-application .lab-panel { padding: 18px; }
+}
+@media (min-width: 761px) and (max-width: 960px) {
+  .qb-application.qb-application .app-header { gap: 14px; }
+  .qb-application.qb-application .app-navigation a { padding: 10px; }
+  .qb-application.qb-application .app-navigation svg { display: none; }
+}
+@media (max-width: 360px) {
+  .qb-application.qb-application .app-header { padding: 0 12px; }
+  .qb-application.qb-application .app-profile-avatar { display: none; }
+  .qb-application.qb-application .app-main { width: calc(100% - 28px); }
+  .qb-application.qb-application .dashboard-greeting h1 { font-size: 25px; }
+  .qb-application.qb-application .session-card { padding: 17px; }
+  .qb-application .train-category-grid { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .qb-application.qb-application *, .qb-application.qb-application *::before, .qb-application.qb-application *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+}
+
+/* Retained family and activity-desk surfaces use the same accessible palette. */
+.qb-application.qb-application .lab-session-ledger { background: #19191c; color: #f4f4f7; border-color: #3c3c43; }
+.qb-application.qb-application .lab-family-briefing dt { color: #b5b5bd; }
+/* Preserve the coach workspace while aligning its remaining branded chrome. */
+.qb-application.qb-application .coach-console { --coach-bg: #18181c; --coach-card: #222228; --coach-muted: #b5b5c2; }
+.qb-application.qb-application :is(.coach-header,.coach-tabs) { background: #1d1d22; background-image: none; border-color: #4c4c56; }
+.qb-application.qb-application .coach-eyebrow { color: #c5c5d0 !important; }
+.qb-application.qb-application .coach-tabs button > span { color: #dddde8; }
+.qb-application.qb-application :is(.coach-pill,.coach-private) { background: #303038; color: #e0e0eb; border-color: #626270; }
+.qb-application.qb-application .coach-chart-track { background: #3a3a44; }
+.qb-application.qb-application .coach-chart-track > span { background: #dedee8; }
+.qb-application.qb-application :is(.coach-empty > span,.coach-date-dot) { color: #dedee8; }
+.qb-application.qb-application .coach-date-dot { background: #dedee8; }
+.qb-application.qb-application .lab-callout { padding: 22px; }
