@@ -23,7 +23,3 @@ export async function api<T>(path: string, body?: unknown): Promise<T> {
   if (!response.ok) throw new Error(data.error || "Please try again.");
   return data;
 }
-export const privateCalendly =
-  "https://calendly.com/taenextlevelqbs/individual-training-clone";
-export const groupCalendly =
-  "https://calendly.com/taenextlevelqbs/group-training";

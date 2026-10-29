@@ -1,4 +1,5 @@
-import { AuthGate, CalendlyFallback } from "../Session";
+import Link from "next/link";
+import { AuthGate } from "../Session";
 import Book from "./Book";
 export default function BookPage() {
   return (
@@ -24,13 +25,14 @@ export default function BookPage() {
           <div className="notice section-gap">
             <strong>Integrated booking is being prepared.</strong>
             <p>
-              Keep training with our current calendar. Your existing bookings
-              are unchanged.
+              Online booking is not open yet. Please contact Coach Tae through
+              the website before planning a session. Existing appointments are
+              preserved.
             </p>
           </div>
-          <div className="section-gap">
-            <CalendlyFallback />
-          </div>
+          <Link className="button secondary" href="/#training">
+            Back to Coach Tae
+          </Link>
         </>
       )}
     </>

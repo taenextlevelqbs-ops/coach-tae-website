@@ -18,7 +18,10 @@ type Rule = {
   capacity: number;
   active: boolean;
 };
-type CalendarBooking = Booking & { ct_athletes: { name: string } };
+type CalendarBooking = Booking & {
+  ct_athletes: { name: string };
+  ct_families?: { email: string } | null;
+};
 type CalendarData = {
   rules: Rule[];
   slots: (Slot & { cancelled: boolean })[];
@@ -94,6 +97,9 @@ function CoachBooking({
           {booking.status === "held" ? "Unpaid hold" : booking.status}
         </span>
       </div>
+      {booking.ct_families?.email && (
+        <small className="muted">Parent: {booking.ct_families.email}</small>
+      )}
       <small className="muted">Reference: {booking.id}</small>
       <div className="row">
         {booking.status === "confirmed" && (

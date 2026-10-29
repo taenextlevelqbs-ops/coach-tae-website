@@ -17,7 +17,7 @@ export function required(name: string) {
   if (!value)
     throw new HttpError(
       503,
-      "Platform setup is incomplete. Existing Calendly booking remains available.",
+      "This service is temporarily unavailable. Please contact Coach Tae.",
     );
   return value;
 }
@@ -42,14 +42,17 @@ export function payments() {
   const testKey = key.startsWith("sk_test_") || key.startsWith("rk_test_");
   const liveKey = key.startsWith("sk_live_") || key.startsWith("rk_live_");
   if (!testKey && !(liveKey && process.env.STRIPE_LIVE_ENABLED === "true"))
-    throw new HttpError(503, "Stripe payments are not enabled for this environment.");
+    throw new HttpError(
+      503,
+      "Stripe payments are not enabled for this environment.",
+    );
   return new Stripe(key, { maxNetworkRetries: 2, timeout: 20000 });
 }
 export function bookingEnabled() {
   if (process.env.PLATFORM_BOOKING_ENABLED !== "true")
     throw new HttpError(
       503,
-      "Integrated booking is not open yet. Please use Calendly.",
+      "Online booking is not open yet. Please contact Coach Tae.",
     );
 }
 export function checkOrigin(req: Request) {

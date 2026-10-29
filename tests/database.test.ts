@@ -949,3 +949,113 @@ test("production minute scheduler targets only the production domain, preserves 
     c.release();
   }
 });
+
+test("legacy occupied intervals are idempotent, remove native availability and prevent reservations without changing appointments", async () => {
+  const id = await slot();
+  const times = (
+    await pool.query("select starts_at,ends_at from ct_slots where id=$1", [id])
+  ).rows[0];
+  const items = [
+    {
+      source_ref: "a".repeat(64),
+      starts_at: times.starts_at.toISOString(),
+      ends_at: times.ends_at.toISOString(),
+    },
+  ];
+  assert.equal(
+    (
+      await pool.query("select ct_import_busy_times($1) n", [
+        JSON.stringify(items),
+      ])
+    ).rows[0].n,
+    1,
+  );
+  assert.equal(
+    (
+      await pool.query("select ct_import_busy_times($1) n", [
+        JSON.stringify(items),
+      ])
+    ).rows[0].n,
+    0,
+  );
+  assert.equal(
+    (await pool.query("select count(*) n from ct_blocks")).rows[0].n,
+    "1",
+  );
+  assert.equal(
+    (
+      await pool.query(
+        "select * from ct_availability(now(),now()+interval '10 days','private')",
+      )
+    ).rowCount,
+    0,
+  );
+  await credit();
+  await assert.rejects(book(id), /blocked|Blocked/);
+  assert.equal(await balance(), 3);
+  assert.equal(
+    (await pool.query("select count(*) n from ct_bookings")).rows[0].n,
+    "0",
+  );
+  const c = await pool.connect();
+  try {
+    for (const query of [
+      "select ct_import_busy_times('[]')",
+      "select * from ct_legacy_busy_times",
+    ]) {
+      await c.query("begin");
+      await c.query("set local role authenticated");
+      await assert.rejects(c.query(query), /permission denied/);
+      await c.query("rollback");
+    }
+  } finally {
+    c.release();
+  }
+});
+
+test("occupied-time import rolls back a whole conflicting batch and refuses silent changes to previous imports", async () => {
+  const id = await slot();
+  await credit();
+  await book(id);
+  const times = (
+    await pool.query("select starts_at,ends_at from ct_slots where id=$1", [id])
+  ).rows[0];
+  const first = {
+    source_ref: "b".repeat(64),
+    starts_at: new Date(Date.now() + 200 * 3600000).toISOString(),
+    ends_at: new Date(Date.now() + 201 * 3600000).toISOString(),
+  };
+  const conflicting = {
+    source_ref: "c".repeat(64),
+    starts_at: times.starts_at.toISOString(),
+    ends_at: times.ends_at.toISOString(),
+  };
+  await assert.rejects(
+    pool.query("select ct_import_busy_times($1)", [
+      JSON.stringify([first, conflicting]),
+    ]),
+    /overlaps/,
+  );
+  assert.equal(
+    (await pool.query("select count(*) n from ct_blocks")).rows[0].n,
+    "0",
+  );
+  await pool.query("select ct_import_busy_times($1)", [
+    JSON.stringify([first]),
+  ]);
+  await assert.rejects(
+    pool.query("select ct_import_busy_times($1)", [
+      JSON.stringify([
+        {
+          ...first,
+          ends_at: new Date(Date.parse(first.ends_at) + 60000).toISOString(),
+        },
+      ]),
+    ]),
+    /Previously imported appointment changed/,
+  );
+  assert.equal(
+    (await pool.query("select count(*) n from ct_blocks")).rows[0].n,
+    "1",
+  );
+});

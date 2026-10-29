@@ -11,27 +11,16 @@ const baseLinks = [
   { href: "#apparel", label: "Apparel" },
 ];
 
-const individualBookingUrl =
-  "https://calendly.com/taenextlevelqbs/individual-training-clone";
-const groupBookingUrl = "https://calendly.com/taenextlevelqbs/group-training";
+const privateUrl = "/book?kind=private";
+const groupUrl = "/book?kind=group";
 const shopUrl = "https://dmvattack.myshopify.com/";
 
-export default function SiteNav({
-  bookingEnabled = false,
-}: {
-  bookingEnabled?: boolean;
-}) {
-  const links = bookingEnabled
-    ? [
-        { href: "/portal", label: "Family portal" },
-        { href: "/lab", label: "QB Lab" },
-        ...baseLinks,
-      ]
-    : baseLinks;
-  const privateUrl = bookingEnabled
-    ? "/book?kind=private"
-    : individualBookingUrl;
-  const groupUrl = bookingEnabled ? "/book?kind=group" : groupBookingUrl;
+export default function SiteNav() {
+  const links = [
+    { href: "/portal", label: "Family portal" },
+    { href: "/lab", label: "QB Lab" },
+    ...baseLinks,
+  ];
   const [isOpen, setIsOpen] = useState(false);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
 
@@ -81,14 +70,8 @@ export default function SiteNav({
               </a>
             </div>
 
-            <a
-              className="nav-booking-link"
-              href={privateUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Book a session <span aria-hidden="true">↗</span>
-              <span className="sr-only">(opens in a new tab)</span>
+            <a className="nav-booking-link" href={privateUrl}>
+              Book a session <span aria-hidden="true">→</span>
             </a>
 
             <button
@@ -149,15 +132,13 @@ export default function SiteNav({
       </header>
 
       <nav className="mobile-booking-bar" aria-label="Quick training booking">
-        <a href={privateUrl} target="_blank" rel="noopener noreferrer">
+        <a href={privateUrl}>
           <span>PRIVATE</span>
           <strong>Book 1-on-1</strong>
-          <span className="sr-only">(opens in a new tab)</span>
         </a>
-        <a href={groupUrl} target="_blank" rel="noopener noreferrer">
+        <a href={groupUrl}>
           <span>SMALL GROUP</span>
           <strong>Book a group</strong>
-          <span className="sr-only">(opens in a new tab)</span>
         </a>
       </nav>
     </>

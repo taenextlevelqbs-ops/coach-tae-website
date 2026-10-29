@@ -302,6 +302,16 @@ test("actual HTTP routes reject missing auth, CSRF, unsigned webhooks and unauth
   request,
 }) => {
   expect((await request.get("/api/platform/me")).status()).toBe(401);
+  for (const path of ["admin", "admin/calendar?date=2030-01-01"])
+    expect((await request.get(`/api/platform/${path}`)).status()).toBe(401);
+  expect(
+    (
+      await request.post("/api/platform/admin/windows", {
+        headers: { Origin: "http://127.0.0.1:3100" },
+        data: {},
+      })
+    ).status(),
+  ).toBe(401);
   expect(
     (
       await request.post("/api/platform/book", {
@@ -578,4 +588,100 @@ test("sign-out clears local access and explains when remote session revocation f
   expect(
     await page.evaluate(() => localStorage.getItem("sb-fixture-auth-token")),
   ).toBeNull();
+});
+
+test("all public training links use native booking and the booking page contains no external calendar fallback", async ({
+  page,
+}) => {
+  await session(page);
+  await mocks(page);
+  await page.goto("/");
+  const hrefs = await page
+    .locator("a")
+    .evaluateAll((links) => links.map((a) => a.getAttribute("href") || ""));
+  expect(hrefs.some((h) => /calendly/i.test(h))).toBe(false);
+  expect(hrefs).toContain("/book?kind=private");
+  expect(hrefs).toContain("/book?kind=group");
+  await page.goto("/book?kind=group");
+  await expect(
+    page.getByRole("combobox", { name: "Training", exact: true }),
+  ).toHaveValue("group");
+  expect(await page.content()).not.toMatch(/calendly/i);
+  await noOverflow(page);
+});
+
+test("coach can inspect parent contact, pending, cancelled and completed time windows", async ({
+  page,
+}) => {
+  await session(page);
+  await mocks(page, { coach: true });
+  const past = {
+    ...slot,
+    starts_at: new Date(Date.now() - 48 * 3600000).toISOString(),
+    ends_at: new Date(Date.now() - 47 * 3600000).toISOString(),
+  };
+  await page.route("**/api/platform/admin", (route) =>
+    route.fulfill({
+      json: {
+        ct_athletes: portal.athletes,
+        ct_families: [{ id: family, email: "parent@example.invalid" }],
+        ct_bookings: [
+          {
+            id: "past",
+            family_id: family,
+            athlete_id: athlete,
+            status: "confirmed",
+            paid: true,
+            ct_slots: past,
+            ct_athletes: { name: "Test Athlete" },
+          },
+          {
+            id: "pending",
+            family_id: family,
+            athlete_id: athlete,
+            status: "held",
+            paid: false,
+            hold_until: new Date(Date.now() + 600000).toISOString(),
+            ct_slots: { ...slot, kind: "group" },
+            ct_athletes: { name: "Test Athlete" },
+          },
+          {
+            id: "cancelled",
+            family_id: family,
+            athlete_id: athlete,
+            status: "cancelled",
+            paid: true,
+            ct_slots: slot,
+            ct_athletes: { name: "Test Athlete" },
+          },
+        ],
+        ct_slots: [slot],
+        ct_rules: [],
+        ct_blocks: [],
+        ct_orders: [],
+        ct_invoices: [],
+        ct_credits: [],
+        ct_memberships: [],
+        ct_lessons: [],
+        ct_outbox: [],
+        ct_settings: [portal.settings],
+      },
+    }),
+  );
+  await page.goto("/coach");
+  await page.getByRole("button", { name: "Appointments", exact: true }).click();
+  await expect(
+    page.getByText("Completed time window", { exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.getByText("Pending payment", { exact: true }),
+  ).toBeVisible();
+  await expect(page.getByText("cancelled", { exact: true })).toBeVisible();
+  await expect(
+    page.getByText("Parent: parent@example.invalid", { exact: true }),
+  ).toHaveCount(3);
+  await expect(
+    page.getByText("Paid / training credit redeemed", { exact: false }),
+  ).toHaveCount(2);
+  await noOverflow(page);
 });

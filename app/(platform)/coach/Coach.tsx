@@ -1,6 +1,7 @@
 "use client";
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
+import { DateTime } from "luxon";
 import QuizEditor from "./QuizEditor";
 import { api } from "@/lib/platform/browser";
 import { entitled } from "@/lib/platform/catalog";
@@ -44,8 +45,10 @@ type Settings = {
 };
 type Admin = {
   ct_athletes: Athlete[];
+  ct_families?: { id: string; email: string }[];
   ct_bookings: (Booking & {
     family_id: string;
+    paid?: boolean;
     ct_athletes: { name: string };
   })[];
   ct_slots: Slot[];
@@ -178,6 +181,7 @@ export default function Coach() {
       <div className="tabs" aria-label="Dashboard sections">
         {[
           "Overview",
+          "Appointments",
           "Schedule",
           "Athletes",
           "Payments",
@@ -244,6 +248,66 @@ export default function Coach() {
           </section>
         </>
       )}
+      {tab === "Appointments" && (
+        <section className="panel stack">
+          <h2>All appointments</h2>
+          <p className="muted">
+            Times are Eastern. Completed time window means the scheduled end has
+            passed; attendance is not recorded. Pending reservations are unpaid
+            and do not confirm a place.
+          </p>
+          <Link className="button secondary" href="/coach/schedule">
+            Manage appointments in schedule
+          </Link>
+          {[...data.ct_bookings]
+            .sort(
+              (a, b) =>
+                Date.parse(b.ct_slots.starts_at) -
+                Date.parse(a.ct_slots.starts_at),
+            )
+            .map((b) => (
+              <article className="record stack" key={b.id}>
+                <div className="row between">
+                  <h3>
+                    {b.ct_athletes?.name || "Athlete"} · {b.ct_slots.kind}
+                  </h3>
+                  <span className="badge">
+                    {b.status === "held"
+                      ? Date.parse(b.hold_until || "") > now
+                        ? "Pending payment"
+                        : "Expired hold"
+                      : b.status === "confirmed" &&
+                          Date.parse(b.ct_slots.ends_at) < now
+                        ? "Completed time window"
+                        : b.status}
+                  </span>
+                </div>
+                <p>
+                  {DateTime.fromISO(b.ct_slots.starts_at)
+                    .setZone("America/New_York")
+                    .toFormat("ccc, LLL d, yyyy · h:mm a")}
+                  –
+                  {DateTime.fromISO(b.ct_slots.ends_at)
+                    .setZone("America/New_York")
+                    .toFormat("h:mm a")}{" "}
+                  Eastern
+                </p>
+                <p className="muted">
+                  Parent:{" "}
+                  {data.ct_families?.find((f) => f.id === b.family_id)?.email ||
+                    b.family_id}
+                </p>
+                <p className="muted">
+                  {b.paid ? "Paid / training credit redeemed" : "Unpaid"} ·
+                  Booking reference: {b.id}
+                </p>
+              </article>
+            ))}
+          {!data.ct_bookings.length && (
+            <p className="muted">No appointments recorded.</p>
+          )}
+        </section>
+      )}
       {tab === "Schedule" && (
         <section className="panel stack">
           <h2>Availability & Schedule</h2>
@@ -265,7 +329,11 @@ export default function Coach() {
                 {a.name}{" "}
                 {a.graduation_year ? `· Class of ${a.graduation_year}` : ""}
               </h3>
-              <p className="muted">Family reference: {a.family_id}</p>
+              <p className="muted">
+                Parent:{" "}
+                {data.ct_families?.find((f) => f.id === a.family_id)?.email ||
+                  a.family_id}
+              </p>
               <p className="muted">
                 {
                   data.ct_bookings.filter(

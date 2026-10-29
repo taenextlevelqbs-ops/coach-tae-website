@@ -1,5 +1,7 @@
 # Production release status — October 29, 2026
 
+Historical checkpoint: current native-booking cutover changes and verification boundaries are recorded in [CUTOVER.md](CUTOVER.md).
+
 **Release held: hosted integrations and production acceptance remain unverified.** This is not a finished production release. The user has authorized production deployment after critical checks pass; the remaining issue is service access, not another deployment-approval request.
 
 ## Completed repository work

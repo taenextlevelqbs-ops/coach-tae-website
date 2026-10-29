@@ -42,8 +42,10 @@ Supabase migration, QB Lab, and notification worker are documented in
 [the platform runbook](docs/PLATFORM.md). Configuration names are in
 [docs/platform.env.example](docs/platform.env.example).
 
-Calendly remains the default until the staged replacement passes hosted
-acceptance. Live Stripe keys/events are disabled pending release approval.
+The cutover branch routes all public training links to native booking. Production
+cutover is blocked until hosted acceptance passes for the exact release commit;
+see [cutover status](docs/CUTOVER.md). The existing live booking path must remain
+operational until then. Live charges are not authorized.
 
 ```bash
 npm run lint

@@ -1,5 +1,7 @@
 # Final integration validation — October 28, 2026
 
+Historical checkpoint: current native-booking cutover changes and verification boundaries are recorded in [CUTOVER.md](CUTOVER.md).
+
 This record covers the final-integration request. No production or preview deployment was created, no hosted schema was changed, and no live payments or booking cutover was activated.
 
 | Check                        | Result                         | What this establishes                                                                                                                                                                                                               |

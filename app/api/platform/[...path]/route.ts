@@ -215,7 +215,7 @@ export async function GET(req: Request, ctx: Context) {
           .limit(1000),
         client
           .from("ct_bookings")
-          .select("*,ct_slots!inner(*),ct_athletes(name)")
+          .select("*,ct_slots!inner(*),ct_athletes(name),ct_families(email)")
           .gte("ct_slots.starts_at", start.toUTC().toISO())
           .lt("ct_slots.starts_at", end.toUTC().toISO())
           .order("created_at")
@@ -244,6 +244,7 @@ export async function GET(req: Request, ctx: Context) {
     if (path === "admin") {
       const tables = [
         "ct_athletes",
+        "ct_families",
         "ct_bookings",
         "ct_slots",
         "ct_rules",
@@ -262,7 +263,11 @@ export async function GET(req: Request, ctx: Context) {
           client
             .from(t)
             .select(
-              t === "ct_bookings" ? "*,ct_slots(*),ct_athletes(name)" : "*",
+              t === "ct_bookings"
+                ? "*,ct_slots(*),ct_athletes(name)"
+                : t === "ct_families"
+                  ? "id,email"
+                  : "*",
             )
             .limit(1000),
         ),

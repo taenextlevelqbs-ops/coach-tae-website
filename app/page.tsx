@@ -3,11 +3,9 @@ import SiteNav from "./SiteNav";
 
 const SHOP_URL = "https://dmvattack.myshopify.com/";
 
-const INDIVIDUAL_BOOKING_URL = process.env.PLATFORM_BOOKING_ENABLED === "true" ? "/book?kind=private" :
-  "https://calendly.com/taenextlevelqbs/individual-training-clone";
+const INDIVIDUAL_BOOKING_URL = "/book?kind=private";
 
-const GROUP_BOOKING_URL = process.env.PLATFORM_BOOKING_ENABLED === "true" ? "/book?kind=group" :
-  "https://calendly.com/taenextlevelqbs/group-training";
+const GROUP_BOOKING_URL = "/book?kind=group";
 
 const trainingFocus = [
   "Throwing Mechanics",
@@ -21,7 +19,7 @@ const trainingFocus = [
 export default function Home() {
   return (
     <>
-      <SiteNav bookingEnabled={process.env.PLATFORM_BOOKING_ENABLED === "true"} />
+      <SiteNav />
 
       <main id="main-content" className="min-h-screen bg-black text-white">
 
@@ -188,8 +186,6 @@ export default function Home() {
 
                 <a
                   href={GROUP_BOOKING_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
                   className="group rounded-2xl border border-white/10 bg-black/20 p-6 transition duration-300 hover:-translate-y-1 hover:border-white/30 hover:bg-white/[0.04]"
                 >
                   <p className="text-[9px] font-black tracking-[0.25em] text-white/30">
@@ -218,8 +214,6 @@ export default function Home() {
 
                 <a
                   href={INDIVIDUAL_BOOKING_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
                   className="group rounded-2xl border border-white/10 bg-black/20 p-6 transition duration-300 hover:-translate-y-1 hover:border-white/30 hover:bg-white/[0.04]"
                 >
                   <p className="text-[9px] font-black tracking-[0.25em] text-white/30">
@@ -295,8 +289,6 @@ export default function Home() {
 
                 <a
                   href={INDIVIDUAL_BOOKING_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
                   className="rounded-full bg-white px-7 py-3 text-center font-bold text-black transition hover:scale-[1.02]"
                 >
                   Book Private Training →
@@ -305,8 +297,6 @@ export default function Home() {
 
                 <a
                   href={GROUP_BOOKING_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
                   className="rounded-full border border-white/20 px-7 py-3 text-center font-bold text-white transition hover:bg-white hover:text-black"
                 >
                   Book Group Training →
@@ -757,8 +747,6 @@ export default function Home() {
 
                   <a
                     href={INDIVIDUAL_BOOKING_URL}
-                    target="_blank"
-                    rel="noopener noreferrer"
                     className="rounded-full bg-white px-8 py-4 font-bold text-black transition hover:scale-[1.02]"
                   >
                     Book Private →
@@ -767,8 +755,6 @@ export default function Home() {
 
                   <a
                     href={GROUP_BOOKING_URL}
-                    target="_blank"
-                    rel="noopener noreferrer"
                     className="rounded-full border border-white/20 px-8 py-4 font-bold text-white transition hover:bg-white hover:text-black"
                   >
                     Book Group →
