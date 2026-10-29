@@ -4,8 +4,10 @@ import {
   useContext,
   useEffect,
   useState,
+  useRef,
   type ReactNode,
 } from "react";
+import { authMessage, OTP_COOLDOWN_SECONDS } from "@/lib/platform/auth";
 import type { User } from "@supabase/supabase-js";
 import {
   browser,
@@ -37,15 +39,25 @@ export function SessionProvider({
       return;
     }
     let mounted = true;
-    client.auth.getSession().then(({ data }) => {
+    client.auth
+      .getSession()
+      .then(({ data }) => {
+        if (mounted) {
+          setUser(data.session?.user || null);
+          setLoading(false);
+        }
+      })
+      .catch(() => {
+        if (mounted) {
+          setUser(null);
+          setLoading(false);
+        }
+      });
+    const { data } = client.auth.onAuthStateChange((_event, session) => {
       if (mounted) {
-        setUser(data.session?.user || null);
+        setUser(session?.user || null);
         setLoading(false);
       }
-    });
-    const { data } = client.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user || null);
-      setLoading(false);
     });
     return () => {
       mounted = false;
@@ -94,29 +106,72 @@ export function AuthGate({ children }: { children: ReactNode }) {
     [code, setCode] = useState(""),
     [sent, setSent] = useState(false),
     [busy, setBusy] = useState(false),
-    [error, setError] = useState("");
+    [error, setError] = useState(""),
+    [remaining, setRemaining] = useState(0);
+  const pending = useRef(false);
+  const retryAt = useRef(0);
+  useEffect(() => {
+    const tick = () => {
+      try {
+        retryAt.current = Number(
+          sessionStorage.getItem("ct-auth-retry-at") || retryAt.current,
+        );
+      } catch {
+        /* Use the in-memory deadline when storage is unavailable. */
+      }
+      setRemaining(
+        Math.max(0, Math.ceil((retryAt.current - Date.now()) / 1000)),
+      );
+    };
+    queueMicrotask(tick);
+    const timer = setInterval(tick, 1000);
+    return () => clearInterval(timer);
+  }, []);
+  function backoff(seconds: number) {
+    retryAt.current = Date.now() + seconds * 1000;
+    setRemaining(seconds);
+    try {
+      sessionStorage.setItem("ct-auth-retry-at", String(retryAt.current));
+    } catch {
+      /* Best effort; server limits still apply. */
+    }
+  }
+  async function requestCode() {
+    const client = browser();
+    if (!client) throw new Error("Family sign-in is not configured yet.");
+    backoff(OTP_COOLDOWN_SECONDS);
+    const result = await client.auth.signInWithOtp({
+      email: email.trim().toLowerCase(),
+      options: { shouldCreateUser: true },
+    });
+    if (result.error) {
+      if (result.error.status === 429) backoff(300);
+      throw result.error;
+    }
+    setSent(true);
+    setCode("");
+  }
   async function submit(event: React.FormEvent) {
     event.preventDefault();
+    if (pending.current || (!sent && remaining > 0)) return;
+    pending.current = true;
     setBusy(true);
     setError("");
     try {
       const client = browser();
       if (!client) throw new Error("Family sign-in is not configured yet.");
-      const result = sent
-        ? await client.auth.verifyOtp({
-            email,
-            token: code.trim(),
-            type: "email",
-          })
-        : await client.auth.signInWithOtp({
-            email,
-            options: { shouldCreateUser: true },
-          });
-      if (result.error) throw result.error;
-      setSent(true);
+      if (sent) {
+        const result = await client.auth.verifyOtp({
+          email: email.trim().toLowerCase(),
+          token: code.trim(),
+          type: "email",
+        });
+        if (result.error) throw result.error;
+      } else await requestCode();
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Sign-in failed.");
+      setError(authMessage(e && typeof e === "object" ? e : {}));
     } finally {
+      pending.current = false;
       setBusy(false);
     }
   }
@@ -188,8 +243,9 @@ export function AuthGate({ children }: { children: ReactNode }) {
                 onChange={(e) => setCode(e.target.value)}
                 autoComplete="one-time-code"
                 inputMode="numeric"
-                pattern="[0-9]{6,10}"
-                maxLength={10}
+                pattern="[0-9]{6}"
+                minLength={6}
+                maxLength={6}
               />
             </label>
           </>
@@ -199,23 +255,50 @@ export function AuthGate({ children }: { children: ReactNode }) {
             {error}
           </p>
         )}
-        <button disabled={busy}>
+        <button disabled={busy || (!sent && remaining > 0)}>
           {busy
             ? "Please wait…"
             : sent
               ? "Verify & sign in"
-              : "Email my sign-in code"}
+              : remaining > 0
+                ? `Try again in ${remaining}s`
+                : "Email my sign-in code"}
         </button>
         {sent && (
           <button
             type="button"
             className="secondary"
+            disabled={busy || remaining > 0}
+            onClick={async () => {
+              if (pending.current || remaining > 0) return;
+              pending.current = true;
+              setBusy(true);
+              setError("");
+              try {
+                await requestCode();
+              } catch (e) {
+                setError(authMessage(e && typeof e === "object" ? e : {}));
+              } finally {
+                pending.current = false;
+                setBusy(false);
+              }
+            }}
+          >
+            {remaining > 0 ? `Resend code in ${remaining}s` : "Resend code"}
+          </button>
+        )}
+        {sent && (
+          <button
+            type="button"
+            className="secondary"
+            disabled={busy}
             onClick={() => {
               setSent(false);
               setCode("");
+              setError("");
             }}
           >
-            Use another email or resend
+            Use another email
           </button>
         )}
         <p className="auth-note">

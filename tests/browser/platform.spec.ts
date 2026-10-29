@@ -451,3 +451,110 @@ test("original curriculum renders a coverage diagram and explains the submitted 
     fullPage: true,
   });
 });
+
+test("OTP registration/sign-in request, session persistence and sign-out", async ({
+  page,
+}) => {
+  await mocks(page);
+  let sends = 0;
+  await page.route("https://fixture.supabase.co/auth/v1/otp", async (route) => {
+    sends++;
+    expect(route.request().postDataJSON()).toMatchObject({
+      email: "parent@example.invalid",
+      create_user: true,
+    });
+    return route.fulfill({ json: {} });
+  });
+  await page.route("https://fixture.supabase.co/auth/v1/verify", (route) => {
+    if (route.request().postDataJSON().token === "000000")
+      return route.fulfill({
+        status: 403,
+        headers: {
+          "x-supabase-api-version": "2024-01-01",
+          "access-control-expose-headers": "x-supabase-api-version",
+        },
+        json: { code: "otp_expired", msg: "Token expired" },
+      });
+    expect(route.request().postDataJSON()).toMatchObject({
+      email: "parent@example.invalid",
+      token: "123456",
+      type: "email",
+    });
+    const payload = btoa(
+      JSON.stringify({
+        sub: family,
+        exp: Math.floor(Date.now() / 1000) + 3600,
+        role: "authenticated",
+        aud: "authenticated",
+      }),
+    );
+    return route.fulfill({
+      json: {
+        access_token: `e30.${payload}.fixture`,
+        refresh_token: "fixture-refresh",
+        expires_in: 3600,
+        token_type: "bearer",
+        user: {
+          id: family,
+          email: "parent@example.invalid",
+          aud: "authenticated",
+          role: "authenticated",
+          app_metadata: {},
+          user_metadata: {},
+          created_at: new Date().toISOString(),
+        },
+      },
+    });
+  });
+  await page.route("https://fixture.supabase.co/auth/v1/logout**", (route) =>
+    route.fulfill({ status: 204 }),
+  );
+  await page.goto("/portal");
+  await page.getByLabel("Parent email").fill("parent@example.invalid");
+  await page.getByRole("button", { name: "Email my sign-in code" }).click();
+  await expect(
+    page.getByRole("button", { name: /Resend code in/ }),
+  ).toBeDisabled();
+  await page.getByLabel("Email verification code").fill("000000");
+  await page.getByRole("button", { name: "Verify & sign in" }).click();
+  await expect(
+    page.getByRole("alert").filter({ hasText: "That code has expired" }),
+  ).toBeVisible();
+  await page.getByLabel("Email verification code").fill("123456");
+  await page.getByRole("button", { name: "Verify & sign in" }).click();
+  await expect(page.getByText("Test Athlete", { exact: true })).toBeVisible();
+  await page.reload();
+  await expect(page.getByText("Test Athlete", { exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "Sign out", exact: true }).click();
+  await expect(page.getByLabel("Parent email")).toBeVisible();
+  await expect(page.getByText("Test Athlete", { exact: true })).toHaveCount(0);
+  expect(sends).toBe(1);
+});
+
+test("email rate limit gives clear feedback and survives reload", async ({
+  page,
+}) => {
+  await mocks(page);
+  await page.route("https://fixture.supabase.co/auth/v1/otp", (route) =>
+    route.fulfill({
+      status: 429,
+      json: {
+        code: "over_email_send_rate_limit",
+        msg: "email rate limit exceeded",
+      },
+    }),
+  );
+  await page.goto("/portal");
+  await page.getByLabel("Parent email").fill("parent@example.invalid");
+  await page.getByRole("button", { name: "Email my sign-in code" }).click();
+  await expect(
+    page.getByRole("alert").filter({ hasText: "Too many sign-in attempts" }),
+  ).toContainText("Wait a few minutes");
+  await expect(
+    page.getByRole("button", { name: /Try again in/ }),
+  ).toBeDisabled();
+  await page.reload();
+  await expect(
+    page.getByRole("button", { name: /Try again in/ }),
+  ).toBeDisabled();
+});
