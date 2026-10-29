@@ -2,7 +2,7 @@ name: Platform checks
 on:
   pull_request:
   push:
-    branches: [main]
+    branches: [main, coach-tae-platform]
 permissions:
   contents: read
 jobs:

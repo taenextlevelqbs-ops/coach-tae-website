@@ -1,18 +1,38 @@
-import { timingSafeEqual } from "node:crypto";
 import { failure, HttpError, required } from "@/lib/platform/server";
 import { runJobs } from "@/lib/platform/jobs";
+import {
+  authorizedJobRequest,
+  matchesJobEnvironment,
+} from "@/lib/platform/job-auth";
 export const runtime = "nodejs";
 export const maxDuration = 60;
-export async function GET(req: Request) {
+async function handle(req: Request, maintenance: boolean) {
   try {
-    const expected = Buffer.from(`Bearer ${required("CRON_SECRET")}`),
-      actual = Buffer.from(req.headers.get("authorization") || "");
-    if (expected.length !== actual.length || !timingSafeEqual(expected, actual))
+    if (
+      !authorizedJobRequest(
+        req.headers.get("authorization"),
+        required("CRON_SECRET"),
+      )
+    )
       throw new HttpError(401, "Unauthorized.");
-    return Response.json(await runJobs(), {
-      headers: { "Cache-Control": "no-store" },
-    });
+    if (
+      !matchesJobEnvironment(
+        req.headers.get("x-coach-tae-environment"),
+        process.env.VERCEL_ENV,
+      )
+    )
+      throw new HttpError(403, "Scheduler environment mismatch.");
+    const result = await runJobs(undefined, { maintenance });
+    return Response.json(result, { headers: { "Cache-Control": "no-store" } });
   } catch (e) {
     return failure(e);
   }
+}
+/** Hobby-compatible daily maintenance and queue recovery, not timely reminders. */
+export async function GET(req: Request) {
+  return handle(req, true);
+}
+/** Authenticated external minute scheduler: due notifications/refunds only. */
+export async function POST(req: Request) {
+  return handle(req, false);
 }

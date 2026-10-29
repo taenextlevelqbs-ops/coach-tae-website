@@ -28,3 +28,11 @@ No real Supabase registration/login or family permission test, Stripe test Check
 The production domain `https://coachtaeqb.com` was supplied by the user. This run did not certify its remote deployment state. There is no new preview URL.
 
 **The platform is not cleared for real customers.** Supply the existing service bindings securely, review/apply migrations on staging, complete actual hosted acceptance, and obtain the required live-payment/cutover approval. See [the runbook](PLATFORM.md) and [configuration names](platform.env.example). Fixture tests are not hosted signoff.
+
+## Hobby preview cron fix — October 29, 2026
+
+- Inspected the only Vercel cron and changed it from every five minutes to `0 6 * * *`, once daily at 06:00 UTC. Daily execution is maintenance/recovery, not timely reminders.
+- Added post-response dispatch after successful booking changes and verified payment webhooks. Delivery failures do not undo fulfillment. Added authenticated POST support for minute-level preview queue processing.
+- Added the optional staging Supabase Cron/pg_net/Vault integration in `supabase/operations/preview-notification-scheduler.sql`, with preview targeting, idempotent registration, protected secret queues, leases and existing retry handling. It has not been installed against a hosted project. See `SCHEDULING.md`; minute reminders require actual configuration and delivery verification.
+- Lint, type checking, optimized production build, 56 backend tests and 33 browser checks passed. Scheduler SQL tests use test-only pg_net/Cron/Vault stand-ins and send no HTTP requests.
+- `main`, production deployments, live payments and Calendly were not changed. GitHub API deployment-status reads were blocked by this cloud environment's network policy; local build success is not proof of Vercel preview success.

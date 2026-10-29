@@ -65,17 +65,20 @@ export async function runJobs(
       };
     },
   },
+  options: { maintenance?: boolean } = {},
 ) {
   const { client, send, refund } = services;
-  checked(
-    await client
-      .from("ct_bookings")
-      .update({ status: "expired" })
-      .eq("status", "held")
-      .lt("hold_until", new Date().toISOString()),
-  );
-  // Extend the rolling schedule; never changes booked slots.
-  checked(await client.rpc("ct_publish", { p_days: 60 }));
+  if (options.maintenance !== false) {
+    checked(
+      await client
+        .from("ct_bookings")
+        .update({ status: "expired" })
+        .eq("status", "held")
+        .lt("hold_until", new Date().toISOString()),
+    );
+    // Extend the rolling schedule; never changes booked slots.
+    checked(await client.rpc("ct_publish", { p_days: 60 }));
+  }
   const jobs = checked(
     await client.rpc("ct_claim_jobs", { p_limit: 5 }),
   ) as Job[];

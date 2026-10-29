@@ -1,3 +1,7 @@
+import {
+  createsNotifications,
+  dispatchNotifications,
+} from "@/lib/platform/dispatch";
 import { z } from "zod";
 import { DateTime, IANAZone } from "luxon";
 import { gradeQuiz } from "@/lib/platform/grading";
@@ -21,6 +25,7 @@ import {
 } from "@/lib/platform/server";
 
 export const runtime = "nodejs";
+export const maxDuration = 60;
 export const dynamic = "force-dynamic";
 type Context = { params: Promise<{ path: string[] }> };
 const reply = (data: unknown) =>
@@ -275,6 +280,10 @@ export async function POST(req: Request, ctx: Context) {
   try {
     checkOrigin(req);
     const path = (await ctx.params).path.join("/");
+    const reply = (data: unknown) => {
+      if (createsNotifications(path)) dispatchNotifications();
+      return Response.json(data, { headers: { "Cache-Control": "no-store" } });
+    };
     const { client, user } = await identity(req, path.startsWith("admin/"));
     const input = await json(req);
     checked(await client.rpc("ct_rate_limit", { p_family: user.id }));

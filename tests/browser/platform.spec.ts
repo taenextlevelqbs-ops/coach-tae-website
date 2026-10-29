@@ -314,6 +314,7 @@ test("actual HTTP routes reject missing auth, CSRF, unsigned webhooks and unauth
     (await request.post("/api/stripe/webhook", { data: {} })).status(),
   ).toBe(400);
   expect((await request.get("/api/jobs")).status()).toBe(401);
+  expect((await request.post("/api/jobs", { data: {} })).status()).toBe(401);
 });
 
 test("coach workspace exposes schedule, policies, content and delivery controls without mobile overflow", async ({

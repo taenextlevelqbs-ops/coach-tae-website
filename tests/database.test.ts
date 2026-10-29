@@ -796,3 +796,84 @@ test("even backend writes cannot rewrite or delete the credit audit ledger", asy
   );
   assert.equal(await balance(), 3);
 });
+
+async function schedulerFixture() {
+  await pool.query(`create schema if not exists vault;create schema if not exists net;create schema if not exists cron;
+ create table if not exists vault.decrypted_secrets(name text primary key,decrypted_secret text);
+ create table if not exists net.http_request_queue(id bigserial primary key,url text,headers jsonb,body jsonb,timeout_milliseconds int);
+ create table if not exists cron.job(jobid bigserial primary key,jobname text unique,schedule text,command text);
+ create or replace function net.http_post(url text,body jsonb default '{}',params jsonb default '{}',headers jsonb default '{}',timeout_milliseconds int default 5000) returns bigint language sql as $$insert into net.http_request_queue(url,body,headers,timeout_milliseconds) values(url,body,headers,timeout_milliseconds) returning id$$;
+ create or replace function cron.schedule(p_name text,p_schedule text,p_command text) returns bigint language sql as $$insert into cron.job(jobname,schedule,command) values(p_name,p_schedule,p_command) on conflict(jobname) do update set schedule=excluded.schedule,command=excluded.command returning jobid$$;
+ truncate vault.decrypted_secrets,net.http_request_queue,cron.job;
+ `);
+  const secret = randomUUID();
+  await pool.query(
+    "insert into vault.decrypted_secrets values('coach_tae_preview_jobs_url','https://coach-tae-preview-fixture.vercel.app/api/jobs'),('coach_tae_preview_cron_secret',$1),('coach_tae_preview_bypass','fixture-bypass-not-a-credential')",
+    [secret],
+  );
+  return secret;
+}
+test("optional external scheduler registers once, uses a fixed minute job and resolves Vault secrets only when dispatching", async () => {
+  const secret = await schedulerFixture(),
+    sql = await readFile(
+      "supabase/operations/preview-notification-scheduler.sql",
+      "utf8",
+    );
+  await pool.query(sql);
+  await pool.query(sql);
+  const jobs = (await pool.query("select * from cron.job")).rows;
+  assert.equal(jobs.length, 1);
+  assert.equal(jobs[0].schedule, "* * * * *");
+  assert.equal(
+    jobs[0].command,
+    "select public.ct_dispatch_preview_notifications();",
+  );
+  assert.equal(jobs[0].command.includes(secret), false);
+  await pool.query("select ct_dispatch_preview_notifications()");
+  const request = (await pool.query("select * from net.http_request_queue"))
+    .rows[0];
+  assert.equal(
+    request.url,
+    "https://coach-tae-preview-fixture.vercel.app/api/jobs",
+  );
+  assert.equal(request.headers.Authorization, `Bearer ${secret}`);
+  assert.equal(request.headers["x-coach-tae-environment"], "preview");
+  assert.equal(
+    request.headers["x-vercel-protection-bypass"],
+    "fixture-bypass-not-a-credential",
+  );
+  assert.equal(request.timeout_milliseconds, 55000);
+  const c = await pool.connect();
+  try {
+    await c.query("begin");
+    await c.query("set local role authenticated");
+    await assert.rejects(
+      c.query("select ct_dispatch_preview_notifications()"),
+      /permission denied/,
+    );
+    await c.query("rollback");
+  } finally {
+    c.release();
+  }
+});
+test("external scheduler fails closed for exposed request queues or a non-preview URL", async () => {
+  await schedulerFixture();
+  const sql = await readFile(
+    "supabase/operations/preview-notification-scheduler.sql",
+    "utf8",
+  );
+  const c = await pool.connect();
+  try {
+    await c.query("grant select on net.http_request_queue to authenticated");
+    await assert.rejects(c.query(sql), /must not be readable/);
+    await c.query("rollback");
+    await c.query("revoke select on net.http_request_queue from authenticated");
+    await c.query(
+      "update vault.decrypted_secrets set decrypted_secret='https://coachtaeqb.com/api/jobs' where name='coach_tae_preview_jobs_url'",
+    );
+    await assert.rejects(c.query(sql), /verified preview/);
+    await c.query("rollback");
+  } finally {
+    c.release();
+  }
+});

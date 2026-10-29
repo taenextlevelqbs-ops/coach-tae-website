@@ -148,3 +148,20 @@ test("a pending automatic refund remains queued and is never marked settled", as
   );
   assert.ok(f.writes.some((w) => w.body.last_error === "RefundNotSettled"));
 });
+
+test("event-driven and minute-scheduler dispatch processes due jobs without repeating daily schedule maintenance", async () => {
+  const f = fixture();
+  const result = await runJobs(f, { maintenance: false });
+  assert.equal(result.succeeded, 1);
+  assert.ok(f.writes.some((w) => w.path.includes("ct_claim_jobs")));
+  assert.equal(
+    f.writes.some((w) => w.path.includes("ct_publish")),
+    false,
+  );
+  assert.equal(
+    f.writes.some(
+      (w) => w.path.includes("ct_bookings") && w.body.status === "expired",
+    ),
+    false,
+  );
+});

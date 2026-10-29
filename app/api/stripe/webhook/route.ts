@@ -1,6 +1,8 @@
+import { dispatchNotifications } from "@/lib/platform/dispatch";
 import { failure, HttpError, payments, required } from "@/lib/platform/server";
 import { processEvent } from "@/lib/platform/webhook";
 export const runtime = "nodejs";
+export const maxDuration = 60;
 export async function POST(req: Request) {
   try {
     if (Number(req.headers.get("content-length") || 0) > 1000000)
@@ -18,6 +20,7 @@ export async function POST(req: Request) {
       throw new HttpError(400, "Invalid webhook signature.");
     }
     await processEvent(event);
+    dispatchNotifications();
     return Response.json({ received: true });
   } catch (e) {
     return failure(e);
