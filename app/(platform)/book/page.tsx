@@ -22,10 +22,11 @@ export default function BookPage() {
       ) : (
         <>
           <div className="notice section-gap">
-            <strong>Integrated booking is being prepared.</strong>
+            <strong>Schedule through Calendly.</strong>
             <p>
-              Keep training with our current calendar. Your existing bookings
-              are unchanged.
+              Private and group appointments remain in Calendly. This page does
+              not collect a separate session payment or change existing
+              appointments.
             </p>
           </div>
           <div className="section-gap">

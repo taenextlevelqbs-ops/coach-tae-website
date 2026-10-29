@@ -3,7 +3,11 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import "./platform.css";
 import { SessionProvider } from "./Session";
-import { catalog, type ProductKey } from "@/lib/platform/catalog";
+import {
+  catalog,
+  requiresNativeBooking,
+  type ProductKey,
+} from "@/lib/platform/catalog";
 export const metadata: Metadata = { robots: { index: false, follow: false } };
 export default function PlatformLayout({
   children,
@@ -15,11 +19,19 @@ export default function PlatformLayout({
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY &&
     process.env.SUPABASE_SERVICE_ROLE_KEY
   );
+  const nativeBookingEnabled = process.env.PLATFORM_BOOKING_ENABLED === "true";
   const products = (Object.keys(catalog) as ProductKey[]).filter(
-    (key) => !!process.env[catalog[key].env] && !!process.env.STRIPE_SECRET_KEY,
+    (key) =>
+      !!process.env[catalog[key].env] &&
+      !!process.env.STRIPE_SECRET_KEY &&
+      (nativeBookingEnabled || !requiresNativeBooking(key)),
   );
   return (
-    <SessionProvider configured={configured} products={products}>
+    <SessionProvider
+      configured={configured}
+      products={products}
+      nativeBookingEnabled={nativeBookingEnabled}
+    >
       <div className="platform">
         <a href="#platform-main" className="skip-link">
           Skip to content

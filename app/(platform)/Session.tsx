@@ -20,15 +20,24 @@ const Context = createContext<{
   loading: boolean;
   products: ProductKey[];
   configured: boolean;
-}>({ user: null, loading: true, products: [], configured: false });
+  nativeBookingEnabled: boolean;
+}>({
+  user: null,
+  loading: true,
+  products: [],
+  configured: false,
+  nativeBookingEnabled: false,
+});
 export function SessionProvider({
   children,
   products,
   configured,
+  nativeBookingEnabled,
 }: {
   children: ReactNode;
   products: ProductKey[];
   configured: boolean;
+  nativeBookingEnabled: boolean;
 }) {
   const [user, setUser] = useState<User | null>(null),
     [loading, setLoading] = useState(true);
@@ -65,7 +74,9 @@ export function SessionProvider({
     };
   }, []);
   return (
-    <Context.Provider value={{ user, loading, products, configured }}>
+    <Context.Provider
+      value={{ user, loading, products, configured, nativeBookingEnabled }}
+    >
       {children}
     </Context.Provider>
   );
@@ -76,8 +87,8 @@ export function CalendlyFallback() {
     <div className="notice stack">
       <strong>Book with Coach Tae</strong>
       <p>
-        Our current booking calendar remains available while integrated booking
-        is validated.
+        Choose private or group scheduling in Calendly. Follow any payment
+        instructions shown there; do not purchase the same session separately.
       </p>
       <div className="row">
         <a

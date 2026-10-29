@@ -231,7 +231,7 @@ test("family portal displays separate balances, athlete profile and unavailable 
   ).toBeDisabled();
   await expect(
     page.getByText(
-      "No upcoming confirmed sessions. Choose a date to get started.",
+      "No upcoming confirmed native bookings are recorded here. Calendly appointments are not included.",
     ),
   ).toBeVisible();
   await noOverflow(page);
@@ -697,5 +697,30 @@ test("coach can inspect parent contact, pending, cancelled and completed time wi
   await expect(
     page.getByText("Paid / training credit redeemed", { exact: false }),
   ).toHaveCount(2);
+  await noOverflow(page);
+});
+
+test("native record and schedule notices do not claim Calendly appointments are empty or synchronized", async ({
+  page,
+}) => {
+  await session(page);
+  await mocks(page, { coach: true });
+  await page.goto("/portal");
+  await expect(page.getByRole("note")).toContainText(
+    "Calendly appointments are not synchronized here",
+  );
+  await expect(
+    page.getByText(
+      "No upcoming confirmed native bookings are recorded here. Calendly appointments are not included.",
+    ),
+  ).toBeVisible();
+  await page.goto("/coach");
+  await expect(page.getByRole("note")).toContainText(
+    "An empty list does not mean you have no Calendly appointments",
+  );
+  await page.goto("/coach/schedule");
+  await expect(page.getByRole("note")).toContainText(
+    "It does not change Calendly availability",
+  );
   await noOverflow(page);
 });

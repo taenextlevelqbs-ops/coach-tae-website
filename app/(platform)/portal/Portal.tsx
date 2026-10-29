@@ -7,6 +7,7 @@ import { entitled } from "@/lib/platform/catalog";
 import type { Booking, Slot } from "@/lib/platform/types";
 import { usePortal, message, useNow } from "../usePortal";
 import Purchase from "../Purchase";
+import { NativeRecordNotice } from "../BookingSource";
 function SessionActions({
   booking,
   onUpdate,
@@ -205,6 +206,7 @@ export default function Portal() {
     );
   return (
     <div className="stack">
+      <NativeRecordNotice />
       {data.recovery?.private || data.recovery?.group ? (
         <p className="notice">
           Refund reconciliation: {data.recovery?.private || 0} private and{" "}
@@ -250,14 +252,14 @@ export default function Portal() {
           <p className="muted">Available for small-group training</p>
         </div>
         <div className="panel">
-          <p className="eyebrow">On the calendar</p>
+          <p className="eyebrow">Native bookings</p>
           <div className="credit">{upcoming.length}</div>
           <p className="muted">Upcoming confirmed sessions</p>
         </div>
       </div>
       <div className="grid">
         <section className="panel stack">
-          <h2>Upcoming training</h2>
+          <h2>Upcoming native bookings</h2>
           {upcoming.length ? (
             upcoming.map((b) => (
               <article key={b.id} className="record">
@@ -280,7 +282,8 @@ export default function Portal() {
             ))
           ) : (
             <p className="muted">
-              No upcoming confirmed sessions. Choose a date to get started.
+              No upcoming confirmed native bookings are recorded here. Calendly
+              appointments are not included.
             </p>
           )}
           {pending.length > 0 && (
@@ -404,7 +407,7 @@ export default function Portal() {
       </section>
       <div className="grid">
         <section className="panel">
-          <h2>Training history</h2>
+          <h2>Native booking history</h2>
           {history.length ? (
             history.map((b) => (
               <div className="record" key={b.id}>
@@ -419,7 +422,9 @@ export default function Portal() {
               </div>
             ))
           ) : (
-            <p className="muted">Past confirmed sessions will appear here.</p>
+            <p className="muted">
+              Past native confirmed sessions will appear here.
+            </p>
           )}
           <details>
             <summary>Cancelled & expired bookings</summary>
@@ -434,7 +439,7 @@ export default function Portal() {
           </details>
         </section>
         <section className="panel">
-          <h2>Payments</h2>
+          <h2>Website payments</h2>
           {data.orders.length ? (
             data.orders.map((o) => (
               <div className="record" key={o.id}>

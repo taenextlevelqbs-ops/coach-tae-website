@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { DateTime } from "luxon";
 import QuizEditor from "./QuizEditor";
+import { NativeRecordNotice } from "../BookingSource";
 import { api } from "@/lib/platform/browser";
 import { entitled } from "@/lib/platform/catalog";
 import type {
@@ -168,6 +169,7 @@ export default function Coach() {
   );
   return (
     <div className="stack">
+      <NativeRecordNotice />
       <div className="row between">
         <p className="notice">
           Staging workflow · Stripe test mode only. Reports below show at most
@@ -203,7 +205,7 @@ export default function Coach() {
         <>
           <div className="grid-3">
             <div className="panel">
-              <p className="eyebrow">Upcoming sessions</p>
+              <p className="eyebrow">Upcoming native bookings</p>
               <div className="credit">{upcoming.length}</div>
             </div>
             <div className="panel">
@@ -217,7 +219,7 @@ export default function Coach() {
               </div>
             </div>
             <div className="panel">
-              <p className="eyebrow">Recorded paid volume · USD</p>
+              <p className="eyebrow">Website recorded paid volume · USD</p>
               <div className="price">
                 {new Intl.NumberFormat("en-US", {
                   style: "currency",
@@ -243,14 +245,17 @@ export default function Coach() {
               </div>
             ))}
             {!upcoming.length && (
-              <p className="muted">No upcoming confirmed sessions.</p>
+              <p className="muted">
+                No upcoming confirmed native bookings are recorded here.
+                Calendly appointments are not included.
+              </p>
             )}
           </section>
         </>
       )}
       {tab === "Appointments" && (
         <section className="panel stack">
-          <h2>All appointments</h2>
+          <h2>Native appointments</h2>
           <p className="muted">
             Times are Eastern. Completed time window means the scheduled end has
             passed; attendance is not recorded. Pending reservations are unpaid
@@ -304,7 +309,10 @@ export default function Coach() {
               </article>
             ))}
           {!data.ct_bookings.length && (
-            <p className="muted">No appointments recorded.</p>
+            <p className="muted">
+              No native appointments recorded. Calendly appointments are not
+              included.
+            </p>
           )}
         </section>
       )}
@@ -322,7 +330,7 @@ export default function Coach() {
       )}
       {tab === "Athletes" && (
         <section className="panel">
-          <h2>Athlete directory</h2>
+          <h2>Native athlete directory</h2>
           {data.ct_athletes.map((a) => (
             <div className="record" key={a.id}>
               <h3>
@@ -348,7 +356,7 @@ export default function Coach() {
       )}
       {tab === "Payments" && (
         <section className="panel">
-          <h2>Payments & subscription invoices</h2>
+          <h2>Website payments & subscription invoices</h2>
           <div className="table-wrap">
             <table>
               <thead>

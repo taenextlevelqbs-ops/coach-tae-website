@@ -5,6 +5,7 @@ import { DateTime } from "luxon";
 import { api } from "@/lib/platform/browser";
 import type { Booking, Slot } from "@/lib/platform/types";
 import { message, useNow } from "../../usePortal";
+import { NativeRecordNotice } from "../../BookingSource";
 const zone = "America/New_York";
 const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 type Rule = {
@@ -324,6 +325,7 @@ export default function Schedule() {
   );
   return (
     <div className="stack">
+      <NativeRecordNotice scheduleEditor />
       <div className="row between">
         <Link className="inline-link" href="/coach">
           ← Coach dashboard

@@ -72,3 +72,8 @@ export function validPrice(key: ProductKey, price: PriceShape) {
       : price.type === "one_time" && price.recurring === null)
   );
 }
+
+/** Training credits have no verified redemption bridge into Calendly. */
+export function requiresNativeBooking(key: ProductKey) {
+  return !key.startsWith("lab_");
+}

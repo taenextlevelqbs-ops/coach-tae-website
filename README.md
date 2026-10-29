@@ -44,7 +44,7 @@ Supabase migration, QB Lab, and notification worker are documented in
 
 Calendly remains available on homepage/mobile booking links and the booking page.
 Native booking stays gated until hosted acceptance passes; live charges remain
-unauthorized. See [release status](docs/CUTOVER.md).
+unauthorized. See [release status](docs/CUTOVER.md) and the [payment audit](docs/PAYMENT-RELEASE-AUDIT.md). Website training package purchases are paused while native booking is disabled; Calendly payment requirements remain separate.
 
 ```bash
 npm run lint

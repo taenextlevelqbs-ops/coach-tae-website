@@ -6,7 +6,7 @@ import { z } from "zod";
 import { DateTime, IANAZone } from "luxon";
 import { gradeQuiz } from "@/lib/platform/grading";
 import { checkoutParams } from "@/lib/platform/checkout";
-import { isProductKey } from "@/lib/platform/catalog";
+import { isProductKey, requiresNativeBooking } from "@/lib/platform/catalog";
 import {
   bookingEnabled,
   checked,
@@ -124,6 +124,8 @@ export async function GET(req: Request, ctx: Context) {
         settings,
         progress,
         isCoach,
+        recordSource: "native",
+        calendlySync: "not_connected",
       });
     }
     if (path === "availability") {
@@ -373,6 +375,7 @@ export async function POST(req: Request, ctx: Context) {
       if (!isProductKey(b.product))
         throw new HttpError(400, "Unknown product.");
       const key = b.product;
+      if (requiresNativeBooking(key)) bookingEnabled();
       if (key.startsWith("lab_")) {
         const lessons = checked(
           await client
