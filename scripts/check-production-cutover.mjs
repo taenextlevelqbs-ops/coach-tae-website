@@ -1,5 +1,17 @@
 /** Prevent an automatic production push from cutting over before hosted acceptance. */
-if (process.env.VERCEL_ENV === "production") {
+if (
+  process.env.VERCEL_ENV === "production" &&
+  process.env.STRIPE_LIVE_ENABLED === "true"
+) {
+  console.error(
+    "Production release blocked: live Stripe activation is not authorized.",
+  );
+  process.exitCode = 1;
+}
+if (
+  process.env.VERCEL_ENV === "production" &&
+  process.env.PLATFORM_BOOKING_ENABLED === "true"
+) {
   const issues = [];
   const sha = process.env.VERCEL_GIT_COMMIT_SHA;
   if (
@@ -10,8 +22,6 @@ if (process.env.VERCEL_ENV === "production") {
     issues.push(
       "Hosted acceptance must be recorded for this exact VERCEL_GIT_COMMIT_SHA using BOOKING_CUTOVER_VERIFIED_COMMIT.",
     );
-  if (process.env.PLATFORM_BOOKING_ENABLED !== "true")
-    issues.push("PLATFORM_BOOKING_ENABLED must be true after acceptance.");
   if (process.env.APP_URL !== "https://coachtaeqb.com")
     issues.push("APP_URL must be the verified Coach Tae production origin.");
   if (

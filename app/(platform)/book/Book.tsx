@@ -4,7 +4,7 @@ import Link from "next/link";
 import { DateTime } from "luxon";
 import { api } from "@/lib/platform/browser";
 import type { Slot } from "@/lib/platform/types";
-import { useSession } from "../Session";
+import { CalendlyFallback, useSession } from "../Session";
 import { message, usePortal } from "../usePortal";
 export default function Book() {
   const { data, error, refresh } = usePortal();
@@ -254,7 +254,8 @@ export default function Book() {
           </div>
         ) : (
           <p className="notice">
-            No sessions available on this date. Try another day.
+            No sessions available on this date. Try another day or use the
+            current calendar below.
           </p>
         )}
       </section>
@@ -324,8 +325,8 @@ export default function Book() {
         )}
         {!credits && !products.includes(kind) && (
           <p className="muted">
-            Online payment for this session is temporarily unavailable. Please
-            contact Coach Tae before planning a session.
+            Integrated payment for this session is not configured yet. Use the
+            current calendar below.
           </p>
         )}
         <p className="auth-note">
@@ -333,6 +334,9 @@ export default function Book() {
           release approval.
         </p>
       </section>
+      <div className="wide">
+        <CalendlyFallback />
+      </div>
     </div>
   );
 }

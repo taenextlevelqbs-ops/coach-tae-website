@@ -11,8 +11,9 @@ const baseLinks = [
   { href: "#apparel", label: "Apparel" },
 ];
 
-const privateUrl = "/book?kind=private";
-const groupUrl = "/book?kind=group";
+const privateUrl =
+  "https://calendly.com/taenextlevelqbs/individual-training-clone";
+const groupUrl = "https://calendly.com/taenextlevelqbs/group-training";
 const shopUrl = "https://dmvattack.myshopify.com/";
 
 export default function SiteNav() {

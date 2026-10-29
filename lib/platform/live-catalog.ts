@@ -1,4 +1,4 @@
-/** User-supplied existing live catalog. These IDs are NOT verified or activated by declaring them here. */
+/** Existing live catalog supplied and reported verified by the user. Declaring IDs does not activate payments. */
 export const liveAccount = "acct_1UVeHrQGpLTTSzQv";
 export const livePrices = {
   private: "price_1UVea8QGpLTTSzQvpFLHGT5l",

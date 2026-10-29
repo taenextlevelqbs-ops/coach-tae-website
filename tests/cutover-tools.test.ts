@@ -133,7 +133,6 @@ test("production build guard blocks unaccepted commits, missing configuration an
   assert.equal(run(fixture).status, 0);
   for (const overrides of [
     { BOOKING_CUTOVER_VERIFIED_COMMIT: "b".repeat(40) },
-    { PLATFORM_BOOKING_ENABLED: "false" },
     {
       STRIPE_SECRET_KEY: "sk_live_fixture_unauthorized",
       STRIPE_LIVE_ENABLED: "true",
@@ -147,4 +146,20 @@ test("production build guard blocks unaccepted commits, missing configuration an
     assert.ok(!result.stderr.includes("fixture-value-not-a-secret"));
   }
   assert.equal(run({ VERCEL_ENV: "preview" }).status, 0);
+  assert.equal(
+    run({
+      VERCEL_ENV: "production",
+      PLATFORM_BOOKING_ENABLED: "false",
+      STRIPE_LIVE_ENABLED: "false",
+    }).status,
+    0,
+  );
+  assert.equal(
+    run({
+      VERCEL_ENV: "production",
+      PLATFORM_BOOKING_ENABLED: "false",
+      STRIPE_LIVE_ENABLED: "true",
+    }).status,
+    1,
+  );
 });

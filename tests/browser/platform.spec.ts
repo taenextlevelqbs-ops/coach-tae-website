@@ -590,7 +590,7 @@ test("sign-out clears local access and explains when remote session revocation f
   ).toBeNull();
 });
 
-test("all public training links use native booking and the booking page contains no external calendar fallback", async ({
+test("Calendly booking links remain available alongside gated native booking", async ({
   page,
 }) => {
   await session(page);
@@ -599,14 +599,28 @@ test("all public training links use native booking and the booking page contains
   const hrefs = await page
     .locator("a")
     .evaluateAll((links) => links.map((a) => a.getAttribute("href") || ""));
-  expect(hrefs.some((h) => /calendly/i.test(h))).toBe(false);
-  expect(hrefs).toContain("/book?kind=private");
-  expect(hrefs).toContain("/book?kind=group");
+  expect(hrefs).toContain(
+    "https://calendly.com/taenextlevelqbs/individual-training-clone",
+  );
+  expect(hrefs).toContain(
+    "https://calendly.com/taenextlevelqbs/group-training",
+  );
   await page.goto("/book?kind=group");
   await expect(
     page.getByRole("combobox", { name: "Training", exact: true }),
   ).toHaveValue("group");
-  expect(await page.content()).not.toMatch(/calendly/i);
+  await expect(
+    page.getByRole("link", { name: "Book private training ↗", exact: true }),
+  ).toHaveAttribute(
+    "href",
+    "https://calendly.com/taenextlevelqbs/individual-training-clone",
+  );
+  await expect(
+    page.getByRole("link", { name: "Book group training ↗", exact: true }),
+  ).toHaveAttribute(
+    "href",
+    "https://calendly.com/taenextlevelqbs/group-training",
+  );
   await noOverflow(page);
 });
 

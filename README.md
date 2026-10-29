@@ -42,10 +42,9 @@ Supabase migration, QB Lab, and notification worker are documented in
 [the platform runbook](docs/PLATFORM.md). Configuration names are in
 [docs/platform.env.example](docs/platform.env.example).
 
-The cutover branch routes all public training links to native booking. Production
-cutover is blocked until hosted acceptance passes for the exact release commit;
-see [cutover status](docs/CUTOVER.md). The existing live booking path must remain
-operational until then. Live charges are not authorized.
+Calendly remains available on homepage/mobile booking links and the booking page.
+Native booking stays gated until hosted acceptance passes; live charges remain
+unauthorized. See [release status](docs/CUTOVER.md).
 
 ```bash
 npm run lint
