@@ -1,0 +1,552 @@
+.platform {
+  --accent: #80dcff;
+  --muted: #acb8c6;
+  background: #090c11;
+  color: #f5f7fa;
+  min-height: 100svh;
+  font-family: Arial, Helvetica, sans-serif;
+}
+.platform * {
+  box-sizing: border-box;
+}
+.platform-header {
+  max-width: 1240px;
+  margin: auto;
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  border-bottom: 1px solid #ffffff20;
+  flex-wrap: wrap;
+}
+.platform-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-decoration: none;
+}
+.platform-brand img {
+  border-radius: 12px;
+}
+.platform-brand small {
+  display: block;
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  color: var(--muted);
+  margin-top: 5px;
+}
+.platform-header nav {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.platform-header nav a {
+  padding: 12px;
+  font-size: 13px;
+  font-weight: 700;
+  border-radius: 10px;
+}
+.platform-header nav a:hover {
+  background: #ffffff0c;
+  color: var(--accent);
+}
+.platform-main {
+  max-width: 1180px;
+  margin: auto;
+  padding: 44px 24px 80px;
+}
+.platform h1 {
+  font-size: clamp(2.5rem, 7vw, 5rem);
+  font-weight: 900;
+  letter-spacing: -0.055em;
+  line-height: 1.02;
+  margin: 12px 0 20px;
+  max-width: 850px;
+}
+.platform h2 {
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  margin: 0 0 16px;
+}
+.platform h3 {
+  font-size: 17px;
+  font-weight: 800;
+  margin: 0 0 12px;
+}
+.platform p {
+  line-height: 1.65;
+}
+.platform a {
+  color: inherit;
+}
+.platform .eyebrow {
+  font-size: 11px;
+  color: var(--accent);
+  font-weight: 800;
+  letter-spacing: 0.19em;
+  text-transform: uppercase;
+}
+.platform .lede {
+  font-size: 17px;
+  max-width: 640px;
+  color: var(--muted);
+  margin-bottom: 28px;
+}
+.platform .panel {
+  background: linear-gradient(140deg, #151d28, #10151d);
+  border: 1px solid #ffffff18;
+  border-radius: 22px;
+  padding: 24px;
+  min-width: 0;
+}
+.platform .stack {
+  display: grid;
+  gap: 20px;
+}
+.platform .grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+.platform .grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+.platform .wide {
+  grid-column: 1/-1;
+}
+.platform .row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.platform .between {
+  justify-content: space-between;
+}
+.platform .muted {
+  color: var(--muted);
+  font-size: 14px;
+}
+.platform .badge {
+  font-size: 11px;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  border: 1px solid #80dcff55;
+  border-radius: 999px;
+  padding: 6px 10px;
+  display: inline-flex;
+  color: var(--accent);
+}
+.platform label {
+  display: grid;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  min-width: 0;
+}
+.platform input,
+.platform select,
+.platform textarea {
+  color: #f5f7fa;
+  background: #080d14;
+  border: 1px solid #73859b80;
+  border-radius: 10px;
+  padding: 12px;
+  font: inherit;
+  min-height: 48px;
+  width: 100%;
+  max-width: 100%;
+}
+.platform textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+.platform select option {
+  background: #080d14;
+}
+.platform button,
+.platform .button {
+  min-height: 48px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  background: var(--accent);
+  color: #06131c;
+  font-size: 14px;
+  font-weight: 800;
+  padding: 12px 20px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.15s;
+}
+.platform button:hover,
+.platform .button:hover {
+  background: #b5ebff;
+}
+.platform button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.platform .secondary {
+  background: transparent;
+  color: white;
+  border-color: #7e8d9f80;
+}
+.platform .secondary:hover {
+  background: #ffffff12;
+}
+.platform .danger {
+  color: #ffb4b4;
+  border-color: #ffb4b470;
+  background: transparent;
+}
+.platform .notice {
+  border: 1px solid #80dcff44;
+  background: #80dcff09;
+  padding: 16px 20px;
+  border-radius: 14px;
+  font-size: 14px;
+  line-height: 1.6;
+}
+.platform .error {
+  color: #ffd2d2;
+  border-color: #f2777766;
+  background: #461c2430;
+}
+.platform .success {
+  color: #b7f3cf;
+}
+.platform .section-gap {
+  margin-top: 32px;
+}
+.platform .slot-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+.platform .slot {
+  background: transparent;
+  color: white;
+  border-color: #71809655;
+  display: grid;
+  text-align: left;
+  gap: 6px;
+  padding: 16px;
+}
+.platform .slot[aria-pressed="true"] {
+  border-color: var(--accent);
+  background: #80dcff18;
+}
+.platform .price {
+  font-size: 32px;
+  font-weight: 900;
+  letter-spacing: -0.04em;
+}
+.platform .record {
+  padding: 18px 0;
+  border-top: 1px solid #ffffff18;
+  overflow-wrap: anywhere;
+}
+.platform .record:first-child {
+  border-top: 0;
+}
+.platform .record p {
+  margin: 8px 0;
+}
+.platform .credit {
+  font-size: 42px;
+  font-weight: 900;
+  line-height: 1.1;
+}
+.platform .lesson-body {
+  white-space: pre-wrap;
+  line-height: 1.8;
+  font-size: 16px;
+}
+.platform fieldset {
+  border: 1px solid #ffffff25;
+  border-radius: 12px;
+  padding: 18px;
+  min-width: 0;
+}
+.platform legend {
+  padding: 0 6px;
+  font-weight: 700;
+}
+.platform .radio {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 12px 0;
+}
+.platform .radio input {
+  width: 20px;
+  min-height: 20px;
+  flex: none;
+}
+.platform details {
+  border-top: 1px solid #ffffff20;
+  padding: 16px 0;
+}
+.platform summary {
+  cursor: pointer;
+  min-height: 44px;
+  font-weight: 700;
+}
+.platform .platform-footer {
+  max-width: 1180px;
+  margin: auto;
+  padding: 28px 24px 40px;
+  border-top: 1px solid #ffffff20;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+.platform .auth {
+  max-width: 560px;
+}
+.platform .auth form {
+  display: grid;
+  gap: 16px;
+}
+.platform .tabs {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 20px 0;
+}
+.platform .tabs button {
+  background: #ffffff08;
+  color: #fff;
+  border-color: #ffffff20;
+}
+.platform .tabs button[aria-pressed="true"] {
+  color: #07131b;
+  background: var(--accent);
+}
+.platform .table-wrap {
+  overflow-x: auto;
+}
+.platform table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.platform td,
+.platform th {
+  text-align: left;
+  padding: 14px 10px;
+  border-bottom: 1px solid #ffffff18;
+  white-space: nowrap;
+}
+.platform .inline-link {
+  color: var(--accent);
+  text-underline-offset: 4px;
+}
+.platform .loading {
+  padding: 32px;
+  color: var(--muted);
+}
+.platform .hero-card {
+  background:
+    linear-gradient(90deg, #090e15ee, #090e1580),
+    url("/Tae_Training.jpeg") center 35% / cover;
+  padding: 36px;
+  border-radius: 24px;
+  border: 1px solid #ffffff20;
+  margin-bottom: 28px;
+}
+.platform .hero-card h1 {
+  max-width: 650px;
+}
+.platform .hero-card .lede {
+  color: #dde3ec;
+  max-width: 530px;
+}
+.platform .auth-note {
+  font-size: 12px;
+  color: var(--muted);
+}
+@media (max-width: 760px) {
+  .platform-main {
+    padding: 28px 18px 56px;
+  }
+  .platform-header {
+    padding: 16px 18px;
+    gap: 14px;
+  }
+  .platform-header nav {
+    width: 100%;
+    justify-content: space-between;
+    border-top: 1px solid #ffffff12;
+    padding-top: 8px;
+  }
+  .platform-header nav a {
+    font-size: 12px;
+    padding: 10px 8px;
+  }
+  .platform .grid,
+  .platform .grid-3 {
+    grid-template-columns: 1fr;
+  }
+  .platform .panel {
+    padding: 20px;
+  }
+  .platform .hero-card {
+    padding: 24px;
+  }
+  .platform .row > * {
+    max-width: 100%;
+  }
+  .platform .row label {
+    flex: 1 1 140px;
+  }
+  .platform .platform-footer {
+    display: grid;
+    gap: 12px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .platform * {
+    transition: none;
+    scroll-behavior: auto;
+  }
+}
+
+/* Keep the keyboard skip link readable against its white background. */
+.platform .skip-link {
+  color: #080a0d;
+}
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 3px;
+  margin-top: 18px;
+}
+.platform .calendar-day {
+  min-width: 0;
+  min-height: 72px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  background: #0a1018;
+  color: #f5f7fa;
+  border: 1px solid #ffffff20;
+  border-radius: 9px;
+  padding: 8px 2px;
+}
+.platform .calendar-day[aria-pressed="true"] {
+  border-color: #80dcff;
+  background: #80dcff20;
+}
+.calendar-day small {
+  font-size: 9px;
+  font-weight: 400;
+}
+.calendar-weekday {
+  text-align: center;
+  font-size: 11px;
+  color: #acb8c6;
+  padding: 8px 0;
+}
+.calendar-dots {
+  display: flex;
+  gap: 3px;
+  min-height: 6px;
+}
+.calendar-dots i {
+  width: 5px;
+  height: 5px;
+  border-radius: 100%;
+  display: block;
+}
+.session-dot {
+  background: #80dcff;
+}
+.booking-dot {
+  background: #8ce5b5;
+}
+.block-dot {
+  background: #ffa3a3;
+}
+.platform .field-diagram {
+  width: 100%;
+  height: auto;
+  background: #081b1b;
+  border: 1px solid #497669;
+  border-radius: 16px;
+}
+.platform .path-card[aria-pressed="true"] {
+  border-color: #80dcff;
+  background: #80dcff20;
+}
+.platform .feedback {
+  border-left: 3px solid #80dcff;
+  padding-left: 16px;
+}
+.platform .lesson-index {
+  display: grid;
+  gap: 8px;
+}
+.platform .lesson-index a {
+  padding: 14px;
+  border: 1px solid #ffffff20;
+  border-radius: 12px;
+  text-decoration: none;
+  font-weight: 700;
+}
+.platform .lesson-index a:hover {
+  border-color: #80dcff;
+}
+@media (max-width: 760px) {
+  .platform .calendar-panel {
+    padding: 12px;
+  }
+  .platform .calendar-day {
+    min-height: 64px;
+  }
+  .calendar-day small {
+    font-size: 8px;
+  }
+}
+.platform .weekday-picker {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 8px;
+}
+.platform .weekday-picker .radio {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  border: 1px solid #ffffff30;
+  border-radius: 10px;
+  padding: 12px 4px;
+}
+.platform .weekday-picker .radio:has(input:checked) {
+  background: #80dcff16;
+  border-color: #80dcff;
+}
+#schedule-editor {
+  scroll-margin-top: 24px;
+}
+@media (max-width: 760px) {
+  .platform .weekday-picker {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}

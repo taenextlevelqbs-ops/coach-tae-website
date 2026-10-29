@@ -1,0 +1,4 @@
+{
+  "buildCommand": "npm run build -- --webpack",
+  "crons": [{ "path": "/api/jobs", "schedule": "*/5 * * * *" }]
+}

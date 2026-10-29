@@ -70,9 +70,7 @@ export const metadata: Metadata = {
     description:
       "Quarterback development and private QB training in Northern Virginia and the DMV.",
 
-    images: [
-      "/opengraph-image.jpeg",
-    ],
+    images: ["/opengraph-image.jpeg"],
   },
 
   icons: {
@@ -100,7 +98,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" data-scroll-behavior="smooth">
       <body>{children}</body>
     </html>
   );

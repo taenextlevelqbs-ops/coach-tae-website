@@ -3,10 +3,10 @@ import SiteNav from "./SiteNav";
 
 const SHOP_URL = "https://dmvattack.myshopify.com/";
 
-const INDIVIDUAL_BOOKING_URL =
+const INDIVIDUAL_BOOKING_URL = process.env.PLATFORM_BOOKING_ENABLED === "true" ? "/book?kind=private" :
   "https://calendly.com/taenextlevelqbs/individual-training-clone";
 
-const GROUP_BOOKING_URL =
+const GROUP_BOOKING_URL = process.env.PLATFORM_BOOKING_ENABLED === "true" ? "/book?kind=group" :
   "https://calendly.com/taenextlevelqbs/group-training";
 
 const trainingFocus = [
@@ -21,7 +21,7 @@ const trainingFocus = [
 export default function Home() {
   return (
     <>
-      <SiteNav />
+      <SiteNav bookingEnabled={process.env.PLATFORM_BOOKING_ENABLED === "true"} />
 
       <main id="main-content" className="min-h-screen bg-black text-white">
 

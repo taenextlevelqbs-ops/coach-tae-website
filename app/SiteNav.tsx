@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 
-const links = [
+const baseLinks = [
   { href: "#training", label: "Training" },
   { href: "#about", label: "About Coach Tae" },
   { href: "#attack", label: "DMV Attack" },
@@ -16,7 +16,22 @@ const individualBookingUrl =
 const groupBookingUrl = "https://calendly.com/taenextlevelqbs/group-training";
 const shopUrl = "https://dmvattack.myshopify.com/";
 
-export default function SiteNav() {
+export default function SiteNav({
+  bookingEnabled = false,
+}: {
+  bookingEnabled?: boolean;
+}) {
+  const links = bookingEnabled
+    ? [
+        { href: "/portal", label: "Family portal" },
+        { href: "/lab", label: "QB Lab" },
+        ...baseLinks,
+      ]
+    : baseLinks;
+  const privateUrl = bookingEnabled
+    ? "/book?kind=private"
+    : individualBookingUrl;
+  const groupUrl = bookingEnabled ? "/book?kind=group" : groupBookingUrl;
   const [isOpen, setIsOpen] = useState(false);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
 
@@ -66,7 +81,12 @@ export default function SiteNav() {
               </a>
             </div>
 
-            <a className="nav-booking-link" href={individualBookingUrl} target="_blank" rel="noopener noreferrer">
+            <a
+              className="nav-booking-link"
+              href={privateUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               Book a session <span aria-hidden="true">↗</span>
               <span className="sr-only">(opens in a new tab)</span>
             </a>
@@ -75,12 +95,17 @@ export default function SiteNav() {
               ref={menuButtonRef}
               className="menu-toggle"
               type="button"
-              aria-label={isOpen ? "Close site navigation" : "Open site navigation"}
+              aria-label={
+                isOpen ? "Close site navigation" : "Open site navigation"
+              }
               aria-expanded={isOpen}
               aria-controls="mobile-site-navigation"
               onClick={() => setIsOpen((open) => !open)}
             >
-              <span aria-hidden="true" className={isOpen ? "menu-icon is-open" : "menu-icon"}>
+              <span
+                aria-hidden="true"
+                className={isOpen ? "menu-icon is-open" : "menu-icon"}
+              >
                 <span />
                 <span />
               </span>
@@ -95,15 +120,28 @@ export default function SiteNav() {
             <p className="mobile-nav-kicker">Explore Coach Tae</p>
             {links.map((link, index) => (
               <a key={link.href} href={link.href} onClick={closeMenu}>
-                <span className="mobile-nav-number">0{index + 1}</span>
+                <span className="mobile-nav-number" aria-hidden="true">
+                  0{index + 1}
+                </span>
                 {link.label}
-                <span className="mobile-nav-arrow" aria-hidden="true">↗</span>
+                <span className="mobile-nav-arrow" aria-hidden="true">
+                  ↗
+                </span>
               </a>
             ))}
-            <a href={shopUrl} target="_blank" rel="noopener noreferrer" onClick={closeMenu}>
-              <span className="mobile-nav-number">06</span>
+            <a
+              href={shopUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={closeMenu}
+            >
+              <span className="mobile-nav-number" aria-hidden="true">
+                06
+              </span>
               Shop DMV Attack
-              <span className="mobile-nav-arrow" aria-hidden="true">↗</span>
+              <span className="mobile-nav-arrow" aria-hidden="true">
+                ↗
+              </span>
               <span className="sr-only">(opens in a new tab)</span>
             </a>
           </div>
@@ -111,12 +149,12 @@ export default function SiteNav() {
       </header>
 
       <nav className="mobile-booking-bar" aria-label="Quick training booking">
-        <a href={individualBookingUrl} target="_blank" rel="noopener noreferrer">
+        <a href={privateUrl} target="_blank" rel="noopener noreferrer">
           <span>PRIVATE</span>
           <strong>Book 1-on-1</strong>
           <span className="sr-only">(opens in a new tab)</span>
         </a>
-        <a href={groupBookingUrl} target="_blank" rel="noopener noreferrer">
+        <a href={groupUrl} target="_blank" rel="noopener noreferrer">
           <span>SMALL GROUP</span>
           <strong>Book a group</strong>
           <span className="sr-only">(opens in a new tab)</span>

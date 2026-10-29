@@ -1,0 +1,18 @@
+{
+  "checked_at": "2026-10-28T22:50:00.401Z",
+  "checks": {},
+  "blockers": [
+    "Configure NEXT_PUBLIC_SUPABASE_URL securely",
+    "Configure NEXT_PUBLIC_SUPABASE_ANON_KEY securely",
+    "Configure SUPABASE_SERVICE_ROLE_KEY securely",
+    "Configure STRIPE_SECRET_KEY securely",
+    "Configure STRIPE_WEBHOOK_SECRET securely",
+    "Configure RESEND_API_KEY securely",
+    "Configure EMAIL_FROM securely",
+    "Configure CRON_SECRET securely",
+    "Configure APP_URL securely",
+    "Configure VERCEL_TOKEN securely",
+    "Configure VERCEL_PROJECT_ID securely"
+  ],
+  "hosted_acceptance": "NOT VERIFIED — account reads do not replace end-to-end hosted testing"
+}

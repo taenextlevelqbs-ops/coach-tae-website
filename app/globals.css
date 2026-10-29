@@ -232,7 +232,7 @@ button {
   text-decoration: none;
 }
 
-@media (max-width: 980px) {
+@media (max-width: 1180px) {
   .site-nav-inner {
     min-height: 70px;
     gap: 12px;

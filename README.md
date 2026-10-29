@@ -34,3 +34,21 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## Coach Tae booking and family platform
+
+The integrated booking, family portal, coach workspace, Stripe test checkout,
+Supabase migration, QB Lab, and notification worker are documented in
+[the platform runbook](docs/PLATFORM.md). Configuration names are in
+[docs/platform.env.example](docs/platform.env.example).
+
+Calendly remains the default until the staged replacement passes hosted
+acceptance. Live Stripe keys/events are disabled pending release approval.
+
+```bash
+npm run lint
+npm run typecheck
+npm test
+npm run build -- --webpack
+npm run test:e2e
+```
