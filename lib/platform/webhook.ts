@@ -1,4 +1,5 @@
 import "server-only";
+import { closeUnpaidCheckout, expireAndCloseCheckout } from "./close-checkout";
 import type Stripe from "stripe";
 import { catalog, isProductKey, validPrice } from "./catalog";
 import { checked, db, HttpError, payments } from "./server";
@@ -119,6 +120,50 @@ export async function processEvent(
       await reconcileCharge(`checkout-refund:${event.id}`, charge, services);
     if (typeof session.subscription === "string")
       await syncSubscription(event, session.subscription, services);
+  } else if (
+    event.type === "checkout.session.expired" ||
+    event.type === "checkout.session.async_payment_failed"
+  ) {
+    const session = await stripe.checkout.sessions.retrieve(
+      event.data.object.id,
+    );
+    if (
+      session.metadata?.platform !== "coach-tae" ||
+      session.payment_status === "paid"
+    )
+      return;
+    await closeUnpaidCheckout(
+      session,
+      event.id,
+      event.type === "checkout.session.expired" ? "expired" : "failed",
+      services,
+    );
+  } else if (event.type === "payment_intent.payment_failed") {
+    const intent = await stripe.paymentIntents.retrieve(event.data.object.id);
+    const id = intent.metadata.order_id;
+    if (
+      !id ||
+      !/^[0-9a-f-]{36}$/i.test(id) ||
+      !["requires_payment_method", "canceled"].includes(intent.status)
+    )
+      return;
+    const order = checked(
+      await client
+        .from("ct_orders")
+        .select("id,session_id,status")
+        .eq("id", id)
+        .maybeSingle(),
+    );
+    if (!order) return;
+    if (order.status !== "pending") return;
+    if (!order.session_id)
+      throw new HttpError(503, "Checkout is not yet bound; retry required.");
+    await expireAndCloseCheckout(
+      order.session_id,
+      event.id,
+      "failed",
+      services,
+    );
   } else if (
     [
       "customer.subscription.created",

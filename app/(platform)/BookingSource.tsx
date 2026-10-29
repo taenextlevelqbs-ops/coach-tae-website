@@ -5,16 +5,16 @@ export function NativeRecordNotice({
 }) {
   return (
     <div className="notice" role="note">
-      <strong>Calendly appointments are not synchronized here.</strong>
+      <strong>Earlier appointments may not appear here.</strong>
       <p>
         {scheduleEditor
-          ? "This editor changes native availability and native bookings only. It does not change Calendly availability, reschedule Calendly appointments, or send updates to Calendly families."
-          : "Booking counts, athlete records, payments and credits shown here cover this website’s native records only. An empty list does not mean you have no Calendly appointments. Manage Calendly bookings in Calendly."}
+          ? "This editor changes website availability and bookings. Reconcile every earlier appointment as occupied time before opening native availability; this editor does not change appointments in the previous calendar."
+          : "These counts and records cover website bookings. An empty list does not mean you have no earlier appointments. Contact Coach Tae to confirm an older appointment before booking it again."}
       </p>
       <p>
-        Calendly payments are not reconciled into website credits. Do not pay
-        separately for a session already paid in Calendly. QB Lab subscriptions
-        are separate from training appointments.
+        Earlier payments are not automatically converted into website credits.
+        Do not pay again for an existing appointment. QB Lab subscriptions are
+        separate from training appointments.
       </p>
     </div>
   );

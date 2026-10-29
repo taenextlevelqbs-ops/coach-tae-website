@@ -1,4 +1,4 @@
-import { AuthGate, CalendlyFallback } from "../Session";
+import { AuthGate } from "../Session";
 import Book from "./Book";
 export default function BookPage() {
   return (
@@ -22,15 +22,11 @@ export default function BookPage() {
       ) : (
         <>
           <div className="notice section-gap">
-            <strong>Schedule through Calendly.</strong>
+            <strong>Native booking is not open yet.</strong>
             <p>
-              Private and group appointments remain in Calendly. This page does
-              not collect a separate session payment or change existing
-              appointments.
+              Please contact Coach Tae before planning a new session. Existing
+              appointments are preserved.
             </p>
-          </div>
-          <div className="section-gap">
-            <CalendlyFallback />
           </div>
         </>
       )}

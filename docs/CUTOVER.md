@@ -1,5 +1,7 @@
 # Calendly-preserving release — October 29, 2026
 
+Superseded by the latest native-booking launch instruction. Current implementation, evidence and launch gates: [NATIVE-LAUNCH.md](NATIVE-LAUNCH.md).
+
 Current coordinated audit and payment/record-provenance fixes: [PAYMENT-RELEASE-AUDIT.md](PAYMENT-RELEASE-AUDIT.md). Training package purchases are paused while native booking is disabled; Calendly remains the scheduler.
 
 **Prepared in the repository; not deployed or certified for production.** The user authorizes production deployment after real hosted acceptance and preservation of existing appointments. They have not authorized live charges. The live business remains Coach Tae; no DMV Attack payment integration has been added.

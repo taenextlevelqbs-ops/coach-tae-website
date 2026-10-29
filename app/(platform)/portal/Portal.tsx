@@ -144,9 +144,24 @@ export default function Portal() {
     [year, setYear] = useState(""),
     [busy, setBusy] = useState(false),
     [notice, setNotice] = useState(""),
-    [checkout, setCheckout] = useState("");
+    [checkout, setCheckout] = useState(""),
+    [checkoutCancellation, setCheckoutCancellation] = useState("");
   useEffect(() => {
-    const value = new URLSearchParams(window.location.search).get("checkout");
+    const query = new URLSearchParams(window.location.search);
+    const value = query.get("checkout");
+    const order = query.get("order");
+    if (value === "cancelled" && order && /^[0-9a-f-]{36}$/i.test(order)) {
+      void api<{ released: boolean }>("checkout/cancel", { order_id: order })
+        .then((result) => {
+          setCheckoutCancellation(
+            result.released
+              ? "Unpaid Checkout closed and reservation released."
+              : "Payment may have completed. Refresh the portal; the reservation was not released.",
+          );
+          void refresh();
+        })
+        .catch((e) => setNotice(message(e)));
+    }
     if (value) {
       queueMicrotask(() => setCheckout(value));
       let count = 0;
@@ -219,7 +234,12 @@ export default function Portal() {
         <p className="notice" role="status">
           {checkout === "complete"
             ? "Checkout returned successfully. Confirmation and access appear only after Stripe payment verification. If the payment is still pending, refresh shortly."
-            : "Checkout was cancelled. Any unpaid reservation expires automatically."}
+            : "Checkout cancellation requested. Reservation release is confirmed separately; payment status is verified with Stripe."}
+        </p>
+      )}
+      {checkoutCancellation && (
+        <p className="notice" role="status">
+          {checkoutCancellation}
         </p>
       )}
       {notice && (

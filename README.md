@@ -42,9 +42,10 @@ Supabase migration, QB Lab, and notification worker are documented in
 [the platform runbook](docs/PLATFORM.md). Configuration names are in
 [docs/platform.env.example](docs/platform.env.example).
 
-Calendly remains available on homepage/mobile booking links and the booking page.
-Native booking stays gated until hosted acceptance passes; live charges remain
-unauthorized. See [release status](docs/CUTOVER.md) and the [payment audit](docs/PAYMENT-RELEASE-AUDIT.md). Website training package purchases are paused while native booking is disabled; Calendly payment requirements remain separate.
+The current release candidate routes public training links to native booking and
+includes upstream `67330a7`. Existing legacy appointments must be reconciled
+before cutover. See [native launch evidence and blockers](docs/NATIVE-LAUNCH.md).
+Production promotion and real charges remain gated on hosted acceptance.
 
 ```bash
 npm run lint

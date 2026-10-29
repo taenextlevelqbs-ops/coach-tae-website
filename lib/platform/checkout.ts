@@ -18,7 +18,7 @@ export function checkoutParams(input: {
     allowed_payment_method_types: ["card"],
     line_items: [{ price: input.price, quantity: 1 }],
     success_url: `${input.origin}/portal?checkout=complete`,
-    cancel_url: `${input.origin}/portal?checkout=cancelled`,
+    cancel_url: `${input.origin}/portal?checkout=cancelled&order=${input.id}`,
     expires_at: Math.floor(Date.parse(input.createdAt) / 1000) + 1860,
     allow_promotion_codes: false,
     adaptive_pricing: { enabled: false },

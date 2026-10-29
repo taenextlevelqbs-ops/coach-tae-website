@@ -152,7 +152,7 @@ test("production build guard blocks unaccepted commits, missing configuration an
       PLATFORM_BOOKING_ENABLED: "false",
       STRIPE_LIVE_ENABLED: "false",
     }).status,
-    0,
+    1,
   );
   assert.equal(
     run({

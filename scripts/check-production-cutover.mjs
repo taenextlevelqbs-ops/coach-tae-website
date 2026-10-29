@@ -8,11 +8,12 @@ if (
   );
   process.exitCode = 1;
 }
-if (
-  process.env.VERCEL_ENV === "production" &&
-  process.env.PLATFORM_BOOKING_ENABLED === "true"
-) {
+if (process.env.VERCEL_ENV === "production") {
   const issues = [];
+  if (process.env.PLATFORM_BOOKING_ENABLED !== "true")
+    issues.push(
+      "Native cutover requires PLATFORM_BOOKING_ENABLED=true after hosted acceptance.",
+    );
   const sha = process.env.VERCEL_GIT_COMMIT_SHA;
   if (
     !sha ||

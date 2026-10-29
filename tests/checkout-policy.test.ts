@@ -90,3 +90,70 @@ test("website Checkout cannot use live credentials or an override while webhook 
     else process.env.STRIPE_LIVE_ENABLED = flag;
   }
 });
+
+test("Checkout cancellation is authenticated, scoped to the parent, retry-safe and refuses an unbound in-flight Checkout", async () => {
+  const names = [
+    "APP_URL",
+    "NEXT_PUBLIC_SUPABASE_URL",
+    "SUPABASE_SERVICE_ROLE_KEY",
+  ];
+  const saved = Object.fromEntries(names.map((n) => [n, process.env[n]]));
+  const oldFetch = globalThis.fetch;
+  Object.assign(process.env, {
+    APP_URL: "https://coachtaeqb.com",
+    NEXT_PUBLIC_SUPABASE_URL: "https://fixture.supabase.co",
+    SUPABASE_SERVICE_ROLE_KEY: "fixture-only",
+  });
+  let found: Record<string, unknown> | null = null;
+  const queries: string[] = [];
+  globalThis.fetch = async (input) => {
+    const u = String(input);
+    queries.push(u);
+    if (u.includes("/auth/v1/user"))
+      return Response.json({
+        id: "11111111-1111-4111-8111-111111111111",
+        email: "parent@example.invalid",
+      });
+    if (u.includes("ct_coaches") || u.includes("ct_rate_limit"))
+      return Response.json(null);
+    if (u.includes("ct_families")) return new Response(null, { status: 201 });
+    if (u.includes("ct_orders")) return Response.json(found);
+    throw new Error("Unexpected downstream call");
+  };
+  const request = (auth = true) =>
+    POST(
+      new Request("https://coachtaeqb.com/api/platform/checkout/cancel", {
+        method: "POST",
+        headers: {
+          Origin: "https://coachtaeqb.com",
+          "Content-Type": "application/json",
+          ...(auth ? { Authorization: "Bearer fixture" } : {}),
+        },
+        body: JSON.stringify({
+          order_id: "22222222-2222-4222-8222-222222222222",
+        }),
+      }),
+      { params: Promise.resolve({ path: ["checkout", "cancel"] }) },
+    );
+  try {
+    assert.equal((await request(false)).status, 401);
+    assert.equal((await request()).status, 404);
+    assert.ok(
+      queries.some(
+        (u) =>
+          u.includes("ct_orders") &&
+          u.includes("family_id=eq.11111111-1111-4111-8111-111111111111"),
+      ),
+    );
+    found = { id: "22222222-2222-4222-8222-222222222222", status: "cancelled" };
+    assert.equal((await (await request()).json()).released, true);
+    found = { ...found, status: "pending", session_id: null };
+    assert.equal((await request()).status, 409);
+    assert.ok(!queries.some((u) => u.includes("stripe.com")));
+  } finally {
+    globalThis.fetch = oldFetch;
+    for (const name of names)
+      if (saved[name] === undefined) delete process.env[name];
+      else process.env[name] = saved[name];
+  }
+});

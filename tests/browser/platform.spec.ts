@@ -590,7 +590,7 @@ test("sign-out clears local access and explains when remote session revocation f
   ).toBeNull();
 });
 
-test("Calendly booking links remain available alongside gated native booking", async ({
+test("public private/group buttons route to native booking without an external calendar fallback", async ({
   page,
 }) => {
   await session(page);
@@ -599,28 +599,14 @@ test("Calendly booking links remain available alongside gated native booking", a
   const hrefs = await page
     .locator("a")
     .evaluateAll((links) => links.map((a) => a.getAttribute("href") || ""));
-  expect(hrefs).toContain(
-    "https://calendly.com/taenextlevelqbs/individual-training-clone",
-  );
-  expect(hrefs).toContain(
-    "https://calendly.com/taenextlevelqbs/group-training",
-  );
+  expect(hrefs).toContain("/book?kind=private");
+  expect(hrefs).toContain("/book?kind=group");
+  expect(hrefs.some((h) => /calendly/i.test(h))).toBe(false);
   await page.goto("/book?kind=group");
   await expect(
     page.getByRole("combobox", { name: "Training", exact: true }),
   ).toHaveValue("group");
-  await expect(
-    page.getByRole("link", { name: "Book private training ↗", exact: true }),
-  ).toHaveAttribute(
-    "href",
-    "https://calendly.com/taenextlevelqbs/individual-training-clone",
-  );
-  await expect(
-    page.getByRole("link", { name: "Book group training ↗", exact: true }),
-  ).toHaveAttribute(
-    "href",
-    "https://calendly.com/taenextlevelqbs/group-training",
-  );
+  expect(await page.content()).not.toMatch(/calendly/i);
   await noOverflow(page);
 });
 
@@ -707,7 +693,7 @@ test("native record and schedule notices do not claim Calendly appointments are 
   await mocks(page, { coach: true });
   await page.goto("/portal");
   await expect(page.getByRole("note")).toContainText(
-    "Calendly appointments are not synchronized here",
+    "Earlier appointments may not appear here",
   );
   await expect(
     page.getByText(
@@ -716,11 +702,31 @@ test("native record and schedule notices do not claim Calendly appointments are 
   ).toBeVisible();
   await page.goto("/coach");
   await expect(page.getByRole("note")).toContainText(
-    "An empty list does not mean you have no Calendly appointments",
+    "An empty list does not mean you have no earlier appointments",
   );
   await page.goto("/coach/schedule");
   await expect(page.getByRole("note")).toContainText(
-    "It does not change Calendly availability",
+    "this editor does not change appointments in the previous calendar",
   );
+  await noOverflow(page);
+});
+
+test("returning from simulated cancelled Checkout requests secure closure and displays its verified result", async ({
+  page,
+}) => {
+  await session(page);
+  await mocks(page);
+  const orderId = "66666666-6666-4666-8666-666666666666";
+  await page.route("**/api/platform/checkout/cancel", (route) => {
+    expect(route.request().method()).toBe("POST");
+    expect(route.request().postDataJSON()).toEqual({ order_id: orderId });
+    return route.fulfill({ json: { released: true } });
+  });
+  await page.goto(`/portal?checkout=cancelled&order=${orderId}`);
+  await expect(
+    page.getByText("Unpaid Checkout closed and reservation released.", {
+      exact: true,
+    }),
+  ).toBeVisible();
   await noOverflow(page);
 });

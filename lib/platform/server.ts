@@ -3,6 +3,7 @@ import { createClient } from "@supabase/supabase-js";
 import Stripe from "stripe";
 import { z } from "zod";
 import { catalog, type ProductKey, validPrice } from "./catalog";
+import { liveAccount } from "./live-catalog";
 
 export class HttpError extends Error {
   constructor(
@@ -135,11 +136,21 @@ export function failure(error: unknown) {
 }
 export const uuid = z.string().uuid();
 export const kind = z.enum(["private", "group"]);
+export async function assertCoachTaeAccount(stripe: Stripe) {
+  const account = await stripe.accounts.retrieve(null);
+  if (account.id !== liveAccount)
+    throw new HttpError(
+      503,
+      "Stripe credentials do not belong to the approved CoachTae account.",
+    );
+}
 export async function verifiedPrice(key: ProductKey) {
   const id = required(catalog[key].env);
   if (!/^price_[A-Za-z0-9]+$/.test(id))
     throw new HttpError(503, "A verified Stripe Price ID is required.");
-  const price = await payments().prices.retrieve(id, { expand: ["product"] });
+  const stripe = payments();
+  await assertCoachTaeAccount(stripe);
+  const price = await stripe.prices.retrieve(id, { expand: ["product"] });
   if (
     price.livemode ||
     !validPrice(key, price) ||
