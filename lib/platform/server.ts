@@ -1,4 +1,5 @@
 import "server-only";
+import { liveAccount } from "./live-catalog";
 import { createClient } from "@supabase/supabase-js";
 import Stripe from "stripe";
 import { z } from "zod";
@@ -40,11 +41,17 @@ export function siteUrl() {
 export function payments() {
   const key = required("STRIPE_SECRET_KEY");
   const testKey = key.startsWith("sk_test_") || key.startsWith("rk_test_");
-  // Fulfillment currently rejects live events; Checkout must enforce the same mode.
-  if (!testKey || process.env.STRIPE_LIVE_ENABLED === "true")
+  const liveKey = key.startsWith("sk_live_") || key.startsWith("rk_live_");
+  if (
+    (!testKey && !liveKey) ||
+    (liveKey &&
+      (process.env.STRIPE_LIVE_ENABLED !== "true" ||
+        process.env.STRIPE_ACCOUNT_ID !== liveAccount)) ||
+    (testKey && process.env.STRIPE_LIVE_ENABLED === "true")
+  )
     throw new HttpError(
       503,
-      "Live website payments are disabled pending hosted validation.",
+      "Payment mode is not verified for this deployment.",
     );
   return new Stripe(key, { maxNetworkRetries: 2, timeout: 20000 });
 }
@@ -139,9 +146,13 @@ export async function verifiedPrice(key: ProductKey) {
   const id = required(catalog[key].env);
   if (!/^price_[A-Za-z0-9]+$/.test(id))
     throw new HttpError(503, "A verified Stripe Price ID is required.");
-  const price = await payments().prices.retrieve(id, { expand: ["product"] });
+  const stripe = payments();
+  const live = /^(sk|rk)_live_/.test(required("STRIPE_SECRET_KEY"));
+  if (live && (await stripe.accounts.retrieveCurrent()).id !== liveAccount)
+    throw new HttpError(503, "Coach Tae payment account does not match.");
+  const price = await stripe.prices.retrieve(id, { expand: ["product"] });
   if (
-    price.livemode ||
+    price.livemode !== live ||
     !validPrice(key, price) ||
     typeof price.product === "string" ||
     price.product.deleted ||

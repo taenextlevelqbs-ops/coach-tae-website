@@ -43,8 +43,9 @@ export default function Purchase({
       </button>
       {trainingPaused ? (
         <p className="muted">
-          Training package purchases are paused while scheduling uses Calendly.
-          Existing credits remain recorded; contact Coach Tae about redemption.
+          Training package purchases are paused until native booking is verified
+          and open. Existing credits remain recorded; contact Coach Tae about
+          redemption.
         </p>
       ) : (
         !products.includes(product) && (

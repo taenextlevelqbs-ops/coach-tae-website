@@ -9,11 +9,7 @@ import {
 } from "react";
 import { authMessage, OTP_COOLDOWN_SECONDS } from "@/lib/platform/auth";
 import type { User } from "@supabase/supabase-js";
-import {
-  browser,
-  groupCalendly,
-  privateCalendly,
-} from "@/lib/platform/browser";
+import { browser } from "@/lib/platform/browser";
 import type { ProductKey } from "@/lib/platform/catalog";
 const Context = createContext<{
   user: User | null;
@@ -82,35 +78,6 @@ export function SessionProvider({
   );
 }
 export const useSession = () => useContext(Context);
-export function CalendlyFallback() {
-  return (
-    <div className="notice stack">
-      <strong>Book with Coach Tae</strong>
-      <p>
-        Choose private or group scheduling in Calendly. Follow any payment
-        instructions shown there; do not purchase the same session separately.
-      </p>
-      <div className="row">
-        <a
-          className="button"
-          href={privateCalendly}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Book private training ↗
-        </a>
-        <a
-          className="button secondary"
-          href={groupCalendly}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Book group training ↗
-        </a>
-      </div>
-    </div>
-  );
-}
 export function AuthGate({ children }: { children: ReactNode }) {
   const { user, loading, configured } = useSession();
   const [email, setEmail] = useState(""),
@@ -199,11 +166,10 @@ export function AuthGate({ children }: { children: ReactNode }) {
         <div className="notice">
           <strong>The family platform is not open yet.</strong>
           <p>
-            Secure family sign-in is being configured. Current training bookings
-            remain available below.
+            Secure family sign-in is temporarily unavailable. Existing
+            appointments remain reserved. Please contact Coach Tae.
           </p>
         </div>
-        <CalendlyFallback />
       </div>
     );
   if (user)

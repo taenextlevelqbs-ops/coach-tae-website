@@ -590,7 +590,7 @@ test("sign-out clears local access and explains when remote session revocation f
   ).toBeNull();
 });
 
-test("Calendly booking links remain available alongside gated native booking", async ({
+test("all public booking links use the native date/time flow", async ({
   page,
 }) => {
   await session(page);
@@ -600,27 +600,16 @@ test("Calendly booking links remain available alongside gated native booking", a
     .locator("a")
     .evaluateAll((links) => links.map((a) => a.getAttribute("href") || ""));
   expect(hrefs).toContain(
-    "https://calendly.com/taenextlevelqbs/individual-training-clone",
+    "/book?kind=private",
   );
   expect(hrefs).toContain(
-    "https://calendly.com/taenextlevelqbs/group-training",
+    "/book?kind=group",
   );
   await page.goto("/book?kind=group");
   await expect(
     page.getByRole("combobox", { name: "Training", exact: true }),
   ).toHaveValue("group");
-  await expect(
-    page.getByRole("link", { name: "Book private training ↗", exact: true }),
-  ).toHaveAttribute(
-    "href",
-    "https://calendly.com/taenextlevelqbs/individual-training-clone",
-  );
-  await expect(
-    page.getByRole("link", { name: "Book group training ↗", exact: true }),
-  ).toHaveAttribute(
-    "href",
-    "https://calendly.com/taenextlevelqbs/group-training",
-  );
+  await expect(page.locator('a[href*="calendly.com"]')).toHaveCount(0);
   await noOverflow(page);
 });
 
@@ -707,7 +696,7 @@ test("native record and schedule notices do not claim Calendly appointments are 
   await mocks(page, { coach: true });
   await page.goto("/portal");
   await expect(page.getByRole("note")).toContainText(
-    "Calendly appointments are not synchronized here",
+    "Native training records",
   );
   await expect(
     page.getByText(
@@ -716,11 +705,11 @@ test("native record and schedule notices do not claim Calendly appointments are 
   ).toBeVisible();
   await page.goto("/coach");
   await expect(page.getByRole("note")).toContainText(
-    "An empty list does not mean you have no Calendly appointments",
+    "Preserved external appointments appear as occupied times",
   );
   await page.goto("/coach/schedule");
   await expect(page.getByRole("note")).toContainText(
-    "It does not change Calendly availability",
+    "Schedule edits respect preserved appointment blocks",
   );
   await noOverflow(page);
 });

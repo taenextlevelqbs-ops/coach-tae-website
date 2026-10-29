@@ -24,6 +24,6 @@ export async function api<T>(path: string, body?: unknown): Promise<T> {
   return data;
 }
 export const privateCalendly =
-  "https://calendly.com/taenextlevelqbs/individual-training-clone";
+  "/book?kind=private";
 export const groupCalendly =
-  "https://calendly.com/taenextlevelqbs/group-training";
+  "/book?kind=group";

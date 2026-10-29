@@ -1,10 +1,11 @@
 /** Prevent an automatic production push from cutting over before hosted acceptance. */
 if (
   process.env.VERCEL_ENV === "production" &&
-  process.env.STRIPE_LIVE_ENABLED === "true"
+  process.env.STRIPE_LIVE_ENABLED === "true" &&
+  process.env.STRIPE_ACCOUNT_ID !== "acct_1UVeHrQGpLTTSzQv"
 ) {
   console.error(
-    "Production release blocked: live Stripe activation is not authorized.",
+    "Production booking cutover blocked: Coach Tae Stripe account identity must be pinned.",
   );
   process.exitCode = 1;
 }
@@ -46,11 +47,12 @@ if (
   for (const name of required)
     if (!process.env[name]) issues.push(`Missing production binding: ${name}.`);
   if (
-    !/^(sk|rk)_test_/.test(process.env.STRIPE_SECRET_KEY || "") ||
-    process.env.STRIPE_LIVE_ENABLED === "true"
+    !/^(sk|rk)_(test|live)_/.test(process.env.STRIPE_SECRET_KEY || "") ||
+    /^(sk|rk)_live_/.test(process.env.STRIPE_SECRET_KEY || "") !==
+      (process.env.STRIPE_LIVE_ENABLED === "true")
   )
     issues.push(
-      "This cutover requires Stripe test mode; live payments are not authorized.",
+      "Stripe credential mode and the explicit live-payment flag must agree.",
     );
   if ((process.env.CRON_SECRET || "").length < 32)
     issues.push("A strong production CRON_SECRET is required.");

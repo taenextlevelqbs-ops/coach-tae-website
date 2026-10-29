@@ -1,3 +1,19 @@
+# Current native booking release — October 29, 2026
+
+The current user instruction supersedes the historical Calendly-preserving notes below: public booking links now use `/book?kind=private` and `/book?kind=group`; there is no public Calendly fallback. Existing appointments have not been cancelled or modified.
+
+Two actual upcoming Calendly appointments were read through the connected account and imported into the existing Coach Tae database as protected occupied intervals including their 15-minute buffers. The existing Sunday private/group windows were read from Calendly; native rules now provide 24 upcoming slots with zero overlaps against those protected intervals. Group capacity of 20 was verified from an unbooked available Calendly group slot. Native bookings remain closed until genuine Stripe test-mode hosted acceptance passes; no acceptance marker has been fabricated.
+
+The hosted database's booking/RLS/schema objects were inspected. A rolled-back hosted SQL acceptance check verified unpaid reservations remain held and a second private reservation is rejected. The new minute reservation-expiry Cron job has executed successfully. Local PostgreSQL tests cover capacity races, credits, paid fulfillment, refunds and family isolation.
+
+Checkout and webhook code now support consistent, explicitly gated Stripe modes. Live mode requires the pinned existing Coach Tae account and account verification; test/live webhook mismatches are rejected. The existing six live prices and live webhook endpoint were read and verified through Stripe. The connected Stripe tool session exposes only the live CoachTae account; an explicit test-mode access attempt was rejected. Real hosted test payment and Stripe-delivered webhook acceptance remain blocked by missing test-mode access. Live booking activation has not been enabled.
+
+A signed, read-only `/api/command-center` integration keeps the existing business credentials inside this deployment. It supplies native operational records and verified-account Stripe reporting to the existing Digital Command Center. `/api/command-center/health` exposes only aggregate diagnostics to a short-lived signature. Secrets are stored in sensitive Vercel variables; none belong in source.
+
+The following notes are historical checkpoints, not the current public-booking requirement.
+
+---
+
 # Calendly-preserving release — October 29, 2026
 
 Current coordinated audit and payment/record-provenance fixes: [PAYMENT-RELEASE-AUDIT.md](PAYMENT-RELEASE-AUDIT.md). Training package purchases are paused while native booking is disabled; Calendly remains the scheduler.

@@ -43,3 +43,5 @@ next-env.d.ts
 # Platform test artifacts
 /playwright-report/
 /test-results/
+
+work/

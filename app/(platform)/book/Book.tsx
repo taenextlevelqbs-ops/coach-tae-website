@@ -328,8 +328,8 @@ export default function Book() {
           </p>
         )}
         <p className="auth-note">
-          Stripe integration is in test mode. Live payments are disabled pending
-          release approval.
+          Payment is handled securely by Stripe. A pending reservation is not a
+          confirmed booking.
         </p>
       </section>
     </div>

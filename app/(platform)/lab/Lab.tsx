@@ -393,8 +393,7 @@ export default function Lab() {
             </p>
           )}
           <p className="auth-note">
-            Stripe test mode only. Live subscriptions remain disabled pending
-            release approval.
+            Payments are handled by Stripe. New paid subscriptions require verified payment configuration.
           </p>
         </>
       )}

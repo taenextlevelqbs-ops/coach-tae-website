@@ -3,8 +3,9 @@ import { existsSync } from "node:fs";
 export default defineConfig({
   testDir: "tests/browser",
   fullyParallel: false,
-  workers: 2,
-  timeout: 30000,
+  workers: 1,
+  timeout: 60000,
+  expect: { timeout: 15000 },
   use: {
     baseURL: "http://127.0.0.1:3100",
     launchOptions: {

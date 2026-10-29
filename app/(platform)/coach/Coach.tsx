@@ -172,7 +172,7 @@ export default function Coach() {
       <NativeRecordNotice />
       <div className="row between">
         <p className="notice">
-          Staging workflow · Stripe test mode only. Reports below show at most
+          Operational reports show at most
           1,000 rows per dataset; they are operational summaries, not accounting
           statements.
         </p>

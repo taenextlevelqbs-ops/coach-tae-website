@@ -1,3 +1,4 @@
+import { liveAccount } from "@/lib/platform/live-catalog";
 import { dispatchNotifications } from "@/lib/platform/dispatch";
 import { failure, HttpError, payments, required } from "@/lib/platform/server";
 import { processEvent } from "@/lib/platform/webhook";
@@ -19,6 +20,11 @@ export async function POST(req: Request) {
     } catch {
       throw new HttpError(400, "Invalid webhook signature.");
     }
+    const live = /^(sk|rk)_live_/.test(required("STRIPE_SECRET_KEY"));
+    if (event.livemode !== live)
+      throw new HttpError(400, "Webhook payment mode mismatch.");
+    if (live && (await stripe.accounts.retrieveCurrent()).id !== liveAccount)
+      throw new HttpError(400, "Webhook payment account mismatch.");
     await processEvent(event);
     dispatchNotifications();
     return Response.json({ received: true });

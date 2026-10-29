@@ -11,7 +11,7 @@ export async function processEvent(
   event: Stripe.Event,
   services: WebhookServices = { client: db(), stripe: payments() },
 ) {
-  if (event.livemode)
+  if (event.livemode && process.env.STRIPE_LIVE_ENABLED !== "true")
     throw new HttpError(400, "Live payment processing is disabled.");
   const { client, stripe } = services;
   if (

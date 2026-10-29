@@ -345,7 +345,7 @@ export default function Portal() {
           <p className="muted">
             Credits are shared by athletes in your family. Private and group
             credits remain separate. Purchases are currently restricted to
-            Stripe test mode.
+            Payments are handled securely by Stripe.
           </p>
         </div>
         <div className="grid">
