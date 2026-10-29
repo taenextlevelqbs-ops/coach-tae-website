@@ -23,7 +23,3 @@ export async function api<T>(path: string, body?: unknown): Promise<T> {
   if (!response.ok) throw new Error(data.error || "Please try again.");
   return data;
 }
-export const privateCalendly =
-  "/book?kind=private";
-export const groupCalendly =
-  "/book?kind=group";

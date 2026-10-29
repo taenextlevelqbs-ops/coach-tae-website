@@ -1059,3 +1059,172 @@ test("occupied-time import rolls back a whole conflicting batch and refuses sile
     "1",
   );
 });
+
+test("cancelled, failed and expired Checkout release unpaid capacity exactly once and cannot undo payment", async () => {
+  for (const state of ["cancelled", "failed", "expired"]) {
+    const s = await slot(
+      "group",
+      2,
+      96 + ["cancelled", "failed", "expired"].indexOf(state) * 3,
+    );
+    const b = await book(s, family, athlete, false);
+    const id = await order("group", b.id);
+    const event = randomUUID();
+    const args = [event, id, `cs_${id}`, state];
+    assert.equal(
+      (await pool.query("select ct_close_checkout($1,$2,$3,$4) n", args))
+        .rows[0].n,
+      true,
+    );
+    assert.equal(
+      (await pool.query("select ct_close_checkout($1,$2,$3,$4) n", args))
+        .rows[0].n,
+      false,
+    );
+    assert.equal(
+      (await pool.query("select status from ct_orders where id=$1", [id]))
+        .rows[0].status,
+      state,
+    );
+    assert.equal(
+      (await pool.query("select status from ct_bookings where id=$1", [b.id]))
+        .rows[0].status,
+      state === "expired" ? "expired" : "cancelled",
+    );
+    await fulfill(id, randomUUID(), 6000);
+    assert.equal(
+      (await pool.query("select status from ct_orders where id=$1", [id]))
+        .rows[0].status,
+      "refund_pending",
+    );
+    assert.equal(
+      (
+        await pool.query(
+          "select count(*) n from ct_outbox where kind='refund' and payload->>'order_id'=$1",
+          [id],
+        )
+      ).rows[0].n,
+      "1",
+    );
+  }
+  const s = await slot("private", 1, 120),
+    b = await book(s, family, athlete, false),
+    id = await order("private", b.id);
+  await fulfill(id, randomUUID(), 8500);
+  assert.equal(
+    (
+      await pool.query("select ct_close_checkout($1,$2,$3,'expired') n", [
+        randomUUID(),
+        id,
+        `cs_${id}`,
+      ])
+    ).rows[0].n,
+    false,
+  );
+  assert.equal(
+    (await pool.query("select status from ct_bookings where id=$1", [b.id]))
+      .rows[0].status,
+    "confirmed",
+  );
+});
+
+test("Checkout closure is service-only and refuses mismatched sessions without releasing the booking", async () => {
+  const s = await slot(),
+    b = await book(s, family, athlete, false),
+    id = await order("private", b.id);
+  await assert.rejects(
+    pool.query("select ct_close_checkout($1,$2,'cs_wrong','cancelled')", [
+      randomUUID(),
+      id,
+    ]),
+    /mismatch/,
+  );
+  assert.equal(
+    (await pool.query("select status from ct_bookings where id=$1", [b.id]))
+      .rows[0].status,
+    "held",
+  );
+  const c = await pool.connect();
+  try {
+    await c.query("begin");
+    await c.query("set local role authenticated");
+    await assert.rejects(
+      c.query("select ct_close_checkout('test',$1,$2,'cancelled')", [
+        id,
+        `cs_${id}`,
+      ]),
+      /permission denied/,
+    );
+    await c.query("rollback");
+  } finally {
+    c.release();
+  }
+});
+
+test("simultaneous unpaid group holds stop at capacity and released Checkout capacity can be reserved again", async () => {
+  const s = await slot("group", 2),
+    third = randomUUID();
+  await pool.query(
+    "insert into ct_athletes(id,family_id,name) values($1,$2,'Third fixture')",
+    [third, other],
+  );
+  const inputs = [
+    [family, athlete],
+    [other, otherAthlete],
+    [other, third],
+  ];
+  const results = await Promise.allSettled(
+    inputs.map(([f, a]) => book(s, f, a, false)),
+  );
+  assert.equal(results.filter((r) => r.status === "fulfilled").length, 2);
+  const winners = results.filter(
+    (r): r is PromiseFulfilledResult<Awaited<ReturnType<typeof book>>> =>
+      r.status === "fulfilled",
+  );
+  assert.ok(winners.every((r) => r.value.status === "held" && !r.value.paid));
+  const winner =
+    winners.find((r) => r.value.family_id === family) || winners[0];
+  const oid = randomUUID();
+  await pool.query(
+    "insert into ct_orders(id,family_id,product_key,price_id,booking_id,session_id) values($1,$2,'group','price_fixture',$3,$4)",
+    [oid, winner.value.family_id, winner.value.id, `cs_${oid}`],
+  );
+  await pool.query("select ct_close_checkout($1,$2,$3,'expired')", [
+    randomUUID(),
+    oid,
+    `cs_${oid}`,
+  ]);
+  const loser = results.findIndex((r) => r.status === "rejected"),
+    [f, a] = inputs[loser];
+  assert.equal((await book(s, f, a, false)).status, "held");
+  assert.equal(
+    (
+      await pool.query(
+        "select count(*) n from ct_bookings where slot_id=$1 and status='held'",
+        [s],
+      )
+    ).rows[0].n,
+    "2",
+  );
+});
+
+test("a verified late-paid Lab checkout records payment without inventing an unfulfillable booking refund", async () => {
+  const id = await order("lab_monthly");
+  await pool.query("select ct_close_checkout($1,$2,$3,'cancelled')", [
+    randomUUID(),
+    id,
+    `cs_${id}`,
+  ]);
+  await fulfill(id, randomUUID(), 999);
+  assert.equal(
+    (await pool.query("select status from ct_orders where id=$1", [id])).rows[0]
+      .status,
+    "paid",
+  );
+  assert.equal(
+    (await pool.query("select count(*) n from ct_outbox where kind='refund'"))
+      .rows[0].n,
+    "0",
+  );
+  assert.equal(await balance(), 0);
+});

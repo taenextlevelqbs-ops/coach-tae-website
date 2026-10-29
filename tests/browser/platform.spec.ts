@@ -713,3 +713,23 @@ test("native record and schedule notices do not claim Calendly appointments are 
   );
   await noOverflow(page);
 });
+
+test("returning from simulated cancelled Checkout requests secure closure and displays its verified result", async ({
+  page,
+}) => {
+  await session(page);
+  await mocks(page);
+  const orderId = "66666666-6666-4666-8666-666666666666";
+  await page.route("**/api/platform/checkout/cancel", (route) => {
+    expect(route.request().method()).toBe("POST");
+    expect(route.request().postDataJSON()).toEqual({ order_id: orderId });
+    return route.fulfill({ json: { released: true } });
+  });
+  await page.goto(`/portal?checkout=cancelled&order=${orderId}`);
+  await expect(
+    page.getByText("Unpaid Checkout closed and reservation released.", {
+      exact: true,
+    }),
+  ).toBeVisible();
+  await noOverflow(page);
+});

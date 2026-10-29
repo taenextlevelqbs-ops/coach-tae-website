@@ -69,6 +69,10 @@ test("checkout always uses configured Price ID, server-selected mode, same-origi
     payload.success_url,
     "https://staging.example.invalid/portal?checkout=complete",
   );
+  assert.equal(
+    payload.cancel_url,
+    "https://staging.example.invalid/portal?checkout=cancelled&order=order-fixture",
+  );
   assert.deepEqual(checkoutParams(input), payload);
   assert.equal(payload.expires_at, Date.parse(input.createdAt) / 1000 + 1860);
   assert.equal(
@@ -334,4 +338,24 @@ test("refund webhooks reconcile only settled amounts and reject mismatched payme
     /Refund payment mismatch/,
   );
   assert.equal(calls.length, 1);
+});
+
+test("Checkout price verification must use the approved CoachTae account, never another business's key", async () => {
+  const { assertCoachTaeAccount } = await import("../lib/platform/server");
+  const { liveAccount } = await import("../lib/platform/live-catalog");
+  for (const account of [liveAccount, "acct_unrelated_business"]) {
+    const stripe = new Stripe("sk_test_fixture_not_real", {
+      httpClient: Stripe.createFetchHttpClient(async (url, init) => {
+        assert.equal(String(url), "https://api.stripe.com/v1/account");
+        assert.equal(init?.method, "GET");
+        return Response.json({ id: account });
+      }),
+    });
+    if (account === liveAccount) await assertCoachTaeAccount(stripe);
+    else
+      await assert.rejects(
+        assertCoachTaeAccount(stripe),
+        /approved CoachTae account/,
+      );
+  }
 });

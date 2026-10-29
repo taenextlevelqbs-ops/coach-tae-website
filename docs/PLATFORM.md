@@ -1,5 +1,7 @@
 # Coach Tae platform implementation and release runbook
 
+Current native launch status supersedes earlier Calendly-preserving notes: [NATIVE-LAUNCH.md](NATIVE-LAUNCH.md). Six ordered migrations now include Checkout closure and late-payment recovery; inspect hosted history before applying.
+
 The existing Next.js 16 / React 19 / Tailwind website is preserved. The checkout contained no Supabase migrations, Stripe configuration, Vercel project binding, service credentials, or Price IDs when implementation began. No hosted schema was accessible for inspection. No remote migration, deployment, live payment, or production configuration change has been performed. The integration preflight was rerun for the final-integration request and still found no service bindings; see `docs/INTEGRATION-STATUS.json`.
 
 ## What is implemented
@@ -61,7 +63,7 @@ For cloud execution, allow the selected Supabase project's hostname, `api.stripe
 ## Safe database setup
 
 1. Inspect/export your actual Supabase schema and migration history first. The repository has no prior schema; the remote schema remains unverified. Confirm there are no existing `ct_*` objects and review the migration against your backup/staging branch. Do not run the file over an unknown production project.
-2. Apply all five ordered SQL files under `supabase/migrations/` to staging through your existing migration workflow or the Supabase SQL editor. Migration 001 creates isolated prefixed objects; 002 extends those objects for windows, learning metadata and nonnegative credit recovery; 003 inserts the original curriculum without overwriting existing coach edits; 004 adds cumulative partial-refund reconciliation; 005 adds transactional legacy occupied-time reconciliation. Each is transactional, preserves existing application tables/auth policies, and must be checked against actual hosted migration history before applying. Normal migration history must prevent applying it twice.
+2. Apply all six ordered SQL files under `supabase/migrations/` to staging through your existing migration workflow or the Supabase SQL editor. Migration 001 creates isolated prefixed objects; 002 extends those objects for windows, learning metadata and nonnegative credit recovery; 003 inserts the original curriculum without overwriting existing coach edits; 004 adds cumulative partial-refund reconciliation; 005 adds transactional legacy occupied-time reconciliation. Each is transactional, preserves existing application tables/auth policies, and must be checked against actual hosted migration history before applying. Normal migration history must prevent applying it twice.
 3. Confirm every `ct_*` table has RLS enabled, anon has no table access, and authenticated clients cannot write tables or execute mutation functions. Families may read only their own records. Premium lesson bodies and correct quiz answers are served through the entitled API; direct browser lesson reads are coach-only. Service-role credentials must remain backend-only.
 4. In Supabase Auth, enable email OTP, configure your real SMTP provider, site origin and allowed redirects. The email template must show `{{ .Token }}`; the interface verifies the numeric email code directly and does not rely on a magic-link callback route. Configure rate limits/CAPTCHA and email deliverability for your expected traffic before release.
 5. Sign in with Coach Tae's actual account, then add that existing Auth user ID to `ct_coaches` using the privileged SQL editor:
@@ -77,7 +79,8 @@ insert into public.ct_coaches(user_id) values ('<verified-coach-auth-user-uuid>'
 
 Configure a test webhook at `/api/stripe/webhook` for:
 
-- `checkout.session.completed`, `checkout.session.async_payment_succeeded`
+- `checkout.session.completed`, `checkout.session.async_payment_succeeded`, `checkout.session.expired`, `checkout.session.async_payment_failed`
+- `payment_intent.payment_failed`
 - `customer.subscription.created`, `customer.subscription.updated`, `customer.subscription.deleted`
 - `invoice.paid`, `invoice.payment_failed`, `invoice.payment_action_required`
 - `charge.refunded`, `refund.created`, `refund.updated`, `refund.failed`

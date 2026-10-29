@@ -1,3 +1,4 @@
+import { expireAndCloseCheckout } from "@/lib/platform/close-checkout";
 import {
   createsNotifications,
   dispatchNotifications,
@@ -75,7 +76,7 @@ export async function GET(req: Request, ctx: Context) {
         client
           .from("ct_orders")
           .select(
-            "id,product_key,status,amount,refunded_amount,currency,created_at",
+            "id,product_key,status,amount,refunded_amount,currency,created_at,booking_id",
           )
           .eq("family_id", user.id)
           .order("created_at", { ascending: false })
@@ -363,6 +364,37 @@ export async function POST(req: Request, ctx: Context) {
           }),
         ),
       });
+    }
+    if (path === "checkout/cancel") {
+      const b = z.object({ order_id: uuid }).parse(input);
+      const order = checked(
+        await client
+          .from("ct_orders")
+          .select("*")
+          .eq("id", b.order_id)
+          .eq("family_id", user.id)
+          .maybeSingle(),
+      );
+      if (!order) throw new HttpError(404, "Checkout not found.");
+      if (["cancelled", "expired", "failed"].includes(order.status))
+        return reply({ released: true });
+      if (order.status !== "pending")
+        throw new HttpError(
+          409,
+          "Payment is already processed. Refresh your portal.",
+        );
+      if (!order.session_id)
+        throw new HttpError(
+          409,
+          "Checkout is still being prepared. Retry shortly; the unpaid hold still expires automatically.",
+        );
+      const released = await expireAndCloseCheckout(
+        order.session_id,
+        `cancel:${order.id}`,
+        "cancelled",
+        { client, stripe: payments() },
+      );
+      return reply({ released });
     }
     if (path === "checkout") {
       const b = z
