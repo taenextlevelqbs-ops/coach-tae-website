@@ -4,7 +4,7 @@ import { createClient } from "@supabase/supabase-js";
 import Stripe from "stripe";
 import { z } from "zod";
 import { catalog, type ProductKey, validPrice } from "./catalog";
-import { liveAccount } from "./live-catalog";
+
 
 export class HttpError extends Error {
   constructor(
