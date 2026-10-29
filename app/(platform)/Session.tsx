@@ -107,7 +107,8 @@ export function AuthGate({ children }: { children: ReactNode }) {
     [sent, setSent] = useState(false),
     [busy, setBusy] = useState(false),
     [error, setError] = useState(""),
-    [remaining, setRemaining] = useState(0);
+    [remaining, setRemaining] = useState(0),
+    [logoutError, setLogoutError] = useState("");
   const pending = useRef(false);
   const retryAt = useRef(0);
   useEffect(() => {
@@ -201,13 +202,46 @@ export function AuthGate({ children }: { children: ReactNode }) {
           <span className="muted">Signed in as {user.email}</span>
           <button
             className="secondary"
+            disabled={busy}
             onClick={async () => {
-              await browser()?.auth.signOut();
+              if (pending.current) return;
+              pending.current = true;
+              setBusy(true);
+              setLogoutError("");
+              try {
+                const client = browser();
+                if (!client) throw new Error("AuthUnavailable");
+                const result = await client.auth.signOut();
+                if (result.error) {
+                  const { data, error: sessionError } =
+                    await client.auth.getSession();
+                  if (sessionError || data.session) throw result.error;
+                  setLogoutError(
+                    "You are signed out on this device, but sign-out on other devices could not be confirmed. Sign in again to retry signing out of all devices.",
+                  );
+                }
+                setSent(false);
+                setCode("");
+                setEmail("");
+                setError("");
+              } catch {
+                setLogoutError(
+                  "Sign-out could not be completed. Check your connection and try again.",
+                );
+              } finally {
+                pending.current = false;
+                setBusy(false);
+              }
             }}
           >
-            Sign out
+            {busy ? "Signing out…" : "Sign out"}
           </button>
         </div>
+        {logoutError && (
+          <p role="alert" className="notice error">
+            {logoutError}
+          </p>
+        )}
         {children}
       </div>
     );
@@ -218,6 +252,11 @@ export function AuthGate({ children }: { children: ReactNode }) {
         Sign in or create your parent account with a one-time email code. No
         password to remember.
       </p>
+      {logoutError && (
+        <p role="alert" className="notice error">
+          {logoutError}
+        </p>
+      )}
       <form onSubmit={submit}>
         <label>
           Parent email

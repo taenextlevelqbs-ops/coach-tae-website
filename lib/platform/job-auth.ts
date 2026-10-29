@@ -9,5 +9,6 @@ export function matchesJobEnvironment(
   marker: string | null,
   environment: string | undefined,
 ) {
+  if (marker === "production") return environment === "production";
   return !(marker === "preview" && environment === "production");
 }

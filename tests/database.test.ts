@@ -877,3 +877,75 @@ test("external scheduler fails closed for exposed request queues or a non-previe
     c.release();
   }
 });
+
+test("production minute scheduler targets only the production domain, preserves preview jobs, and protects dispatch and metadata", async () => {
+  await schedulerFixture();
+  await pool.query(
+    await readFile(
+      "supabase/operations/preview-notification-scheduler.sql",
+      "utf8",
+    ),
+  );
+  const secret = randomUUID();
+  await pool.query(
+    "insert into vault.decrypted_secrets values('coach_tae_production_jobs_url','https://coachtaeqb.com/api/jobs'),('coach_tae_production_cron_secret',$1)",
+    [secret],
+  );
+  const sql = await readFile(
+    "supabase/operations/production-notification-scheduler.sql",
+    "utf8",
+  );
+  await pool.query(sql);
+  await pool.query(sql);
+  const jobs = (
+    await pool.query(
+      "select jobname,schedule,command from cron.job order by jobname",
+    )
+  ).rows;
+  assert.equal(jobs.length, 2);
+  const production = jobs.find(
+    (j) => j.jobname === "coach-tae-production-notifications",
+  );
+  assert.equal(production.schedule, "* * * * *");
+  assert.equal(
+    production.command,
+    "select public.ct_dispatch_production_notifications();",
+  );
+  assert.ok(!production.command.includes(secret));
+  await pool.query(production.command);
+  const request = (await pool.query("select * from net.http_request_queue"))
+    .rows[0];
+  assert.equal(request.url, "https://coachtaeqb.com/api/jobs");
+  assert.equal(request.headers.Authorization, `Bearer ${secret}`);
+  assert.equal(request.headers["x-coach-tae-environment"], "production");
+  const c = await pool.connect();
+  try {
+    for (const query of [
+      "select ct_dispatch_production_notifications()",
+      "select * from ct_production_scheduler_runs",
+    ]) {
+      await c.query("begin");
+      await c.query("set local role authenticated");
+      await assert.rejects(c.query(query), /permission denied/);
+      await c.query("rollback");
+    }
+    await c.query(
+      "update vault.decrypted_secrets set decrypted_secret='https://preview.vercel.app/api/jobs' where name='coach_tae_production_jobs_url'",
+    );
+    await assert.rejects(
+      c.query("select ct_dispatch_production_notifications()"),
+      /missing or invalid/,
+    );
+    await assert.rejects(c.query(sql), /Configure https/);
+    await c.query("rollback");
+    await c.query(
+      "update vault.decrypted_secrets set decrypted_secret='https://coachtaeqb.com/api/jobs' where name='coach_tae_production_jobs_url'",
+    );
+    await c.query("grant select on net.http_request_queue to anon");
+    await assert.rejects(c.query(sql), /must not be readable/);
+    await c.query("rollback");
+    await c.query("revoke select on net.http_request_queue from anon");
+  } finally {
+    c.release();
+  }
+});

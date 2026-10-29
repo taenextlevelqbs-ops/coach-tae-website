@@ -1,18 +1,19 @@
 {
-  "checked_at": "2026-10-28T22:50:00.401Z",
+  "checked_at": "2026-10-29T16:57:22.929Z",
+  "assessment_scope": "Current execution environment only. Missing local bindings do not prove missing Vercel production variables; production settings require an authorized remote inspection.",
   "checks": {},
   "blockers": [
-    "Configure NEXT_PUBLIC_SUPABASE_URL securely",
-    "Configure NEXT_PUBLIC_SUPABASE_ANON_KEY securely",
-    "Configure SUPABASE_SERVICE_ROLE_KEY securely",
-    "Configure STRIPE_SECRET_KEY securely",
-    "Configure STRIPE_WEBHOOK_SECRET securely",
-    "Configure RESEND_API_KEY securely",
-    "Configure EMAIL_FROM securely",
-    "Configure CRON_SECRET securely",
-    "Configure APP_URL securely",
-    "Configure VERCEL_TOKEN securely",
-    "Configure VERCEL_PROJECT_ID securely"
+    "Unavailable in this execution environment: NEXT_PUBLIC_SUPABASE_URL; production configuration not inspected",
+    "Unavailable in this execution environment: NEXT_PUBLIC_SUPABASE_ANON_KEY; production configuration not inspected",
+    "Unavailable in this execution environment: SUPABASE_SERVICE_ROLE_KEY; production configuration not inspected",
+    "Unavailable in this execution environment: STRIPE_SECRET_KEY; production configuration not inspected",
+    "Unavailable in this execution environment: STRIPE_WEBHOOK_SECRET; production configuration not inspected",
+    "Unavailable in this execution environment: RESEND_API_KEY; production configuration not inspected",
+    "Unavailable in this execution environment: EMAIL_FROM; production configuration not inspected",
+    "Unavailable in this execution environment: CRON_SECRET; production configuration not inspected",
+    "Unavailable in this execution environment: APP_URL; production configuration not inspected",
+    "Unavailable in this execution environment: VERCEL_TOKEN; production configuration not inspected",
+    "Unavailable in this execution environment: VERCEL_PROJECT_ID; production configuration not inspected"
   ],
   "hosted_acceptance": "NOT VERIFIED — account reads do not replace end-to-end hosted testing"
 }

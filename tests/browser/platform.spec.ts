@@ -558,3 +558,24 @@ test("email rate limit gives clear feedback and survives reload", async ({
     page.getByRole("button", { name: /Try again in/ }),
   ).toBeDisabled();
 });
+
+test("sign-out clears local access and explains when remote session revocation fails", async ({
+  page,
+}) => {
+  await session(page);
+  await mocks(page);
+  await page.route("https://fixture.supabase.co/auth/v1/logout**", (route) =>
+    route.fulfill({ status: 500, json: { message: "Upstream unavailable" } }),
+  );
+  await page.goto("/portal");
+  await expect(page.getByText("Test Athlete", { exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "Sign out", exact: true }).click();
+  await expect(page.getByLabel("Parent email")).toBeVisible();
+  await expect(
+    page.getByRole("alert").filter({ hasText: "signed out on this device" }),
+  ).toBeVisible();
+  await expect(page.getByText("Test Athlete", { exact: true })).toHaveCount(0);
+  expect(
+    await page.evaluate(() => localStorage.getItem("sb-fixture-auth-token")),
+  ).toBeNull();
+});

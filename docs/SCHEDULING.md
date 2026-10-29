@@ -25,7 +25,7 @@ An external minute tick is needed for future reminders, retries, queue backlog a
 4. Review and execute [the preview scheduler SQL](../supabase/operations/preview-notification-scheduler.sql) in that **staging** project. It registers one named minute job, `coach-tae-preview-notifications`. Reapplying it updates that named job; it does not duplicate jobs or unschedule any other application. The cron command contains only a fixed function call; credentials are read from Vault at execution and placed in headers, not command text or URLs. Responses contain only processed/succeeded/failed counts.
 5. Verify actual execution and email delivery against the preview. The endpoint is `POST /api/jobs` and validates its bearer secret on every request. The scheduler sets `x-coach-tae-environment: preview`; production instances reject that marker. A deployment-protection bypass is passed in its designated header, never a query parameter.
 
-Update the Vault URL when the verified preview changes. Do not point this preview job at coachtaeqb.com. Production scheduling is outside this fix and must be separately approved and configured before a future launch.
+Update the Vault URL when the verified preview changes. Do not point this preview job at coachtaeqb.com. Production scheduling uses a separate explicit operations script described below; never repoint the preview job to production.
 
 This repository implements the scheduling integration but cannot configure a hosted Supabase scheduler without the project's authorized access. Until the minute scheduler and actual email delivery are verified, timely reminders/retries are **not operationally certified**. Minute cadence also is not exact-second delivery: due jobs are claimed on the next tick, run in batches of five, and provider latency, retries and backlogs can add delay. Monitor queue age and failures.
 
@@ -62,3 +62,13 @@ select cron.unschedule('coach-tae-preview-notifications');
 ## Local validation scope
 
 Automated tests execute the actual operations SQL with test-only Cron/pg_net/Vault stand-ins in disposable PostgreSQL. They verify repeatable registration, Vault resolution, headers, preview targeting, secret-table protection and anonymous execution denial. No external HTTP request is sent by those SQL tests. Additional tests cover exact worker authentication, deferred event dispatch, existing outbox behavior, and Hobby-compatible Vercel schedules. Hosted cron execution and actual provider delivery still require the configuration above.
+
+## Production release scheduler
+
+The production launch request authorizes configuration once hosted acceptance passes. The operations script [production-notification-scheduler.sql](../supabase/operations/production-notification-scheduler.sql) is prepared but **not installed or operationally verified**. It is separate from application migrations and preserves preview/other cron jobs.
+
+After inspecting existing production Cron, pg_net and Vault permissions, bind `coach_tae_production_jobs_url` to exactly `https://coachtaeqb.com/api/jobs` and `coach_tae_production_cron_secret` to the production deployment's strong `CRON_SECRET`. Execute the production operations script against the verified production project. It registers `coach-tae-production-notifications` every minute, reads credentials only at runtime and records request IDs in an RLS-protected `ct_production_scheduler_runs` table. Browser roles cannot dispatch or read run records. The URL guard rejects other domains, preview URLs, query strings and insecure schemes. The API refuses production-marked ticks unless `VERCEL_ENV=production`.
+
+Verify `cron.job` registration, `cron.job_run_details`, recent `ct_production_scheduler_runs` joined to `net._http_response`, HTTP success counts, outbox queue age and actual receipt of a controlled test reminder. Queue claims remain bounded to five per tick; monitor backlog. A successful SQL registration or a 200 response alone does not establish email delivery. Supabase Cron/pg_net are external to Vercel's Hobby cron restriction.
+
+To uninstall only this scheduler, run `select cron.unschedule('coach-tae-production-notifications');` and revoke execute on `public.ct_dispatch_production_notifications()` from `service_role`. Retain run records for audit or remove them only under the project's data-retention policy. Do not alter other scheduled jobs or shared extension permissions.

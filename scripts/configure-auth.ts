@@ -7,6 +7,7 @@ const apply = process.argv.includes("--apply");
 async function request(method: string, body?: unknown) {
   const response = await fetch(endpoint, {
     method,
+    signal: AbortSignal.timeout(20000),
     headers: {
       Authorization: `Bearer ${token}`,
       "Content-Type": "application/json",

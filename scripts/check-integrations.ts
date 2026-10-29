@@ -5,11 +5,14 @@ import { writeFile } from "node:fs/promises";
 import { catalog, validPrice, type ProductKey } from "../lib/platform/catalog";
 const report: {
   checked_at: string;
+  assessment_scope: string;
   checks: Record<string, unknown>;
   blockers: string[];
   hosted_acceptance: string;
 } = {
   checked_at: new Date().toISOString(),
+  assessment_scope:
+    "Current execution environment only. Missing local bindings do not prove missing Vercel production variables; production settings require an authorized remote inspection.",
   checks: {},
   blockers: [],
   hosted_acceptance:
@@ -18,7 +21,12 @@ const report: {
 const has = (name: string) => !!process.env[name];
 function missing(names: string[]) {
   const absent = names.filter((n) => !has(n));
-  report.blockers.push(...absent.map((n) => `Configure ${n} securely`));
+  report.blockers.push(
+    ...absent.map(
+      (n) =>
+        `Unavailable in this execution environment: ${n}; production configuration not inspected`,
+    ),
+  );
   return absent.length > 0;
 }
 async function run(name: string, operation: () => Promise<unknown>) {

@@ -39,6 +39,9 @@ test("job authentication is exact, rejects absent/incorrect credentials, and pro
   assert.equal(matchesJobEnvironment("preview", "production"), false);
   assert.equal(matchesJobEnvironment("preview", "preview"), true);
   assert.equal(matchesJobEnvironment(null, "production"), true);
+  assert.equal(matchesJobEnvironment("production", "production"), true);
+  assert.equal(matchesJobEnvironment("production", "preview"), false);
+  assert.equal(matchesJobEnvironment("production", undefined), false);
 });
 test("confirmation dispatch runs after the response and notification failures cannot undo a successful transaction", async () => {
   const callbacks: (() => Promise<void>)[] = [];
