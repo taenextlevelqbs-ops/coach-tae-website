@@ -39,11 +39,10 @@ export function siteUrl() {
 }
 export function payments() {
   const key = required("STRIPE_SECRET_KEY");
-  if (!key.startsWith("sk_test_") && !key.startsWith("rk_test_"))
-    throw new HttpError(
-      503,
-      "Live payments are disabled pending release approval.",
-    );
+  const testKey = key.startsWith("sk_test_") || key.startsWith("rk_test_");
+  const liveKey = key.startsWith("sk_live_") || key.startsWith("rk_live_");
+  if (!testKey && !(liveKey && process.env.STRIPE_LIVE_ENABLED === "true"))
+    throw new HttpError(503, "Stripe payments are not enabled for this environment.");
   return new Stripe(key, { maxNetworkRetries: 2, timeout: 20000 });
 }
 export function bookingEnabled() {
@@ -139,7 +138,7 @@ export async function verifiedPrice(key: ProductKey) {
     throw new HttpError(503, "A verified Stripe Price ID is required.");
   const price = await payments().prices.retrieve(id, { expand: ["product"] });
   if (
-    price.livemode ||
+    price.livemode !== (process.env.STRIPE_LIVE_ENABLED === "true") ||
     !validPrice(key, price) ||
     typeof price.product === "string" ||
     price.product.deleted ||
@@ -147,7 +146,7 @@ export async function verifiedPrice(key: ProductKey) {
   )
     throw new HttpError(
       503,
-      "Stripe price does not match the approved test catalog.",
+      "Stripe price does not match the configured catalog or payment mode.",
     );
   return price.id;
 }
