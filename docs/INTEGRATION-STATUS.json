@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-10-29T16:57:22.929Z",
+  "checked_at": "2026-10-30T13:40:27.257Z",
   "assessment_scope": "Current execution environment only. Missing local bindings do not prove missing Vercel production variables; production settings require an authorized remote inspection.",
   "checks": {},
   "blockers": [

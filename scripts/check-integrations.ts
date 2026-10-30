@@ -2,7 +2,7 @@
 import { createClient } from "@supabase/supabase-js";
 import Stripe from "stripe";
 import { writeFile } from "node:fs/promises";
-import { catalog, validPrice, type ProductKey } from "../lib/platform/catalog";
+import { auditTestCatalog } from "../lib/platform/test-catalog-audit";
 const report: {
   checked_at: string;
   assessment_scope: string;
@@ -51,6 +51,11 @@ async function main() {
     ])
   )
     await run("Supabase", async () => {
+      if (
+        process.env.NEXT_PUBLIC_SUPABASE_URL !==
+        "https://fqmojknpqhogotyvxyie.supabase.co"
+      )
+        throw new Error("CoachTaeProjectMismatch");
       const url = process.env.NEXT_PUBLIC_SUPABASE_URL!,
         service = createClient(url, process.env.SUPABASE_SERVICE_ROLE_KEY!, {
           auth: { persistSession: false },
@@ -62,6 +67,7 @@ async function main() {
         ["ct_rules", "id,local_end,superseded_by"],
         ["ct_lessons", "id,slug,level"],
         ["ct_credit_recovery", "family_id,kind,units"],
+        ["ct_legacy_busy_times", "source_ref,block_id,imported_at"],
       ]) {
         const r = await service.from(table).select(columns).limit(1);
         if (r.error) throw new Error("StagingSchemaNotReady");
@@ -75,7 +81,10 @@ async function main() {
       if (!denied.error) throw new Error("AnonymousTableAccessMustBeDenied");
       return {
         status: "read-only checks passed",
-        schema: "window, learning and recovery columns present",
+        schema:
+          "window, learning, recovery and legacy busy-time columns present; migration history and closure RPC not yet verified",
+        legacy_calendar_reconciled:
+          "unverified; table presence is not appointment reconciliation",
         anonymous_family_reads: "denied",
         actual_parent_login: "unverified",
         actual_family_RLS: "unverified",
@@ -87,47 +96,12 @@ async function main() {
       if (!key.startsWith("sk_test_") && !key.startsWith("rk_test_"))
         throw new Error("TestKeyRequired");
       const stripe = new Stripe(key, { timeout: 15000, maxNetworkRetries: 1 });
-      const prices = await stripe.prices
-        .list({ active: true, limit: 100, expand: ["data.product"] })
-        .autoPagingToArray({ limit: 1000 });
-      const mappings: Record<string, unknown> = {};
-      for (const productKey of Object.keys(catalog) as ProductKey[]) {
-        const item = catalog[productKey];
-        const matches = prices.filter((p) => {
-          if (
-            p.livemode ||
-            !validPrice(productKey, p) ||
-            typeof p.product === "string" ||
-            p.product.deleted ||
-            !p.product.active
-          )
-            return false;
-          const name = p.product.name.toLowerCase();
-          return productKey.startsWith("private")
-            ? name.includes("private")
-            : productKey.startsWith("group")
-              ? name.includes("group")
-              : name.includes("qb") && name.includes("lab");
-        });
-        const configured = process.env[item.env];
-        const exact = configured
-          ? matches.filter((p) => p.id === configured)
-          : matches;
-        mappings[item.env] =
-          exact.length === 1
-            ? { status: "verified test price", id: exact[0].id }
-            : {
-                status: exact.length ? "ambiguous" : "missing or mismatched",
-                candidate_ids: matches.map((p) => p.id),
-              };
-        if (exact.length !== 1)
-          report.blockers.push(
-            `Select the existing matching test Price ID for ${item.env}; no product was created`,
-          );
-      }
+      const audit = await auditTestCatalog(stripe, process.env);
+      report.blockers.push(...audit.blockers);
       return {
         status: "catalog read",
-        prices: mappings,
+        account: audit.account,
+        prices: audit.mappings,
         real_checkout: "unverified",
         real_webhook_delivery: "unverified",
       };

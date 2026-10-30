@@ -6,8 +6,9 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { createServer } from "node:net";
 import EmbeddedPostgres from "embedded-postgres";
-import { Pool } from "pg";
+import { Pool, type PoolConfig } from "pg";
 let server: EmbeddedPostgres, pool: Pool, dir: string;
+let connection: PoolConfig;
 let family: string, other: string, athlete: string, otherAthlete: string;
 before(async () => {
   dir = await mkdtemp(join(tmpdir(), "coach-tae-db-"));
@@ -31,14 +32,15 @@ before(async () => {
   });
   await server.initialise();
   await server.start();
-  pool = new Pool({
+  connection = {
     host: "127.0.0.1",
     port,
     user: "postgres",
     password,
     database: "postgres",
     max: 12,
-  });
+  };
+  pool = new Pool(connection);
   await pool.query(
     `create schema auth; create table auth.users(id uuid primary key); create role anon; create role authenticated; create role service_role bypassrls; grant usage on schema auth, public to anon,authenticated,service_role; create function auth.uid() returns uuid language sql stable as $$select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid$$;`,
   );
@@ -86,6 +88,85 @@ async function credit(id = family, kind = "private", units = 3) {
     [id, kind, units, randomUUID()],
   );
 }
+
+test("native cutover migrations preserve existing families, athletes, paid bookings, orders and credits", async () => {
+  await pool.query("create database ct_upgrade_fixture");
+  const upgrade = new Pool({
+    ...connection,
+    database: "ct_upgrade_fixture",
+    max: 1,
+  });
+  try {
+    await upgrade.query(
+      "create schema auth; create table auth.users(id uuid primary key); grant usage on schema auth,public to anon,authenticated,service_role; create function auth.uid() returns uuid language sql stable as $$select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid$$;",
+    );
+    const migrations = (await readdir("supabase/migrations"))
+      .filter((file) => file.endsWith(".sql"))
+      .sort();
+    for (const file of migrations.filter((file) => file < "202610290005"))
+      await upgrade.query(
+        await readFile(`supabase/migrations/${file}`, "utf8"),
+      );
+    const f = randomUUID(),
+      a = randomUUID(),
+      s = randomUUID(),
+      b = randomUUID(),
+      o = randomUUID();
+    await upgrade.query("insert into auth.users values($1)", [f]);
+    await upgrade.query(
+      "insert into ct_families(id,email,stripe_customer_id) values($1,'existing@example.invalid','cus_existing_fixture')",
+      [f],
+    );
+    await upgrade.query(
+      "insert into ct_athletes(id,family_id,name) values($1,$2,'Existing athlete')",
+      [a, f],
+    );
+    await upgrade.query(
+      "insert into ct_slots(id,kind,capacity,starts_at,ends_at) values($1,'private',1,now()+interval '5 days',now()+interval '5 days 1 hour')",
+      [s],
+    );
+    await upgrade.query(
+      "insert into ct_bookings(id,family_id,athlete_id,slot_id,status,paid,request_id) values($1,$2,$3,$4,'confirmed',true,$5)",
+      [b, f, a, s, randomUUID()],
+    );
+    await upgrade.query(
+      "insert into ct_credits(family_id,kind,delta,source) values($1,'private',3,'existing-credit-fixture')",
+      [f],
+    );
+    await upgrade.query(
+      "insert into ct_orders(id,family_id,product_key,price_id,booking_id,status) values($1,$2,'private','price_existing_fixture',$3,'paid')",
+      [o, f, b],
+    );
+    const tables = [
+      "ct_families",
+      "ct_athletes",
+      "ct_bookings",
+      "ct_orders",
+      "ct_credits",
+      "ct_slots",
+    ];
+    const snapshots = async () =>
+      Promise.all(
+        tables.map(
+          async (table) =>
+            (await upgrade.query(`select * from ${table} order by id`)).rows,
+        ),
+      );
+    const before = await snapshots();
+    for (const file of migrations.filter((file) => file >= "202610290005"))
+      await upgrade.query(
+        await readFile(`supabase/migrations/${file}`, "utf8"),
+      );
+    assert.deepEqual(await snapshots(), before);
+    const access = await upgrade.query(
+      "select has_function_privilege('anon','ct_close_checkout(text,uuid,text,text)','execute') as anonymous,has_function_privilege('authenticated','ct_import_busy_times(jsonb)','execute') as browser",
+    );
+    assert.deepEqual(access.rows[0], { anonymous: false, browser: false });
+  } finally {
+    await upgrade.end();
+    await pool.query("drop database ct_upgrade_fixture");
+  }
+});
 async function book(
   s: string,
   f = family,
