@@ -19,7 +19,7 @@ export async function POST(req: Request) {
       if (!id) return Response.json({ received: true });
       const d = db();
       const { data: b, error } = await d
-        .from("ct_bookings")
+        .from("ct_native_bookings")
         .select("amount")
         .eq("id", id)
         .single();
