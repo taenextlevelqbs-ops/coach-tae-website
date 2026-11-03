@@ -10,7 +10,7 @@ export async function GET() {
     const results = await Promise.all(
       [
         "ct_sessions",
-        "ct_bookings",
+        "ct_native_bookings",
         "ct_availability_exceptions",
         "ct_session_types",
         "ct_availability_rules",
