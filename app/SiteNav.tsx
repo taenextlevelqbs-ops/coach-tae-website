@@ -11,9 +11,10 @@ const links = [
   { href: "#apparel", label: "Apparel" },
 ];
 
-const individualBookingUrl =
+const nativeBooking = process.env.NEXT_PUBLIC_BOOKING_ENABLED === 'true';
+const individualBookingUrl = nativeBooking ? '/book' :
   "https://calendly.com/taenextlevelqbs/individual-training-clone";
-const groupBookingUrl = "https://calendly.com/taenextlevelqbs/group-training";
+const groupBookingUrl = nativeBooking ? '/book' : "https://calendly.com/taenextlevelqbs/group-training";
 const shopUrl = "https://dmvattack.myshopify.com/";
 
 export default function SiteNav() {
@@ -67,7 +68,7 @@ export default function SiteNav() {
             </div>
 
             <a className="nav-booking-link" href={individualBookingUrl} target="_blank" rel="noopener noreferrer">
-              Book a session <span aria-hidden="true">↗</span>
+              {nativeBooking ? 'Book Training' : 'Book a session'} <span aria-hidden="true">↗</span>
               <span className="sr-only">(opens in a new tab)</span>
             </a>
 
