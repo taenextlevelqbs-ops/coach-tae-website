@@ -5,7 +5,7 @@ import { DateTime } from "luxon";
 export async function sendNotifications() {
   const d = db();
   const { data: upcoming, error: upcomingError } = await d
-    .from("ct_bookings")
+    .from("ct_native_bookings")
     .select("id,session_id,ct_sessions!inner(starts_at)")
     .eq("status", "confirmed")
     .gte("ct_sessions.starts_at", new Date().toISOString())
@@ -26,13 +26,13 @@ export async function sendNotifications() {
   }
   const { data: pending, error } = await d
     .from("ct_notifications")
-    .select("*,ct_bookings(*,ct_sessions(*))")
+    .select("*,ct_native_bookings(*,ct_sessions(*))")
     .is("delivered_at", null)
     .order("created_at")
     .limit(50);
   if (error) throw error;
   for (const n of pending ?? []) {
-    const current = n.ct_bookings;
+    const current = n.ct_native_bookings;
     const b = n.payload;
     const s = b.ct_sessions;
     if (
