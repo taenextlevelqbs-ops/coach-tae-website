@@ -1,0 +1,92 @@
+.booking {
+  max-width: 850px;
+  margin: auto;
+  padding: 32px 20px 80px;
+  color: #f8fafc;
+}
+.booking h1 {
+  font-size: clamp(2rem, 7vw, 3.5rem);
+  font-weight: 900;
+}
+.booking h2 {
+  font-size: 1.25rem;
+  font-weight: 800;
+  margin-bottom: 16px;
+}
+.booking p {
+  margin: 14px 0;
+  color: #cbd5e1;
+}
+.booking section,
+.booking form {
+  padding: 24px 0;
+  border-top: 1px solid #334155;
+  margin-top: 24px;
+}
+.booking button,
+.booking input,
+.booking select {
+  border: 1px solid #64748b;
+  border-radius: 10px;
+  padding: 12px;
+  background: #111827;
+  color: white;
+  font: inherit;
+  min-height: 46px;
+}
+.booking button {
+  cursor: pointer;
+}
+.booking button:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+.booking button[aria-pressed="true"] {
+  background: #0369a1;
+  border-color: #7dd3fc;
+}
+.booking a {
+  color: #7dd3fc;
+  text-decoration: underline;
+}
+.booking label {
+  display: block;
+  margin: 16px 0;
+}
+.booking input,
+.booking select {
+  display: block;
+  width: 100%;
+  margin-top: 6px;
+}
+.choices {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 16px;
+}
+.calendar {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 6px;
+  text-align: center;
+}
+.calendar button {
+  padding: 10px 0;
+}
+.month {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 16px 0;
+}
+.booking article {
+  padding: 16px;
+  border: 1px solid #334155;
+  border-radius: 10px;
+  margin: 12px 0;
+}
+.booking :focus-visible {
+  outline: 3px solid #7dd3fc;
+  outline-offset: 3px;
+}

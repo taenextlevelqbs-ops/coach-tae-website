@@ -3,10 +3,11 @@ import SiteNav from "./SiteNav";
 
 const SHOP_URL = "https://dmvattack.myshopify.com/";
 
-const INDIVIDUAL_BOOKING_URL =
+const nativeBooking = process.env.NEXT_PUBLIC_BOOKING_ENABLED === 'true';
+const INDIVIDUAL_BOOKING_URL = nativeBooking ? '/book' :
   "https://calendly.com/taenextlevelqbs/individual-training-clone";
 
-const GROUP_BOOKING_URL =
+const GROUP_BOOKING_URL = nativeBooking ? '/book' :
   "https://calendly.com/taenextlevelqbs/group-training";
 
 const trainingFocus = [
@@ -201,7 +202,7 @@ export default function Home() {
                   </p>
 
                   <p className="mt-4 text-4xl font-black">
-                    $60
+                    {nativeBooking ? "$50" : "$60"}
                   </p>
 
                   <div className="my-4 h-[1px] bg-white/10" />
@@ -231,7 +232,7 @@ export default function Home() {
                   </p>
 
                   <p className="mt-4 text-4xl font-black">
-                    $85
+                    {nativeBooking ? "$75" : "$85"}
                   </p>
 
                   <div className="my-4 h-[1px] bg-white/10" />
