@@ -42,7 +42,7 @@ async function main() {
     "ct_session_types",
     "ct_offers",
     "ct_sessions",
-    "ct_bookings",
+    "ct_native_bookings",
     "ct_package_credits",
     "ct_notifications",
   ]) {
