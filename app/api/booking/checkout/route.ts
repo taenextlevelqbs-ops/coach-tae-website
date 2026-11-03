@@ -72,7 +72,7 @@ export async function POST(req: Request) {
       { idempotencyKey: `booking-${hold.id}` },
     );
     const { error: save } = await d
-      .from("ct_bookings")
+      .from("ct_native_bookings")
       .update({ stripe_session_id: checkout.id })
       .eq("id", hold.id);
     if (save) {
