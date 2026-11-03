@@ -202,7 +202,7 @@ export default function Home() {
                   </p>
 
                   <p className="mt-4 text-4xl font-black">
-                    {nativeBooking ? "$50" : "$60"}
+                    "$60"
                   </p>
 
                   <div className="my-4 h-[1px] bg-white/10" />
@@ -232,7 +232,7 @@ export default function Home() {
                   </p>
 
                   <p className="mt-4 text-4xl font-black">
-                    {nativeBooking ? "$75" : "$85"}
+                    "$85"
                   </p>
 
                   <div className="my-4 h-[1px] bg-white/10" />
