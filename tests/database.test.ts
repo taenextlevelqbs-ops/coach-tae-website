@@ -45,7 +45,7 @@ test("PostgreSQL booking lifecycle, capacity, retries, expiration, privacy and s
   ) as PromiseFulfilledResult<Awaited<ReturnType<typeof hold>>>;
   const id = result.value.rows[0].id;
   await db.query(
-    `update ct_bookings set stripe_session_id='cs_fixture' where id=$1`,
+    `update ct_native_bookings set stripe_session_id='cs_fixture' where id=$1`,
     [id],
   );
   await assert.rejects(
@@ -73,7 +73,7 @@ test("PostgreSQL booking lifecycle, capacity, retries, expiration, privacy and s
   assert.equal(
     (
       await db.query<{ status: string }>(
-        `select status from ct_bookings where id=$1`,
+        `select status from ct_native_bookings where id=$1`,
         [id],
       )
     ).rows[0].status,
@@ -83,7 +83,7 @@ test("PostgreSQL booking lifecycle, capacity, retries, expiration, privacy and s
   assert.equal(
     (
       await db.query<{ status: string }>(
-        `select status from ct_bookings where id=$1`,
+        `select status from ct_native_bookings where id=$1`,
         [id],
       )
     ).rows[0].status,
@@ -97,7 +97,7 @@ test("PostgreSQL booking lifecycle, capacity, retries, expiration, privacy and s
   assert.equal(
     (
       await db.query<{ session_id: string }>(
-        `select session_id from ct_bookings where id=$1`,
+        `select session_id from ct_native_bookings where id=$1`,
         [id],
       )
     ).rows[0].session_id,
@@ -105,7 +105,7 @@ test("PostgreSQL booking lifecycle, capacity, retries, expiration, privacy and s
   );
   await db.exec("set role anon");
   await assert.rejects(
-    db.query("select * from ct_bookings"),
+    db.query("select * from ct_native_bookings"),
     /permission denied/,
   );
   await assert.rejects(hold("intruder@example.com"), /permission denied/);
@@ -113,7 +113,7 @@ test("PostgreSQL booking lifecycle, capacity, retries, expiration, privacy and s
   await db.query(`select ct_manage('cancel',$1)`, [id]);
   const expired = (await hold("expired@example.com", target)).rows[0].id;
   await db.query(
-    `update ct_bookings set expires_at=now()-interval '1 second',stripe_session_id='cs_late' where id=$1`,
+    `update ct_native_bookings set expires_at=now()-interval '1 second',stripe_session_id='cs_late' where id=$1`,
     [expired],
   );
   const replacement = (await hold("replacement@example.com", target)).rows[0]
@@ -124,7 +124,7 @@ test("PostgreSQL booking lifecycle, capacity, retries, expiration, privacy and s
   assert.equal(
     (
       await db.query<{ status: string }>(
-        `select status from ct_bookings where id=$1`,
+        `select status from ct_native_bookings where id=$1`,
         [expired],
       )
     ).rows[0].status,
@@ -133,7 +133,7 @@ test("PostgreSQL booking lifecycle, capacity, retries, expiration, privacy and s
   assert.equal(
     (
       await db.query<{ status: string }>(
-        `select status from ct_bookings where id=$1`,
+        `select status from ct_native_bookings where id=$1`,
         [replacement],
       )
     ).rows[0].status,
@@ -158,7 +158,7 @@ test("PostgreSQL booking lifecycle, capacity, retries, expiration, privacy and s
     )
   ).rows[0].id;
   await db.query(
-    `update ct_bookings set stripe_session_id='cs_package' where id=$1`,
+    `update ct_native_bookings set stripe_session_id='cs_package' where id=$1`,
     [purchase],
   );
   await db.query(
@@ -217,7 +217,7 @@ test("PostgreSQL booking lifecycle, capacity, retries, expiration, privacy and s
   assert.equal(
     (
       await db.query<{ status: string }>(
-        `select status from ct_bookings where id=$1`,
+        `select status from ct_native_bookings where id=$1`,
         [redemption],
       )
     ).rows[0].status,
@@ -239,7 +239,7 @@ test("PostgreSQL booking lifecycle, capacity, retries, expiration, privacy and s
   assert.equal(
     (
       await db.query<{ status: string }>(
-        `select status from ct_bookings where id=$1`,
+        `select status from ct_native_bookings where id=$1`,
         [purchase],
       )
     ).rows[0].status,
