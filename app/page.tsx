@@ -9,6 +9,9 @@ const INDIVIDUAL_BOOKING_URL =
 const GROUP_BOOKING_URL =
   "https://calendly.com/taenextlevelqbs/group-training";
 
+const GROUP_BUNDLE_URL = "https://buy.stripe.com/cNibJ3dmM8hOdrUdhu6AM00";
+const PRIVATE_BUNDLE_URL = "https://buy.stripe.com/5kQ9AV82seGc4VogtG6AM01";
+
 const trainingFocus = [
   "Throwing Mechanics",
   "Footwork",
@@ -248,31 +251,23 @@ export default function Home() {
 
               </div>
 
-              <div className="mt-4 rounded-2xl border border-white/10 bg-black/20 p-6">
-
-                <p className="text-[9px] font-black tracking-[0.25em] text-white/30">
-                  PACKAGE // 03
-                </p>
-
-                <div className="mt-4 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
-
-                  <div>
-                    <p className="text-xl font-black">
-                      3 Individual Sessions
-                    </p>
-
-                    <p className="mt-1 text-sm text-white/45">
-                      $80 per session
-                    </p>
-                  </div>
-
-                  <p className="text-4xl font-black">
-                    $240
-                  </p>
-
-                </div>
-
+        <div className="mt-4 grid gap-4 sm:grid-cols-2">
+                <a href={GROUP_BUNDLE_URL} target="_blank" rel="noopener noreferrer" className="rounded-2xl border border-white/20 bg-white/[0.06] p-6 transition hover:border-white/50">
+                  <p className="text-[10px] font-black tracking-[0.2em] text-white/50">PREPAID PACKAGE</p>
+                  <p className="mt-3 text-xl font-black">3 Group Sessions</p>
+                  <p className="mt-3 text-3xl font-black">$150</p>
+                  <p className="mt-2 text-sm text-white/60">$50 per session • Save $30</p>
+                  <p className="mt-5 text-sm font-bold">BUY GROUP PACKAGE →</p>
+                </a>
+                <a href={PRIVATE_BUNDLE_URL} target="_blank" rel="noopener noreferrer" className="rounded-2xl border border-white/20 bg-white/[0.06] p-6 transition hover:border-white/50">
+                  <p className="text-[10px] font-black tracking-[0.2em] text-white/50">PREPAID PACKAGE</p>
+                  <p className="mt-3 text-xl font-black">3 Private Sessions</p>
+                  <p className="mt-3 text-3xl font-black">$240</p>
+                  <p className="mt-2 text-sm text-white/60">$80 per session • Save $15</p>
+                  <p className="mt-5 text-sm font-bold">BUY PRIVATE PACKAGE →</p>
+                </a>
               </div>
+              <p className="mt-3 text-xs text-white/50">Packages include three sessions. Scheduling is arranged after purchase; existing Calendly single-session bookings require separate payment.</p>
 
               <div className="mt-8 grid gap-3 sm:grid-cols-2">
 
