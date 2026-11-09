@@ -10,7 +10,7 @@ Reuse the `coach-tae-website` Vercel project and its existing bindings. Never pa
 - `NEXT_PUBLIC_SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY`: existing Supabase project. Service-role credentials stay server-side. `SUPABASE_URL` is also accepted.
 - `RESEND_API_KEY` and `EMAIL_FROM`: existing Resend bindings. `BOOKING_FROM_EMAIL` can override the sender.
 - `COACH_SUPABASE_USER_ID`: the UUID of a verified coach user in this existing project's Supabase Auth. Do not infer an admin identity from an unverified email. Password sign-in authorizes this exact UUID only. Coach sessions expire with the Supabase token; signing in again is required.
-- `COACH_NOTIFICATION_EMAIL`: verified coach notification address, still to be supplied.
+- `COACH_NOTIFICATION_EMAIL`: `taenextlevelqbs@gmail.com`, designated by the owner for coach notifications and intended coach sign-in. Supabase account ownership and Resend delivery still need verification; supplying this address does not grant coach access.
 - `BOOKING_SITE_URL`: defaults to `https://coachtaeqb.com`; set to the preview origin when testing previews. Mutations enforce same-origin requests.
 - `CRON_SECRET`: scheduler bearer token. Configure a secure scheduler to GET `/api/booking/notifications` every minute (or at the supported deployment-plan interval). The worker retries pending notifications and queues reminders for appointments within 24 hours. This endpoint is not public. Webhooks and coach changes also attempt immediate delivery after responding.
 - `NEXT_PUBLIC_BOOKING_ENABLED=true`: explicit release gate. Leave unset/false in production until live verification. Rebuild when changing it. A protected preview can enable it for end-to-end verification.
