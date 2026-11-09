@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { DateTime } from "luxon";
 import "../../book/booking.css";
 type Session = {
@@ -35,6 +35,25 @@ export default function CoachSchedule() {
     [cursor, setCursor] = useState(DateTime.now().setZone("America/New_York")),
     [view, setView] = useState<"week" | "month">("week"),
     [target, setTarget] = useState("");
+  useEffect(() => {
+    const controller = new AbortController();
+    async function restoreSession() {
+      try {
+        const response = await fetch("/api/coach/schedule", { cache: "no-store", signal: controller.signal });
+        if (response.status === 401) return;
+        if (!response.ok) throw new Error("Unable to restore your schedule. Please sign in again.");
+        const schedule: Schedule = await response.json();
+        if (!controller.signal.aborted) {
+          setData(schedule);
+          setMessage("Schedule updated.");
+        }
+      } catch (error) {
+        if (!controller.signal.aborted) setMessage(error instanceof Error ? error.message : "Unable to restore your schedule.");
+      }
+    }
+    void restoreSession();
+    return () => controller.abort();
+  }, []);
   async function load() {
     const r = await fetch("/api/coach/schedule", { cache: "no-store" });
     const d = await r.json();
@@ -78,8 +97,8 @@ export default function CoachSchedule() {
   return (
     <main className="booking">
       <Link href="/">← Coach Tae</Link>
-      <h1>Coach schedule</h1>
-      <p>Private calendar · Eastern time</p>
+      <h1>Coach Tae Lab</h1>
+      <p>Your private training dashboard · Eastern time</p>
       <p role="status">{message}</p>
       {!data ? (
         <form onSubmit={login}>

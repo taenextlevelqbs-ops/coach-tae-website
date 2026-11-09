@@ -117,7 +117,7 @@ export default function Home() {
                     </a>
 
                     <a
-                      href="https://dmvattack.com" target="_blank" rel="noopener noreferrer"
+                      href="https://www.dmvattack.com" target="_blank" rel="noopener noreferrer"
                       className="rounded-full border border-white/30 bg-black/20 px-7 py-3 text-center font-bold text-white backdrop-blur-sm transition hover:bg-white hover:text-black"
                     >
                       DMV Attack 7v7
@@ -538,10 +538,16 @@ export default function Home() {
                 </h2>
               </div>
 
-              <p className="max-w-sm text-sm leading-relaxed text-white/45">
-                Competitive football built around athlete development,
-                relationships, exposure, and learning how to compete.
-              </p>
+              <div className="max-w-sm">
+                <p className="text-sm leading-relaxed text-white/45">
+                  Competitive football built around athlete development,
+                  relationships, exposure, and learning how to compete.
+                </p>
+                <a href="https://www.dmvattack.com" target="_blank" rel="noopener noreferrer" className="mt-5 inline-flex min-h-11 items-center rounded-full border border-white/30 px-6 py-3 font-bold transition hover:bg-white hover:text-black">
+                  Visit DMV Attack →
+                  <span className="sr-only"> (opens in a new tab)</span>
+                </a>
+              </div>
 
             </div>
 

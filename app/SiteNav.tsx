@@ -6,7 +6,7 @@ import Image from "next/image";
 const links = [
   { href: "#training", label: "Training" },
   { href: "#about", label: "About Coach Tae" },
-  { href: "#attack", label: "DMV Attack" },
+  { href: "https://www.dmvattack.com", label: "DMV Attack" },
   { href: "#foundation", label: "Foundation" },
   { href: "#apparel", label: "Apparel" },
 ];
@@ -58,8 +58,8 @@ export default function SiteNav() {
 
             <div className="desktop-nav-links">
               {links.map((link) => (
-                <a key={link.href} href={link.href}>
-                  {link.label}
+                <a key={link.href} href={link.href} target={link.href.startsWith("https://") ? "_blank" : undefined} rel={link.href.startsWith("https://") ? "noopener noreferrer" : undefined}>
+                  {link.label}{link.href.startsWith("https://") && <span className="sr-only"> (opens in a new tab)</span>}
                 </a>
               ))}
               <a href={shopUrl} target="_blank" rel="noopener noreferrer">
@@ -95,9 +95,9 @@ export default function SiteNav() {
           >
             <p className="mobile-nav-kicker">Explore Coach Tae</p>
             {links.map((link, index) => (
-              <a key={link.href} href={link.href} onClick={closeMenu}>
+              <a key={link.href} href={link.href} target={link.href.startsWith("https://") ? "_blank" : undefined} rel={link.href.startsWith("https://") ? "noopener noreferrer" : undefined} onClick={closeMenu}>
                 <span className="mobile-nav-number">0{index + 1}</span>
-                {link.label}
+                {link.label}{link.href.startsWith("https://") && <span className="sr-only"> (opens in a new tab)</span>}
                 <span className="mobile-nav-arrow" aria-hidden="true">↗</span>
               </a>
             ))}
